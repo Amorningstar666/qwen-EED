@@ -1,871 +1,764 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Remisión por Poder Preferente — EED PGN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
-      --azul-medio:#074C84;--azul-claro:#4DBFE2;
-      --naranja:#FFC300;--verde:#33FFCC;
-      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
-      --fondo:#F0F4F8;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Remisión por Poder Preferente - EED PGN</title>
+    <!-- Tipografías Oficiales -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Colores Institucionales PGN */
+            --pgn-blue: #063853;
+            --pgn-yellow: #FFE601;
+            --pgn-red: #E3201B;
+            --pgn-green: #33FFCC;
+            --pgn-gray-light: #F4F6F9;
+            --pgn-gray-dark: #2C3E50;
+            --text-color: #333333;
+            --border-color: #DDDDDD;
+            
+            /* Estados */
+            --positive-bg: #E0F7FA;
+            --positive-border: #00ACC1;
+            --negative-bg: #FFEBEE;
+            --negative-border: #E53935;
+        }
 
-    /* NAVBAR */
-    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
-    .navbar-left{display:flex;align-items:center;gap:12px;}
-    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
-    .back-btn svg{width:16px;height:16px;}
-    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
-    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
-    .navbar-right{display:flex;align-items:center;gap:10px;}
-    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
-    .nav-btn svg{width:14px;height:14px;}
-    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
-    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
-    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
-    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
-    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
-    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
-    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
-    .btn-accion-principal:hover{background:#e6cf00;}
-    .btn-accion-principal svg{width:14px;height:14px;}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    /* BREADCRUMB */
-    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
-    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
-    .breadcrumb-bar a:hover{color:var(--azul-medio);}
-    .breadcrumb-bar .sep{color:#CBD5E1;}
-    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--pgn-gray-light);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
 
-    /* LAYOUT 3 COLUMNAS */
-    .editor-layout{display:grid;grid-template-columns:240px 1fr 300px;flex:1;height:calc(100vh - 96px);}
+        /* Sidebar Izquierdo - Navegación (Simulado) */
+        .sidebar {
+            width: 260px;
+            background-color: var(--pgn-blue);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+            z-index: 100;
+        }
 
-    /* PANEL IZQUIERDO — ÍNDICE DEL EXPEDIENTE */
-    .panel-indice{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:20px 0;}
-    .indice-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;padding:0 16px 12px;}
-    .indice-seccion{padding:8px 16px 4px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.04em;}
-    .indice-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--negro);border-left:3px solid transparent;transition:all .15s;}
-    .indice-item:hover{background:#F8FAFC;color:var(--azul);}
-    .indice-item.active{border-left-color:var(--azul);background:#EBF4FA;color:var(--azul);font-weight:600;}
-    .indice-item svg{width:14px;height:14px;flex-shrink:0;color:var(--gris-medio);}
-    .indice-item.active svg{color:var(--azul);}
-    .indice-item.badge{position:relative;}
-    .indice-item.badge::after{content:'';position:absolute;right:16px;width:6px;height:6px;border-radius:50%;background:var(--naranja);}
-    .indice-sep{height:1px;background:var(--gris-claro);margin:8px 16px;}
+        .logo-area {
+            padding: 20px;
+            background-color: #042a3e;
+            text-align: center;
+            border-bottom: 4px solid var(--pgn-yellow);
+        }
 
-    /* EDITOR CENTRAL */
-    .editor-center{overflow-y:auto;padding:32px 40px;display:flex;flex-direction:column;gap:0;}
+        .logo-area h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+        }
 
-    /* ROL BANNER */
-    .rol-banner{display:none;align-items:center;gap:10px;padding:10px 16px;flex-shrink:0;}
-    .rol-banner.visible{display:flex;}
-    .rol-banner.revisor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
-    .rol-banner.aprobador{background:#FFFBEB;border-bottom:2px solid #FDE68A;}
-    .rol-banner.jefe{background:#F0FDF4;border-bottom:2px solid #BBF7D0;}
-    .rol-banner svg{width:16px;height:16px;flex-shrink:0;}
-    .rol-banner.revisor svg{color:#2563EB;}
-    .rol-banner.aprobador svg{color:#D97706;}
-    .rol-banner.jefe svg{color:#059669;}
-    .rol-banner-text{flex:1;}
-    .rol-banner-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;}
-    .rol-banner.revisor .rol-banner-title{color:#1D4ED8;}
-    .rol-banner.aprobador .rol-banner-title{color:#B45309;}
-    .rol-banner.jefe .rol-banner-title{color:#065F46;}
-    .rol-banner-sub{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+        .menu-items {
+            list-style: none;
+            padding: 20px 0;
+        }
 
-    /* PANEL ACCIONES ROL — derecho */
-    .rol-action-panel{display:none;flex-direction:column;border-bottom:1px solid var(--gris-claro);}
-    .rol-action-panel.visible{display:flex;}
-    .rap-header{padding:12px 16px 8px;}
-    .rap-rol-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
-    .rap-rol-badge.revisor{background:#DBEAFE;color:#1D4ED8;}
-    .rap-rol-badge.aprobador{background:#FEF3C7;color:#B45309;}
-    .rap-rol-badge.jefe{background:#D1FAE5;color:#065F46;}
-    .rap-rol-badge svg{width:11px;height:11px;}
-    .rap-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--azul);margin-bottom:3px;}
-    .rap-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;margin-bottom:10px;}
-    .rap-opciones{display:flex;flex-direction:column;gap:7px;padding:0 16px 14px;}
-    .rap-opcion{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:8px;border:1.5px solid;cursor:pointer;transition:all .15s;text-align:left;width:100%;background:var(--blanco);}
-    .rap-opcion svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
-    .rap-opcion-body{flex:1;}
-    .rap-opcion-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;display:block;line-height:1.2;margin-bottom:2px;}
-    .rap-opcion-sub{font-size:11px;line-height:1.4;}
-    .rap-opcion.via-aprobar{border-color:#BBF7D0;background:#F0FDF4;}
-    .rap-opcion.via-aprobar svg,.rap-opcion.via-aprobar .rap-opcion-sub{color:#059669;}
-    .rap-opcion.via-aprobar .rap-opcion-label{color:#065F46;}
-    .rap-opcion.via-aprobar:hover{background:#DCFCE7;border-color:#86EFAC;}
-    .rap-opcion.via-devolver{border-color:#FECACA;background:#FEF2F2;}
-    .rap-opcion.via-devolver svg,.rap-opcion.via-devolver .rap-opcion-sub{color:#DC2626;}
-    .rap-opcion.via-devolver .rap-opcion-label{color:#991B1B;}
-    .rap-opcion.via-devolver:hover{background:#FEE2E2;border-color:#FCA5A5;}
-    .devolver-inline{display:none;padding:0 16px 14px;}
-    .devolver-inline.visible{display:block;}
-    .devolver-inline textarea{width:100%;border:1.5px solid #FECACA;border-radius:8px;padding:10px;font-family:'Poppins',sans-serif;font-size:12px;min-height:80px;outline:none;resize:vertical;color:var(--negro);}
-    .devolver-inline-btns{display:flex;gap:8px;margin-top:8px;}
-    .btn-dev-cancel{flex:1;padding:8px;border:1.5px solid var(--gris-claro);background:var(--blanco);border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);cursor:pointer;}
-    .btn-dev-confirm{flex:2;padding:8px;border:none;background:var(--rojo);border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--blanco);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;}
-    .btn-dev-confirm svg{width:13px;height:13px;}
+        .menu-items li a {
+            display: block;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
 
-    /* DOCUMENTO */
-    .doc-sheet{background:var(--blanco);border-radius:4px;box-shadow:0 2px 20px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.04);min-height:900px;overflow:hidden;}
-    .doc-header-oficial{background:var(--azul);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
-    .doc-logo-area{display:flex;align-items:center;gap:12px;}
-    .doc-logo-box{width:40px;height:40px;background:var(--amarillo);border-radius:8px;display:flex;align-items:center;justify-content:center;}
-    .doc-logo-box svg{width:22px;height:22px;color:var(--azul);}
-    .doc-entidad .ent-name{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--blanco);}
-    .doc-entidad .ent-dep{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px;}
-    .doc-tipo-chip{background:var(--amarillo);color:var(--azul);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:5px 16px;border-radius:6px;letter-spacing:.5px;}
-    .doc-meta-table{width:100%;border-collapse:collapse;border-bottom:2px solid var(--gris-claro);}
-    .doc-meta-table td{padding:8px 16px;font-size:12px;border-right:1px solid var(--gris-claro);border-bottom:1px solid var(--gris-claro);vertical-align:top;}
-    .doc-meta-table td:last-child{border-right:none;}
-    .meta-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
-    .meta-value{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);}
-    .meta-value.editable{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);width:100%;cursor:text;border-bottom:1.5px dashed #CBD5E1;}
-    .meta-value.editable:focus{border-bottom-color:var(--azul-claro);}
-    .decision-badge-meta{display:inline-flex;align-items:center;gap:6px;background:#FEF9E7;color:#7a5200;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--naranja);}
-    .doc-body{padding:36px 48px 48px;}
-    .doc-ciudad-fecha{font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);margin-bottom:28px;text-align:right;}
-    .auto-section{margin-bottom:28px;scroll-margin-top:80px;}
-    .auto-section-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-    .auto-section-title .section-num{width:22px;height:22px;background:var(--azul);color:var(--blanco);border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .auto-subsection{margin-bottom:16px;}
-    .auto-subsection-title{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);margin-bottom:8px;}
-    .auto-textarea{width:100%;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:16px;color:var(--negro);line-height:1.8;resize:none;background:transparent;transition:background .15s;border-radius:4px;padding:8px;min-height:80px;}
-    .auto-textarea:focus{background:#F8FBFF;outline:2px solid rgba(77,191,226,0.3);}
-    .auto-textarea::placeholder{color:#CBD5E1;font-style:italic;}
-    .resuelve-header{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:var(--azul);text-align:center;letter-spacing:2px;margin:28px 0 16px;padding:10px;border-top:2px solid var(--azul);border-bottom:2px solid var(--azul);}
-    .articulo-resuelve{margin-bottom:12px;display:flex;gap:10px;}
-    .art-num{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex-shrink:0;padding-top:9px;}
-    .art-input{flex:1;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:16px;color:var(--negro);line-height:1.8;resize:none;background:transparent;border-radius:4px;padding:6px 8px;min-height:60px;transition:background .15s;}
-    .art-input:focus{background:#F8FBFF;outline:2px solid rgba(77,191,226,0.3);}
-    .cumplase{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;text-align:center;margin:28px 0 40px;color:var(--negro);}
-    .firma-block{margin-top:20px;}
-    .firma-linea{width:240px;height:1px;background:var(--negro);margin-bottom:6px;}
-    .firma-nombre-input{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--negro);width:100%;text-transform:uppercase;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;}
-    .firma-cargo-input{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);width:100%;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;margin-top:4px;}
-    .firma-pie{margin-top:24px;font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);line-height:1.8;}
-    .firma-pie-input{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);width:100%;border-bottom:1px dashed #E2E8F0;margin-bottom:4px;}
+        .menu-items li a:hover, .menu-items li a.active {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--pgn-yellow);
+            border-left: 4px solid var(--pgn-yellow);
+        }
 
-    /* DECISION POSITIVO / NEGATIVO */
-    .decision-selector{display:flex;gap:12px;margin-bottom:24px;}
-    .decision-card{flex:1;border:2px solid var(--gris-claro);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;background:var(--blanco);}
-    .decision-card:hover{border-color:var(--azul-claro);transform:translateY(-2px);}
-    .decision-card.selected{border-color:var(--azul);background:#EBF4FA;}
-    .decision-card.positivo.selected{border-color:var(--verde);background:#F0FDF4;}
-    .decision-card.negativo.selected{border-color:var(--rojo);background:#FEF2F2;}
-    .decision-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-    .decision-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .decision-card.positivo .decision-icon{background:#D1FAE5;color:#059669;}
-    .decision-card.negativo .decision-icon{background:#FEE2E2;color:#DC2626;}
-    .decision-card-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);}
-    .decision-card.positivo .decision-card-title{color:#065F46;}
-    .decision-card.negativo .decision-card-title{color:#991B1B;}
-    .decision-card-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;}
-    .decision-card.positivo .decision-card-desc{color:#047857;}
-    .decision-card.negativo .decision-card-desc{color:#DC2626;}
+        /* Contenido Principal */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 20px 30px;
+            display: flex;
+            gap: 20px;
+        }
 
-    /* ANEXOS Y DOCUMENTOS */
-    .anexos-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
-    .anexo-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--gris-claro);border-radius:8px;background:#FAFBFC;transition:all .15s;}
-    .anexo-item:hover{border-color:var(--azul-claro);background:#EEF4FF;}
-    .anexo-icon{width:32px;height:32px;background:var(--azul);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .anexo-icon svg{width:16px;height:16px;color:var(--blanco);}
-    .anexo-info{flex:1;}
-    .anexo-nombre{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--negro);}
-    .anexo-meta{font-size:10px;color:var(--gris-medio);margin-top:2px;}
-    .anexo-actions{display:flex;gap:6px;}
-    .anexo-btn{width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-    .anexo-btn.ver{background:#EEF4FF;color:var(--azul);}
-    .anexo-btn.ver:hover{background:#DBEAFE;}
-    .anexo-btn.descargar{background:#F0FDF4;color:#059669;}
-    .anexo-btn.descargar:hover{background:#DCFCE7;}
+        /* Columna Central - Formulario */
+        .center-column {
+            flex: 1;
+            max-width: 900px;
+        }
 
-    /* UPLOAD ZONE */
-    .upload-zone{border:2px dashed var(--gris-claro);border-radius:12px;padding:24px;text-align:center;background:#FAFBFC;transition:all .2s;cursor:pointer;}
-    .upload-zone:hover{border-color:var(--azul-claro);background:#EEF4FF;}
-    .upload-zone.dragover{border-color:var(--azul);background:#EBF4FA;}
-    .upload-icon{width:48px;height:48px;margin:0 auto 12px;background:#EEF4FF;border-radius:12px;display:flex;align-items:center;justify-content:center;}
-    .upload-icon svg{width:24px;height:24px;color:var(--azul);}
-    .upload-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:4px;}
-    .upload-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;}
+        /* Header del Expediente */
+        .expedient-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-top: 4px solid var(--pgn-blue);
+        }
 
-    /* SIDEBAR DERECHO - QUEJOSO */
-    .panel-quejoso{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;padding:20px 0;}
-    .quejoso-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;padding:0 16px 12px;}
-    .quejoso-card{padding:16px;}
-    .quejoso-info-group{margin-bottom:16px;}
-    .quejoso-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
-    .quejoso-value{font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);line-height:1.6;}
-    .quejoso-sep{height:1px;background:var(--gris-claro);margin:16px;}
+        .expedient-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-    /* MODAL CONFIRMACION */
-    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(6,56,83,0.6);z-index:1000;display:none;align-items:center;justify-content:center;}
-    .modal-overlay.visible{display:flex;}
-    .modal-content{background:var(--blanco);border-radius:12px;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
-    .modal-header{padding:20px 24px;border-bottom:1px solid var(--gris-claro);display:flex;align-items:center;gap:12px;}
-    .modal-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .modal-icon.positivo{background:#D1FAE5;color:#059669;}
-    .modal-icon.negativo{background:#FEE2E2;color:#DC2626;}
-    .modal-icon svg{width:20px;height:20px;}
-    .modal-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;color:var(--negro);}
-    .modal-body{padding:24px;}
-    .modal-text{font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);line-height:1.7;margin-bottom:16px;}
-    .modal-decision-resumen{background:#F8FAFC;border:1px solid var(--gris-claro);border-radius:8px;padding:12px;margin-bottom:16px;}
-    .modal-decision-titulo{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;margin-bottom:6px;}
-    .modal-decision-valor{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--azul);}
-    .modal-actions{display:flex;gap:10px;}
-    .modal-btn{flex:1;padding:12px;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
-    .modal-btn.cancel{background:var(--gris-claro);color:var(--negro);}
-    .modal-btn.cancel:hover{background:#E2E8F0;}
-    .modal-btn.confirm{background:var(--azul);color:var(--blanco);}
-    .modal-btn.confirm:hover{background:var(--azul-medio);}
-  </style>
+        .radicado {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--pgn-blue);
+            font-size: 1.2rem;
+        }
+
+        .estado-badge {
+            background-color: var(--pgn-yellow);
+            color: var(--pgn-blue);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--pgn-blue);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Índice del Expediente (Tabs) */
+        .expedient-index {
+            display: flex;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 0;
+        }
+
+        .index-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .index-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .index-item.active {
+            color: var(--pgn-blue);
+            border-bottom: 3px solid var(--pgn-blue);
+            background-color: white;
+        }
+
+        /* Área de Trabajo (Auto) */
+        .work-area {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--pgn-blue);
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--pgn-blue);
+            box-shadow: 0 0 0 3px rgba(6, 56, 83, 0.1);
+        }
+
+        /* Selector Positivo/Negativo */
+        .decision-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .decision-card {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            opacity: 0.7;
+        }
+
+        .decision-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .decision-card.selected {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        .decision-card.positive.selected {
+            border-color: var(--pgn-green);
+            background-color: var(--positive-bg);
+            box-shadow: 0 0 0 2px var(--pgn-green);
+        }
+
+        .decision-card.negative.selected {
+            border-color: var(--pgn-red);
+            background-color: var(--negative-bg);
+            box-shadow: 0 0 0 2px var(--pgn-red);
+        }
+
+        .decision-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .positive .decision-icon { color: #00ACC1; }
+        .negative .decision-icon { color: #E53935; }
+
+        .decision-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .decision-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Campos Condicionales */
+        .conditional-fields {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px dashed #ccc;
+        }
+
+        .conditional-fields.active {
+            display: block;
+        }
+
+        .positive-fields {
+            background-color: #F0FDFA;
+            border-color: var(--pgn-green);
+        }
+
+        .negative-fields {
+            background-color: #FFF5F5;
+            border-color: var(--pgn-red);
+        }
+
+        /* Select de Dependencia (Estilo Traslado) */
+        .dependency-select-wrapper {
+            position: relative;
+        }
+
+        select.form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+            font-size: 0.95rem;
+        }
+
+        select.form-control:focus {
+            outline: none;
+            border-color: var(--pgn-blue);
+        }
+
+        /* Upload Zone Auto Proyectado */
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background-color: #FAFAFA;
+            transition: 0.3s;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--pgn-blue);
+            background-color: #F0F4F8;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--pgn-blue);
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            display: none; /* Oculto por defecto */
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-info.show {
+            display: flex;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            color: #d32f2f; /* Word color */
+            font-size: 1.5rem;
+        }
+
+        /* Sidebar Derecho - Info Quejoso */
+        .right-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: sticky;
+            top: 20px;
+        }
+
+        .card-header {
+            background-color: var(--pgn-blue);
+            color: white;
+            padding: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .info-row {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--pgn-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #042a3e;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #f5f5f5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lista de Anexos Existentes */
+        .annex-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+        .annex-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+        .annex-item i {
+            margin-right: 10px;
+            color: #666;
+        }
+
+    </style>
 </head>
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="navbar-left">
-      <button class="back-btn" onclick="window.history.back()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <div class="navbar-title">
-        Remisión por Poder Preferente
-        <span>Procuraduría General de la Nación</span>
-      </div>
+
+    <!-- Sidebar Izquierdo -->
+    <nav class="sidebar">
+        <div class="logo-area">
+            <h2>PGN - EED</h2>
+            <small style="color: var(--pgn-yellow); font-size: 0.7rem;">Expediente Electrónico Disciplinario</small>
+        </div>
+        <ul class="menu-items">
+            <li><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="#" class="active"><i class="fas fa-gavel"></i> Mis Actuaciones</a></li>
+            <li><a href="#"><i class="fas fa-folder-open"></i> Expedientes</a></li>
+            <li><a href="#"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        
+        <!-- Columna Central: Formulario del Auto -->
+        <div class="center-column">
+            
+            <!-- Header Expediente -->
+            <div class="expedient-header">
+                <div class="expedient-info">
+                    <span class="radicado">RAD: 2023-001234-NEIVA</span>
+                    <span class="estado-badge">En Proyección de Auto</span>
+                </div>
+                <h1>Proyecto de Auto: Remisión por Poder Preferente</h1>
+                <p style="color: #666; font-size: 0.9rem;">Definición de competencia conforme al Art. 3 y 93 del CGD.</p>
+            </div>
+
+            <!-- Índice del Expediente -->
+            <div class="expedient-index">
+                <div class="index-item"><i class="fas fa-file-alt"></i> La Queja</div>
+                <div class="index-item active"><i class="fas fa-balance-scale"></i> Decisiones / Autos</div>
+                <div class="index-item"><i class="fas fa-users"></i> El Quejoso</div>
+                <div class="index-item"><i class="fas fa-paperclip"></i> Anexos Queja</div>
+                <div class="index-item"><i class="fas fa-book"></i> Rol de Actuación</div>
+            </div>
+
+            <!-- Área de Trabajo -->
+            <div class="work-area">
+                
+                <!-- Considerandos -->
+                <div class="form-group">
+                    <label for="considerandos">Considerandos Jurídicos y Factualles</label>
+                    <textarea id="considerandos" placeholder="Redacte los considerandos que justifican la decisión de asumir o declinar la competencia..."></textarea>
+                    <button type="button" style="margin-top:5px; font-size:0.8rem; color:var(--pgn-blue); background:none; border:none; cursor:pointer; text-decoration:underline;">
+                        <i class="fas fa-magic"></i> Insertar Plantilla Estándar
+                    </button>
+                </div>
+
+                <!-- Decisión Positivo / Negativo -->
+                <label>Decisión sobre la Competencia</label>
+                <div class="decision-container">
+                    <!-- POSITIVO: Asume Competencia -->
+                    <div class="decision-card positive" onclick="selectDecision('positive')">
+                        <i class="fas fa-check-circle decision-icon"></i>
+                        <span class="decision-title">POSITIVO (Asumir)</span>
+                        <span class="decision-desc">La PGN decide LLEVAR la actuación disciplinaria. Se asume la competencia preferente.</span>
+                    </div>
+
+                    <!-- NEGATIVO: Remite Competencia -->
+                    <div class="decision-card negative" onclick="selectDecision('negative')">
+                        <i class="fas fa-exchange-alt decision-icon"></i>
+                        <span class="decision-title">NEGATIVO (Remitir)</span>
+                        <span class="decision-desc">La PGN decide NO LLEVAR la actuación. Se remite al competente territorial o funcional.</span>
+                    </div>
+                </div>
+
+                <!-- Campos Condicionales: POSITIVO -->
+                <div id="fields-positive" class="conditional-fields positive-fields">
+                    <h3 style="color: #00838F; margin-bottom: 15px; font-family: 'Montserrat';">
+                        <i class="fas fa-hand-holding-medical"></i> Asunción de Competencia
+                    </h3>
+                    <div class="form-group">
+                        <label>Motivo de la Asunción (Art. 93 CGD)</label>
+                        <textarea placeholder="Especifique las razones de gravedad, orden público o conexión que justifican que la PGN asuma el caso..." style="min-height: 80px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Resolución del Auto</label>
+                        <textarea readonly style="background: #f0f0f0; color: #555;">RESUELVE: PRIMERO: ASUMIR el conocimiento de la presente actuación disciplinaria...</textarea>
+                    </div>
+                </div>
+
+                <!-- Campos Condicionales: NEGATIVO -->
+                <div id="fields-negative" class="conditional-fields negative-fields">
+                    <h3 style="color: #C62828; margin-bottom: 15px; font-family: 'Montserrat';">
+                        <i class="fas fa-share-square"></i> Remisión al Competente
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="dependencia-competente">Seleccione Dependencia Competente a la que se Remite</label>
+                        <div class="dependency-select-wrapper">
+                            <select id="dependencia-competente" class="form-control">
+                                <option value="">-- Seleccione una dependencia --</option>
+                                <optgroup label="Procuradurías Regionales">
+                                    <option value="PR-BOGOTA">Procuraduría Regional Bogotá</option>
+                                    <option value="PR-ANTIOQUIA">Procuraduría Regional Antioquia</option>
+                                    <option value="PR-VALLE">Procuraduría Regional Valle del Cauca</option>
+                                    <option value="PR-ATLANTICO">Procuraduría Regional Atlántico</option>
+                                    <option value="PR-SANTANDER">Procuraduría Regional Santander</option>
+                                </optgroup>
+                                <optgroup label="Procuradurías Delegadas">
+                                    <option value="PD-DISCIPLINARIA">Procuraduría Delegada para la Defensa Disciplinaria</option>
+                                    <option value="PD-ELECTORAL">Procuraduría Delegada para Asuntos Electorales</option>
+                                    <option value="PD-FFMM">Procuraduría Delegada para la Fuerza Pública</option>
+                                </optgroup>
+                                <optgroup label="Personerías Distritales/Municipales">
+                                    <option value="PDM-BOGOTA">Personería Mayor de Bogotá</option>
+                                    <option value="PDM-MEDELLIN">Personería de Medellín</option>
+                                    <option value="PDM-CALI">Personería de Cali</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Justificación de la Remisión (Art. 3 CGD)</label>
+                        <textarea placeholder="Explique por qué no corresponde a la PGN el conocimiento y cuál es el criterio de competencia (territorial, funcional, etc.)..." style="min-height: 80px;"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Resolución del Auto</label>
+                        <textarea readonly style="background: #f0f0f0; color: #555;">RESUELVE: PRIMERO: DECLINAR la competencia. SEGUNDO: REMITIR las actuaciones a la dependencia seleccionada...</textarea>
+                    </div>
+                </div>
+
+                <!-- Carga del Auto Proyectado -->
+                <div class="form-group" style="margin-top: 30px; border-top: 1px solid #eee; paddingTop: 20px;">
+                    <label>Auto Proyectado (.docx)</label>
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">
+                        cargue el documento formal del auto proyectado generado en su editor de texto.
+                    </p>
+                    
+                    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Arrastre el archivo aquí o haga clic para buscar</h4>
+                        <p style="font-size: 0.8rem; color: #999;">Formato permitido: .docx (Máx. 10MB)</p>
+                        <input type="file" id="fileInput" hidden accept=".docx" onchange="handleFileSelect(this)">
+                    </div>
+
+                    <div id="fileInfo" class="file-info">
+                        <div class="file-details">
+                            <i class="fas fa-file-word file-icon"></i>
+                            <div>
+                                <div id="fileName" style="font-weight: 600; font-size: 0.9rem;">nombre_archivo.docx</div>
+                                <div style="font-size: 0.8rem; color: #888;">Listo para firmar</div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeFile()" style="background: none; border: none; color: #E53935; cursor: pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div style="display: flex; gap: 15px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <button class="btn-action btn-secondary"><i class="fas fa-save"></i> Guardar Borrador</button>
+                    <button class="btn-action btn-primary" onclick="confirmAction()"><i class="fas fa-paper-plane"></i> Enviar a Revisión</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Sidebar Derecho: Información del Quejoso -->
+        <aside class="right-sidebar">
+            <div class="info-card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i> Datos del Quejoso
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="info-label">Nombre Completo</div>
+                        <div class="info-value">Juan Pérez Rodríguez</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Tipo Documento</div>
+                        <div class="info-value">Cédula de Ciudadanía</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Número Documento</div>
+                        <div class="info-value">1.098.765.432</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Correo Electrónico</div>
+                        <div class="info-value">juan.perez@email.com</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">+57 300 123 4567</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Dirección Notificación</div>
+                        <div class="info-value">Calle 123 # 45-67, Bogotá</div>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                    
+                    <div class="info-label" style="margin-bottom: 10px;">Anexos Presentados</div>
+                    <ul class="annex-list">
+                        <li class="annex-item"><i class="fas fa-file-pdf"></i> Copia Denuncia Penal.pdf</li>
+                        <li class="annex-item"><i class="fas fa-file-image"></i> Foto_Evidencia_01.jpg</li>
+                        <li class="annex-item"><i class="fas fa-file-word"></i> Carta_Derechos_Peticion.docx</li>
+                    </ul>
+
+                    <button class="btn-action btn-secondary" style="margin-top: 20px; font-size: 0.85rem;">
+                        <i class="fas fa-envelope"></i> Notificar al Quejoso
+                    </button>
+                </div>
+            </div>
+        </aside>
+
     </div>
-    <div class="navbar-right">
-      <div class="autosave-indicator">
-        <span class="autosave-dot"></span>
-        Guardado automático
-      </div>
-      <select class="rol-select" id="rolSelector">
-        <option value="instructor">Instructor</option>
-        <option value="revisor">Revisor</option>
-        <option value="aprobador">Aprobador</option>
-        <option value="jefe">Jefe de Área</option>
-      </select>
-      <button class="nav-btn ghost">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-        Vista previa
-      </button>
-      <button class="btn-accion-principal" onclick="abrirModalConfirmacion()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Enviar a revisión
-      </button>
-    </div>
-  </nav>
 
-  <!-- BREADCRUMB -->
-  <div class="breadcrumb-bar">
-    <a href="#">Expedientes</a>
-    <span class="sep">/</span>
-    <a href="#">EXP-PGN-2024-001234</a>
-    <span class="sep">/</span>
-    <span class="current">Remisión por Poder Preferente</span>
-  </div>
+    <script>
+        let currentDecision = null;
 
-  <!-- LAYOUT PRINCIPAL -->
-  <div class="editor-layout">
-    
-    <!-- PANEL IZQUIERDO: ÍNDICE DEL EXPEDIENTE -->
-    <aside class="panel-indice">
-      <div class="indice-title">Índice del Expediente</div>
-      
-      <div class="indice-seccion">Documentos Principales</div>
-      <div class="indice-item active" data-seccion="queja">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        La Queja
-      </div>
-      <div class="indice-item" data-seccion="quejoso">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-        El Quejoso
-      </div>
-      <div class="indice-item badge" data-seccion="anexos">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-        Anexos de la Queja
-      </div>
-      <div class="indice-sep"></div>
-      <div class="indice-item" data-seccion="rol">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Rol de Actuación
-      </div>
-      <div class="indice-sep"></div>
-      <div class="indice-seccion">Actuación Actual</div>
-      <div class="indice-item active" data-seccion="auto-proyectado">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        Auto Proyectado
-      </div>
-    </aside>
-
-    <!-- AREA CENTRAL: EDITOR DEL AUTO -->
-    <main class="editor-center">
-      
-      <!-- BANNER DE ROL (dinámico) -->
-      <div id="rolBanner" class="rol-banner">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 013 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-        <div class="rol-banner-text">
-          <div class="rol-banner-title" id="rolBannerTitle">Rol actual: Revisor</div>
-          <div class="rol-banner-sub" id="rolBannerSub">Estás revisando el auto proyectado por el Instructor</div>
-        </div>
-      </div>
-
-      <!-- PANEL DE ACCIONES DE ROL -->
-      <div id="rolActionPanel" class="rol-action-panel">
-        <div class="rap-header">
-          <span class="rap-rol-badge" id="rolBadge">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span id="rolBadgeText">Revisor</span>
-          </span>
-          <div class="rap-titulo">Acciones de Revisión</div>
-          <div class="rap-desc">Selecciona una opción para continuar con el flujo de aprobación del auto</div>
-        </div>
-        <div class="rap-opciones">
-          <div class="rap-opcion via-aprobar" onclick="enviarAprobacion()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <div class="rap-opcion-body">
-              <span class="rap-opcion-label">Enviar a Aprobación</span>
-              <span class="rap-opcion-sub">El documento pasará al Aprobador para firma y validación final</span>
-            </div>
-          </div>
-          <div class="rap-opcion via-devolver" onclick="mostrarDevolverInline()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <div class="rap-opcion-body">
-              <span class="rap-opcion-label">Devolver al Instructor</span>
-              <span class="rap-opcion-sub">Solicita ajustes o correcciones antes de continuar</span>
-            </div>
-          </div>
-        </div>
-        <div id="devolverInline" class="devolver-inline">
-          <textarea placeholder="Describe los motivos de la devolución y los ajustes requeridos..."></textarea>
-          <div class="devolver-inline-btns">
-            <button class="btn-dev-cancel" onclick="ocultarDevolverInline()">Cancelar</button>
-            <button class="btn-dev-confirm" onclick="confirmarDevolucion()">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a2 2 0 012 2v2M3 10l6 6m-6-6l6-6"/></svg>
-              Confirmar Devolución
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- HOJA DEL AUTO PROYECTADO -->
-      <div class="doc-sheet">
-        <!-- HEADER OFICIAL -->
-        <div class="doc-header-oficial">
-          <div class="doc-logo-area">
-            <div class="doc-logo-box">
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <div class="doc-entidad">
-              <div class="ent-name">PROCURADURÍA GENERAL DE LA NACIÓN</div>
-              <div class="ent-dep">Sistema de Gestión Documental EED</div>
-            </div>
-          </div>
-          <div class="doc-tipo-chip">AUTO</div>
-        </div>
-
-        <!-- METADATOS -->
-        <table class="doc-meta-table">
-          <tr>
-            <td style="width:25%;">
-              <span class="meta-label">Radicado</span>
-              <span class="meta-value editable" contenteditable>EXP-PGN-2024-001234</span>
-            </td>
-            <td style="width:25%;">
-              <span class="meta-label">Fecha de Elaboración</span>
-              <span class="meta-value editable" contenteditable>15 de enero de 2025</span>
-            </td>
-            <td style="width:25%;">
-              <span class="meta-label">Tipo de Decisión</span>
-              <span class="decision-badge-meta">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Pendiente de selección
-              </span>
-            </td>
-            <td style="width:25%;">
-              <span class="meta-label">Instructor Asignado</span>
-              <span class="meta-value editable" contenteditable>Dr. Juan Carlos Rodríguez</span>
-            </td>
-          </tr>
-        </table>
-
-        <!-- CUERPO DEL DOCUMENTO -->
-        <div class="doc-body">
-          
-          <div class="doc-ciudad-fecha">
-            Bogotá D.C., <span contenteditable class="editable">15 de enero de 2025</span>
-          </div>
-
-          <!-- SECCIÓN 1: DECISIÓN PODER PREFERENTE -->
-          <div class="auto-section" id="seccion-decision">
-            <div class="auto-section-title">
-              <span class="section-num">1</span>
-              Decisión sobre Poder Preferente
-            </div>
+        function selectDecision(type) {
+            currentDecision = type;
             
-            <div class="decision-selector">
-              <!-- POSITIVO: PGN ASUME COMPETENCIA -->
-              <div class="decision-card positivo" onclick="seleccionarDecision('positivo')">
-                <div class="decision-card-header">
-                  <div class="decision-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                  </div>
-                  <div class="decision-card-title">POSITIVO - Asumir Competencia</div>
-                </div>
-                <div class="decision-card-desc">
-                  La PGN decide <strong>LLEVAR</strong> la actuación disciplinaria. Se asume el conocimiento del caso conforme al Art. 93 CGD.
-                </div>
-              </div>
+            // Reset styles
+            document.querySelectorAll('.decision-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelectorAll('.conditional-fields').forEach(field => {
+                field.classList.remove('active');
+            });
 
-              <!-- NEGATIVO: PGN REMITE AL COMPETENTE -->
-              <div class="decision-card negativo" onclick="seleccionarDecision('negativo')">
-                <div class="decision-card-header">
-                  <div class="decision-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                  </div>
-                  <div class="decision-card-title">NEGATIVO - Remitir al Competente</div>
-                </div>
-                <div class="decision-card-desc">
-                  La PGN decide <strong>NO LLEVAR</strong> la actuación. Se remite al ente competente conforme al Art. 3 CGD.
-                </div>
-              </div>
-            </div>
-
-            <!-- CAMPOS CONDICIONALES SEGÚN DECISIÓN -->
-            <div id="camposPositivo" style="display:none;">
-              <div class="auto-subsection">
-                <div class="auto-subsection-title">Fundamentos para Asumir Competencia (Art. 93 CGD)</div>
-                <textarea class="auto-textarea" placeholder="Describa las razones por las cuales la PGN asume el conocimiento de esta actuación disciplinaria..."></textarea>
-              </div>
-            </div>
-
-            <div id="camposNegativo" style="display:none;">
-              <div class="auto-subsection">
-                <div class="auto-subsection-title">Ente Competente al que se Remite</div>
-                <textarea class="auto-textarea" placeholder="Especifique a qué entidad o autoridad se remite la actuación (ej: Procuraduría Delegada, Personería Municipal, Fiscalía, etc.)..." style="min-height:60px;"></textarea>
-              </div>
-              <div class="auto-subsection">
-                <div class="auto-subsection-title">Motivos de la Remisión (Art. 3 CGD)</div>
-                <textarea class="auto-textarea" placeholder="Justifique por qué la PGN no lleva la actuación y por qué corresponde a otra entidad conocer del caso..."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 2: ANTECEDENTES -->
-          <div class="auto-section" id="seccion-antecedentes">
-            <div class="auto-section-title">
-              <span class="section-num">2</span>
-              Antecedentes
-            </div>
-            <div class="auto-subsection">
-              <div class="auto-subsection-title">Relato de los Hechos</div>
-              <textarea class="auto-textarea" placeholder="Describa cronológicamente los hechos que dieron origen a esta actuación disciplinaria..."></textarea>
-            </div>
-            <div class="auto-subsection">
-              <div class="auto-subsection-title">Normatividad Aplicable</div>
-              <textarea class="auto-textarea" placeholder="Cite los artículos y normas relevantes para este caso (Ley 1952 de 2019, Ley 2094 de 2021, etc.)..."></textarea>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 3: CONSIDERACIONES -->
-          <div class="auto-section" id="seccion-consideraciones">
-            <div class="auto-section-title">
-              <span class="section-num">3</span>
-              Consideraciones
-            </div>
-            <div class="auto-subsection">
-              <div class="auto-subsection-title">Análisis de Competencia</div>
-              <textarea class="auto-textarea" placeholder="Realice el análisis jurídico sobre la competencia de la PGN para conocer este caso..."></textarea>
-            </div>
-            <div class="auto-subsection">
-              <div class="auto-subsection-title">Presupuestos para la Decisión</div>
-              <textarea class="auto-textarea" placeholder="Exponga los fundamentos fácticos y jurídicos que sustentan la decisión de asumir o remitir la actuación..."></textarea>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 4: RESUELVE -->
-          <div class="auto-section" id="seccion-resuelve">
-            <div class="resuelve-header">RESUELVE</div>
-            
-            <div class="articulo-resuelve">
-              <div class="art-num">PRIMERO:</div>
-              <textarea class="art-input" placeholder="Decisión concreta sobre el poder preferente (asumir competencia o remitir al ente competente)..."></textarea>
-            </div>
-            
-            <div class="articulo-resuelve">
-              <div class="art-num">SEGUNDO:</div>
-              <textarea class="art-input" placeholder="Orden de notificación y comunicación a las partes interesadas..."></textarea>
-            </div>
-            
-            <div class="articulo-resuelve">
-              <div class="art-num">TERCERO:</div>
-              <textarea class="art-input" placeholder="Instrucciones sobre el traslado del expediente o continuación del trámite según corresponda..."></textarea>
-            </div>
-          </div>
-
-          <!-- NOTIFICACIONES -->
-          <div class="auto-section" id="seccion-notificaciones">
-            <div class="auto-section-title">
-              <span class="section-num">4</span>
-              Notifíquese y Cúmplase
-            </div>
-            <div class="cumplase">NOTIFÍQUESE Y CÚMPLASE</div>
-            
-            <div class="firma-block">
-              <div class="firma-linea"></div>
-              <input type="text" class="firma-nombre-input" value="DR. JUAN CARLOS RODRÍGUEZ">
-              <input type="text" class="firma-cargo-input" value="Instructor Disciplinario">
-            </div>
-
-            <div class="firma-pie">
-              <input type="text" class="firma-pie-input" value="Procuraduría General de la Nación">
-              <input type="text" class="firma-pie-input" value="Sistema de Gestión Documental EED">
-              <input type="text" class="firma-pie-input" value="Este documento fue generado electrónicamente el 15 de enero de 2025">
-            </div>
-          </div>
-
-          <!-- ANEXOS DEL AUTO -->
-          <div class="auto-section" id="seccion-anexos-auto">
-            <div class="auto-section-title">
-              <span class="section-num">5</span>
-              Anexos del Auto
-            </div>
-            
-            <div class="anexos-list">
-              <div class="anexo-item">
-                <div class="anexo-icon">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </div>
-                <div class="anexo-info">
-                  <div class="anexo-nombre">Auto_Proyectado_Remision_Poder_Preferente.docx</div>
-                  <div class="anexo-meta">245 KB • Subido el 15/01/2025 10:30 AM</div>
-                </div>
-                <div class="anexo-actions">
-                  <button class="anexo-btn ver" title="Ver documento">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                  </button>
-                  <button class="anexo-btn descargar" title="Descargar">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- ZONA DE CARGA - SOLO AUTO PROYECTADO -->
-            <div class="upload-zone" id="uploadZone">
-              <div class="upload-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-              </div>
-              <div class="upload-title">Cargar Auto Proyectado (.docx)</div>
-              <div class="upload-desc">Arrastra el archivo Word aquí o haz clic para seleccionar<br>Solo se permite un documento de tipo Auto Proyectado</div>
-              <input type="file" id="fileInput" accept=".docx,.doc" style="display:none;" onchange="handleFileSelect(event)">
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </main>
-
-    <!-- PANEL DERECHO: DATOS DEL QUEJOSO -->
-    <aside class="panel-quejoso">
-      <div class="quejoso-title">Datos del Quejoso</div>
-      
-      <div class="quejoso-card">
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Nombre Completo</div>
-          <div class="quejoso-value">María Elena González Ramírez</div>
-        </div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Tipo de Documento</div>
-          <div class="quejoso-value">Cédula de Ciudadanía</div>
-        </div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Número de Documento</div>
-          <div class="quejoso-value">52.847.391</div>
-        </div>
-        
-        <div class="quejoso-sep"></div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Correo Electrónico</div>
-          <div class="quejoso-value">maria.gonzalez@email.com</div>
-        </div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Teléfono / Celular</div>
-          <div class="quejoso-value">+57 315 847 2931</div>
-        </div>
-        
-        <div class="quejoso-sep"></div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Dirección</div>
-          <div class="quejoso-value">Carrera 15 # 93-47 Apt 301<br>Bogotá D.C.</div>
-        </div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Departamento</div>
-          <div class="quejoso-value">Bogotá D.C.</div>
-        </div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Municipio</div>
-          <div class="quejoso-value">Bogotá</div>
-        </div>
-        
-        <div class="quejoso-sep"></div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Fecha de Radicación</div>
-          <div class="quejoso-value">10 de enero de 2025</div>
-        </div>
-        
-        <div class="quejoso-info-group">
-          <div class="quejoso-label">Medio de Recepción</div>
-          <div class="quejoso-value">Formulario Web EED</div>
-        </div>
-      </div>
-    </aside>
-
-  </div>
-
-  <!-- MODAL DE CONFIRMACIÓN -->
-  <div class="modal-overlay" id="modalConfirmacion">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-icon" id="modalIcon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div class="modal-title">Confirmar Envío a Revisión</div>
-      </div>
-      <div class="modal-body">
-        <p class="modal-text">
-          Estás a punto de enviar este Auto de Remisión por Poder Preferente a revisión. 
-          Una vez enviado, el documento pasará al siguiente nivel del flujo de aprobación.
-        </p>
-        
-        <div class="modal-decision-resumen">
-          <div class="modal-decision-titulo">Decisión Seleccionada</div>
-          <div class="modal-decision-valor" id="modalDecisionValor">No seleccionada</div>
-        </div>
-        
-        <p class="modal-text" style="font-size:12px;color:var(--gris-medio);">
-          ¿Estás seguro de que deseas continuar? Verifica que todos los campos estén completos antes de confirmar.
-        </p>
-        
-        <div class="modal-actions">
-          <button class="modal-btn cancel" onclick="cerrarModalConfirmacion()">Cancelar</button>
-          <button class="modal-btn confirm" onclick="confirmarEnvio()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            Confirmar Envío
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // VARIABLES GLOBALES
-    let decisionSeleccionada = null;
-    const rolSelector = document.getElementById('rolSelector');
-    const rolBanner = document.getElementById('rolBanner');
-    const rolActionPanel = document.getElementById('rolActionPanel');
-    const modalConfirmacion = document.getElementById('modalConfirmacion');
-    const modalIcon = document.getElementById('modalIcon');
-    const modalDecisionValor = document.getElementById('modalDecisionValor');
-
-    // CONFIGURACIÓN DE ROLES
-    const configRoles = {
-      instructor: { visible: false, title: '', sub: '', badge: '', badgeClass: '' },
-      revisor: { visible: true, title: 'Rol actual: Revisor', sub: 'Estás revisando el auto proyectado por el Instructor', badge: 'Revisor', badgeClass: 'revisor' },
-      aprobador: { visible: true, title: 'Rol actual: Aprobador', sub: 'Estás aprobando el auto revisado', badge: 'Aprobador', badgeClass: 'aprobador' },
-      jefe: { visible: true, title: 'Rol actual: Jefe de Área', sub: 'Visión final del proceso de aprobación', badge: 'Jefe de Área', badgeClass: 'jefe' }
-    };
-
-    // ACTUALIZAR UI SEGÚN ROL
-    function actualizarUIRol() {
-      const rol = rolSelector.value;
-      const config = configRoles[rol];
-      
-      if (config.visible) {
-        rolBanner.classList.add('visible');
-        rolBanner.className = 'rol-banner visible ' + config.badgeClass;
-        document.getElementById('rolBannerTitle').textContent = config.title;
-        document.getElementById('rolBannerSub').textContent = config.sub;
-        
-        rolActionPanel.classList.add('visible');
-        document.getElementById('rolBadge').className = 'rap-rol-badge ' + config.badgeClass;
-        document.getElementById('rolBadgeText').textContent = config.badge;
-      } else {
-        rolBanner.classList.remove('visible');
-        rolActionPanel.classList.remove('visible');
-      }
-    }
-
-    rolSelector.addEventListener('change', actualizarUIRol);
-
-    // SELECCIONAR DECISIÓN (POSITIVO/NEGATIVO)
-    function seleccionarDecision(tipo) {
-      decisionSeleccionada = tipo;
-      
-      // Remover selección previa
-      document.querySelectorAll('.decision-card').forEach(card => {
-        card.classList.remove('selected');
-      });
-      
-      // Agregar selección actual
-      document.querySelector('.decision-card.' + tipo).classList.add('selected');
-      
-      // Mostrar campos condicionales
-      document.getElementById('camposPositivo').style.display = (tipo === 'positivo') ? 'block' : 'none';
-      document.getElementById('camposNegativo').style.display = (tipo === 'negativo') ? 'block' : 'none';
-      
-      // Actualizar badge de metadatos
-      const badge = document.querySelector('.decision-badge-meta');
-      if (tipo === 'positivo') {
-        badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Positivo - Asumir Competencia';
-        badge.style.background = '#F0FDF4';
-        badge.style.color = '#065F46';
-        badge.style.borderColor = '#33FFCC';
-      } else {
-        badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Negativo - Remitir al Competente';
-        badge.style.background = '#FEF2F2';
-        badge.style.color = '#991B1B';
-        badge.style.borderColor = '#E3201B';
-      }
-    }
-
-    // MANEJO DE ARCHIVOS
-    const uploadZone = document.getElementById('uploadZone');
-    const fileInput = document.getElementById('fileInput');
-
-    uploadZone.addEventListener('click', () => fileInput.click());
-
-    uploadZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadZone.classList.add('dragover');
-    });
-
-    uploadZone.addEventListener('dragleave', () => {
-      uploadZone.classList.remove('dragover');
-    });
-
-    uploadZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadZone.classList.remove('dragover');
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        procesarArchivo(files[0]);
-      }
-    });
-
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (file) {
-        procesarArchivo(file);
-      }
-    }
-
-    function procesarArchivo(file) {
-      // Validar que sea .docx o .doc
-      const extension = file.name.split('.').pop().toLowerCase();
-      if (!['docx', 'doc'].includes(extension)) {
-        alert('Solo se permiten archivos Word (.docx o .doc)');
-        return;
-      }
-      
-      // Simular carga exitosa
-      setTimeout(() => {
-        alert(`✅ Auto Proyectado cargado exitosamente:\n${file.name}\n(${(file.size/1024).toFixed(2)} KB)`);
-        
-        // Aquí iría la lógica real de upload al servidor
-        console.log('Archivo listo para subir:', file.name);
-      }, 500);
-    }
-
-    // FUNCIONES DEL PANEL DE ROL
-    function mostrarDevolverInline() {
-      document.getElementById('devolverInline').classList.add('visible');
-    }
-
-    function ocultarDevolverInline() {
-      document.getElementById('devolverInline').classList.remove('visible');
-    }
-
-    function confirmarDevolucion() {
-      const textarea = document.querySelector('#devolverInline textarea');
-      if (!textarea.value.trim()) {
-        alert('Por favor describe los motivos de la devolución');
-        return;
-      }
-      
-      alert('✅ Auto devuelto al Instructor\n\nMotivo: ' + textarea.value);
-      ocultarDevolverInline();
-      textarea.value = '';
-    }
-
-    function enviarAprobacion() {
-      alert('✅ Auto enviado a Aprobación\n\nEl documento ha sido remitido al Aprobador para firma y validación final.');
-    }
-
-    // MODAL DE CONFIRMACIÓN
-    function abrirModalConfirmacion() {
-      if (!decisionSeleccionada) {
-        alert('⚠️ Debes seleccionar una decisión (Positivo o Negativo) antes de enviar a revisión');
-        return;
-      }
-      
-      // Configurar modal según decisión
-      if (decisionSeleccionada === 'positivo') {
-        modalIcon.className = 'modal-icon positivo';
-        modalIcon.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-        modalDecisionValor.textContent = 'POSITIVO - Asumir Competencia';
-        modalDecisionValor.style.color = '#065F46';
-      } else {
-        modalIcon.className = 'modal-icon negativo';
-        modalIcon.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
-        modalDecisionValor.textContent = 'NEGATIVO - Remitir al Competente';
-        modalDecisionValor.style.color = '#991B1B';
-      }
-      
-      modalConfirmacion.classList.add('visible');
-    }
-
-    function cerrarModalConfirmacion() {
-      modalConfirmacion.classList.remove('visible');
-    }
-
-    function confirmarEnvio() {
-      alert('✅ Auto enviado a revisión exitosamente\n\nEl documento pasará al siguiente nivel del flujo de aprobación.');
-      cerrarModalConfirmacion();
-    }
-
-    // SCROLL SUAVE DESDE ÍNDICE
-    document.querySelectorAll('.indice-item').forEach(item => {
-      item.addEventListener('click', function() {
-        const seccion = this.getAttribute('data-seccion');
-        const targetId = 'seccion-' + seccion;
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          
-          // Actualizar item activo
-          document.querySelectorAll('.indice-item').forEach(i => i.classList.remove('active'));
-          this.classList.add('active');
+            // Apply selected style
+            if (type === 'positive') {
+                document.querySelector('.decision-card.positive').classList.add('selected');
+                document.getElementById('fields-positive').classList.add('active');
+            } else {
+                document.querySelector('.decision-card.negative').classList.add('selected');
+                document.getElementById('fields-negative').classList.add('active');
+            }
         }
-      });
-    });
 
-    // INICIALIZAR
-    actualizarUIRol();
-  </script>
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileInfo').classList.add('show');
+                document.querySelector('.upload-zone').style.display = 'none';
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').classList.remove('show');
+            document.querySelector('.upload-zone').style.display = 'block';
+        }
+
+        function confirmAction() {
+            if (!currentDecision) {
+                alert("Por favor seleccione una decisión (Positivo o Negativo).");
+                return;
+            }
+
+            if (!document.getElementById('fileInput').files.length) {
+                alert("Debe cargar el Auto Proyectado en formato .docx antes de enviar.");
+                return;
+            }
+
+            if (currentDecision === 'negative' && !document.getElementById('dependencia-competente').value) {
+                alert("Para una decisión Negativa, es obligatorio seleccionar la Dependencia Competente.");
+                return;
+            }
+
+            const message = currentDecision === 'positive' 
+                ? "¿Confirma enviar este auto de ASUNCIÓN DE COMPETENCIA a revisión?"
+                : "¿Confirma enviar este auto de REMISIÓN DE COMPETENCIA a revisión?";
+
+            if (confirm(message)) {
+                alert("Auto enviado exitosamente a la bandeja del Revisor.");
+                // Aquí iría la lógica de backend
+            }
+        }
+    </script>
 </body>
 </html>
