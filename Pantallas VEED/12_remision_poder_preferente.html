@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remisión por Poder Preferente — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* CONTENIDO PRINCIPAL */
+    .main-content{flex:1;padding:32px;max-width:1100px;margin:0 auto;width:100%;}
+
+    /* HEADER EXPEDIENTE */
+    .expediente-header{background:var(--blanco);border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 2px 8px rgba(6,56,83,0.06);border:1px solid var(--gris-claro);}
+    .expediente-numero{font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;color:var(--azul);margin-bottom:8px;}
+    .expediente-detalles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;}
+    .detalle-item{display:flex;flex-direction:column;gap:4px;}
+    .detalle-label{font-size:11px;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+    .detalle-valor{font-size:13px;color:var(--negro);font-weight:500;}
+
+    /* TARJETA DECISIÓN */
+    .decision-card{background:var(--blanco);border-radius:12px;padding:32px;box-shadow:0 4px 16px rgba(6,56,83,0.08);border:1px solid var(--gris-claro);margin-bottom:24px;}
+    .decision-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:20px;color:var(--azul);margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+    .decision-title svg{width:24px;height:24px;color:var(--azul-medio);}
+    .decision-subtitle{font-size:13px;color:var(--gris-medio);margin-bottom:24px;line-height:1.5;}
+    .norma-badge{display:inline-flex;align-items:center;gap:8px;background:#EBF4FA;color:var(--azul-medio);padding:8px 16px;border-radius:999px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;margin-bottom:24px;}
+    .norma-badge svg{width:14px;height:14px;}
+
+    /* OPCIONES */
+    .decision-options{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+    .option-card{border:2px solid var(--gris-claro);border-radius:12px;padding:24px;cursor:pointer;transition:all .2s;background:var(--blanco);position:relative;}
+    .option-card:hover{border-color:var(--azul-claro);box-shadow:0 4px 16px rgba(6,56,83,0.08);transform:translateY(-2px);}
+    .option-card.selected{border-color:var(--azul);box-shadow:0 8px 32px rgba(6,56,83,0.12);}
+    .option-card.positivo{border-left:4px solid var(--verde);}
+    .option-card.positivo.selected{background:linear-gradient(135deg,#F0FFF9 0%,var(--blanco) 100%);}
+    .option-card.negativo{border-left:4px solid var(--rojo);}
+    .option-card.negativo.selected{background:linear-gradient(135deg,#FFF5F5 0%,var(--blanco) 100%);}
+    .option-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+    .option-icon{width:48px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .option-card.positivo .option-icon{background:rgba(51,255,204,0.15);color:#059669;}
+    .option-card.negativo .option-icon{background:rgba(227,32,27,0.1);color:var(--rojo);}
+    .option-icon svg{width:24px;height:24px;}
+    .option-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px;color:var(--azul);}
+    .option-card.positivo .option-title{color:#065F46;}
+    .option-card.negativo .option-title{color:#991B1B;}
+    .option-description{font-size:12px;color:var(--gris-medio);line-height:1.6;margin-bottom:16px;}
+    .selection-indicator{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--gris-medio);}
+    .radio-custom{width:18px;height:18px;border:2px solid var(--gris-claro);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+    .option-card.selected .radio-custom{border-color:var(--azul);background:var(--azul);}
+    .option-card.selected .radio-custom::after{content:'';width:8px;height:8px;background:var(--blanco);border-radius:50%;}
+    .option-card.positivo.selected .radio-custom{border-color:#059669;background:#059669;}
+    .option-card.negativo.selected .radio-custom{border-color:var(--rojo);background:var(--rojo);}
+
+    /* FORMULARIOS */
+    .conditional-form{display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--gris-claro);}
+    .conditional-form.active{display:block;}
+    .form-section{margin-bottom:24px;}
+    .form-label{display:block;font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:var(--azul);margin-bottom:8px;}
+    .form-label .required{color:var(--rojo);margin-left:2px;}
+    .form-input,.form-select,.form-textarea{width:100%;padding:12px 16px;border:1.5px solid var(--gris-claro);border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);background:var(--blanco);transition:all .15s;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--azul-medio);box-shadow:0 0 0 3px rgba(7,76,132,0.1);}
+    .form-textarea{resize:vertical;min-height:100px;}
+    .form-help{font-size:11px;color:var(--gris-medio);margin-top:8px;display:flex;align-items:center;gap:4px;}
+    .form-help svg{width:12px;height:12px;flex-shrink:0;}
+
+    /* ALERTAS */
+    .alert-box{padding:16px;border-radius:8px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;}
+    .alert-box.info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
+    .alert-box.warning{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;}
+    .alert-box svg{width:20px;height:20px;flex-shrink:0;margin-top:1px;}
+    .alert-content{flex:1;}
+    .alert-title{font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;margin-bottom:4px;}
+    .alert-text{font-size:12px;line-height:1.5;}
+
+    /* BOTONES */
+    .action-buttons{display:flex;gap:16px;justify-content:flex-end;padding-top:24px;border-top:1px solid var(--gris-claro);margin-top:32px;}
+    .btn{padding:12px 24px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s;border:none;}
+    .btn svg{width:16px;height:16px;}
+    .btn-secondary{background:var(--blanco);border:1.5px solid var(--gris-claro);color:var(--negro);}
+    .btn-secondary:hover{background:var(--gris-claro);}
+    .btn-primary{background:var(--azul);color:var(--blanco);}
+    .btn-primary:hover{background:var(--azul-medio);}
+    .btn-primary:disabled{background:var(--gris-medio);cursor:not-allowed;opacity:0.6;}
+    .btn-success{background:#059669;color:var(--blanco);}
+    .btn-success:hover{background:#047857;}
+    .btn-danger{background:var(--rojo);color:var(--blanco);}
+    .btn-danger:hover{background:#B91C1C;}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(6,56,83,0.6);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+    .modal-overlay.active{display:flex;}
+    .modal-content{background:var(--blanco);border-radius:16px;padding:32px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(6,56,83,0.12);}
+    .modal-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
+    .modal-icon.success{background:rgba(51,255,204,0.15);color:#059669;}
+    .modal-icon.warning{background:rgba(227,32,27,0.1);color:var(--rojo);}
+    .modal-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;color:var(--azul);text-align:center;margin-bottom:12px;}
+    .modal-text{font-size:13px;color:var(--gris-medio);text-align:center;line-height:1.6;margin-bottom:24px;}
+    .modal-buttons{display:flex;gap:12px;justify-content:center;}
+    .modal-buttons .btn{flex:1;max-width:140px;justify-content:center;}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <button class="back-btn" onclick="window.history.back()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="navbar-title">
+        Remisión por Poder Preferente
+        <span>Procuraduría General de la Nación</span>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <button class="nav-btn ghost">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        Ayuda
+      </button>
+      <select class="rol-select">
+        <option>Jefe de Dependencia</option>
+        <option>Instructor</option>
+        <option>Secretario</option>
+      </select>
+      <button class="btn-accion-principal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Expediente
+      </button>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-bar">
+    <a href="#">Inicio</a>
+    <span class="sep">/</span>
+    <a href="#">Evaluación Noticia Disciplinaria</a>
+    <span class="sep">/</span>
+    <span class="current">Remisión por Poder Preferente</span>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <!-- HEADER EXPEDIENTE -->
+    <section class="expediente-header">
+      <div class="expediente-numero">RAD-2025-00012345</div>
+      <div style="font-size:13px;color:var(--gris-medio);margin-bottom:16px;">Remisión por Poder Preferente</div>
+      <div class="expediente-detalles">
+        <div class="detalle-item">
+          <span class="detalle-label">Fecha Radicación</span>
+          <span class="detalle-valor">15 Ene 2025</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Estado</span>
+          <span class="detalle-valor" style="color:var(--naranja);font-weight:600;">En Evaluación</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Tipo Noticia</span>
+          <span class="detalle-valor">Queja</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TARJETA DE DECISIÓN -->
+    <section class="decision-card">
+      <h1 class="decision-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 18a3 3 0 1 0-6 0"/><path d="M15 15H9"/><path d="M12 3v12"/></svg>
+        Decisión de Poder Preferente
+      </h1>
+      <p class="decision-subtitle">
+        La Procuraduría General de la Nación debe determinar si asume la competencia para conocer de esta actuación disciplinaria o si la remite al ente competente.
+      </p>
+      
+      <div class="norma-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="21" y2="9"/></svg>
+        Art. 3 y 93 CGD — Ley 1952/2019 mod. Ley 2094/2021
+      </div>
+
+      <!-- OPCIONES DE DECISIÓN -->
+      <div class="decision-options">
+        <!-- OPCIÓN POSITIVA -->
+        <div class="option-card positivo" onclick="selectOption('positivo')">
+          <div class="option-header">
+            <div class="option-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="option-title">POSITIVO - Asumir Competencia</div>
+              <div class="selection-indicator">
+                <div class="radio-custom"></div>
+                <span>La PGN decide LLEVAR la actuación</span>
+              </div>
+            </div>
+          </div>
+          <p class="option-description">
+            La Procuraduría General de la Nación ejerce el poder preferente y asume la competencia para investigar y juzgar los hechos disciplinarios de servidores de entidades territoriales cuando lo considere conveniente.
+          </p>
+        </div>
+
+        <!-- OPCIÓN NEGATIVA -->
+        <div class="option-card negativo" onclick="selectOption('negativo')">
+          <div class="option-header">
+            <div class="option-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+            </div>
+            <div>
+              <div class="option-title">NEGATIVO - Remitir al Competente</div>
+              <div class="selection-indicator">
+                <div class="radio-custom"></div>
+                <span>La PGN decide NO LLEVAR la actuación</span>
+              </div>
+            </div>
+          </div>
+          <p class="option-description">
+            La Procuraduría General de la Nación no ejerce el poder preferente y remite la actuación al ente territorial competente (Personería Municipal/Distrital u Oficina de Control Interno).
+          </p>
+        </div>
+      </div>
+
+      <!-- FORMULARIO POSITIVO -->
+      <div id="form-positivo" class="conditional-form">
+        <div class="alert-box info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <div class="alert-content">
+            <div class="alert-title">Asunción de Competencia</div>
+            <div class="alert-text">
+              Al asumir la competencia mediante poder preferente, la PGN se convierte en el único ente autorizado para investigar y juzgar estos hechos. Esta decisión es discrecional y no requiere motivación extensa.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Motivo de Asunción <span class="required">*</span></label>
+          <textarea class="form-textarea" placeholder="Describa brevemente las razones por las cuales la PGN asume la competencia..."></textarea>
+          <div class="form-help">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            Campo obligatorio. Fundamente de manera concisa la decisión de asumir competencia.
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMULARIO NEGATIVO -->
+      <div id="form-negativo" class="conditional-form">
+        <div class="alert-box warning">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+          <div class="alert-content">
+            <div class="alert-title">Remisión a Ente Competente</div>
+            <div class="alert-text">
+              Al no ejercer el poder preferente, debe remitir la actuación al ente territorial competente según la jerarquía del servidor investigado. Esta decisión pone fin a la intervención de la PGN en este caso.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Ente Receptor <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">Seleccione el ente receptor...</option>
+            <option value="personeria_municipal">Personería Municipal</option>
+            <option value="personeria_distrital">Personería Distrital</option>
+            <option value="control_interno">Oficina de Control Interno Disciplinario</option>
+            <option value="procuraduria_regional">Procuraduría Regional</option>
+          </select>
+          <div class="form-help">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            Seleccione el ente territorial competente según la jurisdicción y nivel del servidor.
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Justificación de Remisión <span class="required">*</span></label>
+          <textarea class="form-textarea" placeholder="Fundamente la decisión de no ejercer poder preferente y remitir al ente competente..."></textarea>
+          <div class="form-help">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            Campo obligatorio. Explique las razones de la remisión con base en criterios de conveniencia o carga procesal.
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="window.history.back()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Cancelar
+        </button>
+        <button class="btn btn-primary" id="btn-guardar" disabled onclick="showConfirmation()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Generar Auto
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL DE CONFIRMACIÓN -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal-content">
+      <div class="modal-icon success" id="modal-icon-success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="modal-icon warning" id="modal-icon-warning" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+      </div>
+      <h2 class="modal-title" id="modal-title">Confirmar Decisión</h2>
+      <p class="modal-text" id="modal-text">¿Está seguro de continuar con esta decisión? Esta acción generará un auto que será revisado y aprobado antes de su notificación.</p>
+      <div class="modal-buttons">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-confirmar-positivo" style="display: none;" onclick="confirmDecision('positivo')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirmar Asunción
+        </button>
+        <button class="btn btn-danger" id="btn-confirmar-negativo" style="display: none;" onclick="confirmDecision('negativo')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 18a3 3 0 1 0-6 0"/><path d="M15 15H9"/><path d="M12 3v12"/></svg>
+          Confirmar Remisión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedOption = null;
+
+    function selectOption(option) {
+      selectedOption = option;
+      document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+      document.querySelectorAll('.conditional-form').forEach(form => form.classList.remove('active'));
+      const selectedCard = document.querySelector(`.option-card.${option}`);
+      selectedCard.classList.add('selected');
+      document.getElementById(`form-${option}`).classList.add('active');
+      document.getElementById('btn-guardar').disabled = false;
+    }
+
+    function showConfirmation() {
+      const modal = document.getElementById('modal-confirm');
+      const iconSuccess = document.getElementById('modal-icon-success');
+      const iconWarning = document.getElementById('modal-icon-warning');
+      const btnPositivo = document.getElementById('btn-confirmar-positivo');
+      const btnNegativo = document.getElementById('btn-confirmar-negativo');
+      const modalTitle = document.getElementById('modal-title');
+      const modalText = document.getElementById('modal-text');
+      
+      if (selectedOption === 'positivo') {
+        iconSuccess.style.display = 'flex';
+        iconWarning.style.display = 'none';
+        btnPositivo.style.display = 'flex';
+        btnNegativo.style.display = 'none';
+        modalTitle.textContent = 'Confirmar Asunción de Competencia';
+        modalText.textContent = 'La PGN asumirá la competencia de esta actuación disciplinaria mediante poder preferente. ¿Está seguro de continuar?';
+      } else {
+        iconSuccess.style.display = 'none';
+        iconWarning.style.display = 'flex';
+        btnPositivo.style.display = 'none';
+        btnNegativo.style.display = 'flex';
+        modalTitle.textContent = 'Confirmar Remisión';
+        modalText.textContent = 'La actuación será remitida al ente territorial seleccionado. Esta decisión pone fin a la intervención de la PGN. ¿Está seguro de continuar?';
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-confirm').classList.remove('active');
+    }
+
+    function confirmDecision(tipo) {
+      alert(`Decisión ${tipo.toUpperCase()} confirmada. Generando auto...`);
+      closeModal();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    document.getElementById('modal-confirm').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+  </script>
+</body>
+</html>
