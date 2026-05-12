@@ -364,9 +364,9 @@
       <option value="revisor">Rol: Revisor</option>
       <option value="jefe">Rol: Jefe</option>
     </select>
-    <button class="btn-accion-principal" onclick="openModal('modal-decision-indagacion')">
+    <button class="btn-accion-principal" onclick="openModal('modal-evaluar')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-      Decisión de indagación
+      Evaluar investigación
     </button>
   </div>
 </nav>
@@ -383,24 +383,40 @@
 <div class="editor-layout">
 
   <!-- ===== PANEL IZQUIERDO ===== -->
-  <nav class="panel-indice" aria-label="Secciones de indagación">
-    <div class="indice-title">Indagación Previa</div>
+  <nav class="panel-indice" aria-label="Secciones de investigación">
+    <div class="indice-title">Investigación</div>
 
-    <div class="indice-item active" onclick="setTab('pruebas',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Pruebas identificación
-    </div>
-    <div class="indice-item" onclick="setTab('persona',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Persona en averiguación
+    <div class="indice-item active" onclick="setTab('oficios',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Oficios
     </div>
     <div class="indice-item" onclick="setTab('documentos',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Documentos
     </div>
-    <div class="indice-item" onclick="setTab('actuaciones',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Actuaciones
+    <div class="indice-item" onclick="setTab('testigos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Testigos
+    </div>
+    <div class="indice-item" onclick="setTab('descargos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Descargos
+    </div>
+    <div class="indice-item" onclick="setTab('sujetos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Sujetos procesales
+    </div>
+    <div class="indice-item" onclick="setTab('ampliaciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Ampliaciones
+    </div>
+    <div class="indice-item" onclick="setTab('notificaciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      Notificaciones
+    </div>
+    <div class="indice-item" onclick="setTab('audiencias',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Audiencias
     </div>
     <div class="indice-item" onclick="setTab('historial',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -413,7 +429,7 @@
     <div class="term-widget verde" id="term-widget">
       <div class="term-label verde">
         <span class="term-dot verde"></span>
-        Término indagación
+        Término investigación
       </div>
       <div class="term-days verde" id="term-days">156</div>
       <div class="term-sublabel">días hábiles restantes</div>
@@ -423,20 +439,28 @@
       <div class="term-dates">
         <div>Inicio: <strong>15-May-2026</strong></div>
         <div>Vence: <strong>15-Nov-2026</strong></div>
-        <div style="color:#991B1B;font-size:10px;margin-top:4px;">Sin prórroga · Art. 208 CGD</div>
+        <div>Prescripción: <strong>15-May-2031</strong></div>
       </div>
+      <button class="term-prorroga-btn" onclick="openModal('modal-prorroga')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Solicitar prórroga
+      </button>
     </div>
 
     <div class="indice-sep"></div>
     <div class="indice-title">Alertas</div>
 
-    <div class="alerta-item alerta-advertencia" onclick="setTab('pruebas',document.querySelector('[onclick*=pruebas]'))">
-      <div class="alerta-titulo advertencia">Prueba pendiente de identificación</div>
-      <div class="alerta-desc">Video cámaras · Solicitar grabación</div>
+    <div class="alerta-item alerta-critica" onclick="setTab('oficios',document.querySelector('[onclick*=oficios]'))">
+      <div class="alerta-titulo critica">Oficio #5 sin respuesta</div>
+      <div class="alerta-desc">Vence 10-Jul-2026 · 8 días hábiles</div>
     </div>
-    <div class="alerta-item alerta-info-color">
-      <div class="alerta-titulo info">Término 6 meses fijos</div>
-      <div class="alerta-desc">Sin prórroga · Art. 208 CGD</div>
+    <div class="alerta-item alerta-critica" onclick="setTab('testigos',document.querySelector('[onclick*=testigos]'))">
+      <div class="alerta-titulo critica">Testigo renuente</div>
+      <div class="alerta-desc">Juan Pérez · Requiere auto de multa</div>
+    </div>
+    <div class="alerta-item alerta-advertencia">
+      <div class="alerta-titulo advertencia">Prescripción en 5 años</div>
+      <div class="alerta-desc">Recordatorio automático · Art. 33 CGD</div>
     </div>
   </nav>
 
@@ -454,7 +478,7 @@
           <div class="ent-dep">Veeduría — Oficina de Control Interno Disciplinario</div>
         </div>
       </div>
-      <div class="exp-chip">Gestión de Indagación Previa</div>
+      <div class="exp-chip">Gestión de Investigación Disciplinaria</div>
     </div>
 
     <!-- TABLA DE METADATOS — patrón idéntico al 08 -->
@@ -463,41 +487,56 @@
         <td style="width:25%"><span class="meta-label">Radicado IUS</span><span class="meta-value">EXP-2026-00487</span></td>
         <td style="width:25%"><span class="meta-label">Radicado IUC</span><span class="meta-value">D-2026-0009874</span></td>
         <td style="width:25%"><span class="meta-label">Dependencia</span><span class="meta-value">Veeduría PGN</span></td>
-        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge" style="background:#FEF9E7;color:#7a5200;border-color:#FFC300;">Indagación · Art. 208 CGD</div></td>
+        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge">Investigación · Art. 213 CGD</div></td>
       </tr>
       <tr>
-        <td><span class="meta-label">Motivo indagación</span><span class="meta-value">Duda sobre identidad del autor</span></td>
+        <td><span class="meta-label">Disciplinado</span><span class="meta-value">Carlos Eduardo Rojas Bermúdez</span></td>
         <td><span class="meta-label">Origen</span><span class="meta-value">Queja ciudadana</span></td>
         <td><span class="meta-label">Fecha hechos</span><span class="meta-value">2024 – 2025</span></td>
-        <td><span class="meta-label">Fecha apertura indagación</span><span class="meta-value">15 de mayo de 2026</span></td>
-      </tr>
-      <tr>
-        <td colspan="2"><span class="meta-label">Fecha límite (6 meses fijos)</span><span class="meta-value" style="color:#991B1B;font-weight:700;">15 de noviembre de 2026</span></td>
-        <td colspan="2"><span class="meta-label">Persona en averiguación</span><span class="meta-value">Jorge Alberto Méndez Torres</span></td>
+        <td><span class="meta-label">Fecha auto apertura</span><span class="meta-value">05 de mayo de 2026</span></td>
       </tr>
     </table>
 
     <!-- TABS -->
     <div class="tabs-nav">
-      <button class="tab-btn active" id="tbtn-pruebas" onclick="setTab('pruebas',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Pruebas identificación
-        <span class="tab-counter alerta">1</span>
-      </button>
-      <button class="tab-btn" id="tbtn-persona" onclick="setTab('persona',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Persona en averiguación
-        <span class="tab-counter">1</span>
+      <button class="tab-btn active" id="tbtn-oficios" onclick="setTab('oficios',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Oficios
+        <span class="tab-counter alerta">2</span>
       </button>
       <button class="tab-btn" id="tbtn-documentos" onclick="setTab('documentos',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Documentos
         <span class="tab-counter">3</span>
       </button>
-      <button class="tab-btn" id="tbtn-actuaciones" onclick="setTab('actuaciones',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Actuaciones
+      <button class="tab-btn" id="tbtn-testigos" onclick="setTab('testigos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Testigos
+        <span class="tab-counter alerta">1</span>
+      </button>
+      <button class="tab-btn" id="tbtn-descargos" onclick="setTab('descargos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Descargos
+        <span class="tab-counter">0</span>
+      </button>
+      <button class="tab-btn" id="tbtn-sujetos" onclick="setTab('sujetos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Sujetos
         <span class="tab-counter">2</span>
+      </button>
+      <button class="tab-btn" id="tbtn-ampliaciones" onclick="setTab('ampliaciones',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Ampliaciones
+      </button>
+      <button class="tab-btn" id="tbtn-notificaciones" onclick="setTab('notificaciones',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+        Notificaciones
+        <span class="tab-counter">2</span>
+      </button>
+      <button class="tab-btn" id="tbtn-audiencias" onclick="setTab('audiencias',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Audiencias
+        <span class="tab-counter">1</span>
       </button>
       <button class="tab-btn" id="tbtn-historial" onclick="setTab('historial',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -505,161 +544,18 @@
       </button>
     </div>
 
-    <!-- ===== PESTAÑA: PRUEBAS IDENTIFICACIÓN ===== -->
-    <div id="tab-pruebas" class="tab-pane active">
+    <!-- ===== PESTAÑA: OFICIOS ===== -->
+    <div id="tab-oficios" class="tab-pane active">
       <div class="tab-body">
         <div class="action-bar">
-          <div class="action-bar-title">Pruebas para identificación del posible autor</div>
+          <div class="action-bar-title">Oficios decretados en el auto de apertura</div>
           <div class="action-bar-btns">
-            <button class="btn btn-primary btn-sm" onclick="showToast('Nueva prueba de identificación')">
+            <button class="btn btn-secondary btn-sm" onclick="openModal('modal-oficio')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Nueva prueba
+              Nuevo oficio de oficio
             </button>
           </div>
         </div>
-
-        <!-- Prueba 1: Video cámaras -->
-        <div class="oficio-card en-curso">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:#FFC300;color:#7a5200;">1</div>
-              <div>
-                <div class="oficio-titulo">Video cámaras de seguridad</div>
-                <div class="oficio-subtitulo">Prueba documental · Art. 208 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-curso">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Pendiente
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Tipo</div><div class="oficio-field-value">Grabaciones CCTV</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Ubicación</div><div class="oficio-field-value">Pasillo 4° piso - Secretaría Hacienda</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Fecha solicitud</div><div class="oficio-field-value">18-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Estado</div><div class="oficio-field-value alerta-naranja">Esperando respuesta</div></div>
-          </div>
-          <div class="oficio-desc">Solicitud de grabaciones de cámaras de seguridad del pasillo del cuarto piso para los días 15, 16 y 17 de mayo de 2025, entre 8:00 AM y 6:00 PM.</div>
-          <div class="oficio-obs alerta">Pendiente de entrega por parte de la Secretaría de Hacienda. Término de respuesta: 3 días hábiles.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="showToast('Ver detalles de la prueba...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              Ver detalles
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Recordatorio enviado...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              Enviar recordatorio
-            </button>
-          </div>
-        </div>
-
-        <!-- Prueba 2: Huellas dactilares -->
-        <div class="oficio-card cumplido">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:#10B981;color:#fff;">2</div>
-              <div>
-                <div class="oficio-titulo">Huella dactilar - Documento cuestionado</div>
-                <div class="oficio-subtitulo">Prueba técnica · Art. 208 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-cumplido">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              Practicada
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Tipo</div><div class="oficio-field-value">Cotejo dactiloscópico</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Entidad</div><div class="oficio-field-value">CTI Fiscalía General</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Fecha práctica</div><div class="oficio-field-value">25-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Resultado</div><div class="oficio-field-value" style="color:#065F46;font-weight:700;">Coincidencia encontrada</div></div>
-          </div>
-          <div class="oficio-desc">Análisis dactiloscópico de la huella encontrada en el documento firmado el 16 de mayo de 2025. Se compara con muestra tomada a Jorge Alberto Méndez Torres.</div>
-          <div class="oficio-obs">Informe técnico #CTI-2026-00892: La huella coincide con el patrón dactilar de Jorge Alberto Méndez Torres. Informe incorporado al expediente.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="showToast('Abriendo informe técnico PDF...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Ver informe
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Descargando informe...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descargar
-            </button>
-          </div>
-        </div>
-
-        <!-- Prueba 3: Testigos presenciales -->
-        <div class="oficio-card cumplido">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:#10B981;color:#fff;">3</div>
-              <div>
-                <div class="oficio-titulo">Declaración testigo presencial</div>
-                <div class="oficio-subtitulo">Prueba testimonial · Art. 208 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-cumplido">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              Practicada
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Testigo</div><div class="oficio-field-value">María Elena Rodríguez Gómez</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Cargo</div><div class="oficio-field-value">Asistente administrativa</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Fecha declaración</div><div class="oficio-field-value">28-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Modalidad</div><div class="oficio-field-value">Presencial</div></div>
-          </div>
-          <div class="oficio-desc">Declaración de la testigo quien afirma haber visto a Jorge Alberto Méndez Torres firmando documentos en la oficina el día 16 de mayo de 2025 aproximadamente a las 10:30 AM.</div>
-          <div class="oficio-obs">Acta de declaración incorporada. La testigo identifica claramente al posible autor de los hechos investigados.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="showToast('Ver acta de declaración...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              Ver acta
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Escuchando audio de declaración...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><rect x="19" y="5" width="2" height="14" rx="1" ry="1"/><rect x="15" y="5" width="2" height="14" rx="1" ry="1"/></svg>
-              Escuchar audio
-            </button>
-          </div>
-        </div>
-
-        <!-- Prueba 4: Análisis caligráfico -->
-        <div class="oficio-card sin-respuesta">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:#E3201B;color:#fff;">4</div>
-              <div>
-                <div class="oficio-titulo">Análisis caligráfico de firmas</div>
-                <div class="oficio-subtitulo">Prueba pericial · Art. 208 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-sinresp">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Sin respuesta
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Tipo</div><div class="oficio-field-value">Peritazgo caligráfico</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Entidad</div><div class="oficio-field-value">Laboratorio Forense PGN</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Fecha envío</div><div class="oficio-field-value">02-Jun-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Vence</div><div class="oficio-field-value alerta-rojo">10-Jun-2026</div></div>
-          </div>
-          <div class="oficio-desc">Comparación de firmas entre documentos auténticos de Jorge Alberto Méndez Torres y el documento cuestionado fechado el 16 de mayo de 2025.</div>
-          <div class="oficio-obs critica">Término de respuesta vencido. Se requiere seguimiento urgente al laboratorio forense.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn danger" onclick="showToast('Enviando requerimiento urgente...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              Requerir urgente
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Ver detalles del envío...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              Ver detalles
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
 
         <!-- BLOQUE: PRACTICADOS -->
         <div class="section-sep">
@@ -861,81 +757,6 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: PERSONA EN AVERIGUACIÓN ===== -->
-    <div id="tab-persona" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Persona en averiguación — Indagación Previa</div>
-        </div>
-
-        <!-- Ficha de la persona en averiguación -->
-        <div class="sujeto-card" style="border-left:4px solid #FFC300;">
-          <div class="sujeto-header">
-            <span class="sujeto-tipo" style="background:#FEF9E7;color:#7a5200;border-color:#FFC300;">Persona en averiguación</span>
-            <div style="display:flex;gap:6px;">
-              <button class="oficio-link-btn" onclick="showToast('Ver historial de actuaciones')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Historial
-              </button>
-            </div>
-          </div>
-          
-          <div class="sujeto-nombre">Jorge Alberto Méndez Torres</div>
-          
-          <div class="sujeto-meta">
-            <div><div class="sujeto-field-label">Cédula</div><div class="sujeto-field-value">79.521.863</div></div>
-            <div><div class="sujeto-field-label">Cargo (época hechos)</div><div class="sujeto-field-value">Coordinador Administrativo</div></div>
-            <div><div class="sujeto-field-label">Entidad</div><div class="sujeto-field-value">Secretaría de Hacienda Distrital</div></div>
-            <div><div class="sujeto-field-label">Fecha identificación</div><div class="sujeto-field-value">20 de mayo de 2026</div></div>
-            <div><div class="sujeto-field-label">Medio identificación</div><div class="sujeto-field-value">Huella dactilar + Testigo presencial</div></div>
-            <div><div class="sujeto-field-label">Correo electrónico</div><div class="sujeto-field-value">j.mendez@hacienda.gov.co</div></div>
-            <div><div class="sujeto-field-label">Teléfono</div><div class="sujeto-field-value">+57 315 482 9071</div></div>
-          </div>
-
-          <div style="margin-top:16px;padding:14px;background:#EFF6FF;border-radius:8px;border-left:3px solid var(--azul-claro);">
-            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul-medio);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              Estado procesal
-            </div>
-            <div style="font-size:12px;color:var(--negro);line-height:1.6;">
-              <strong style="color:var(--azul);">NO está vinculado formalmente como investigado.</strong> Esta persona se encuentra en etapa de indagación previa conforme al Art. 208 CGD. 
-              Su identificación es objeto de las pruebas que se están practicando para determinar si es el posible autor de los hechos.
-            </div>
-            <div style="margin-top:10px;font-size:11px;color:var(--gris-medio);">
-              • No ha sido notificado de pliego de cargos<br/>
-              • No tiene defensor constituido en este proceso<br/>
-              • Puede ser citado a versión libre voluntaria (Art. 130 CGD)
-            </div>
-          </div>
-
-          <div style="padding-top:16px;margin-top:16px;border-top:1px solid var(--gris-claro);display:flex;gap:8px;">
-            <button class="btn btn-primary btn-sm" onclick="showToast('Citando a versión libre...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              Citación a versión libre
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="showToast('Generando informe de identificación...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Informe de identificación
-            </button>
-          </div>
-        </div>
-
-        <!-- Nota sobre la etapa -->
-        <div style="margin-top:20px;padding:14px;background:#FEF9E7;border-radius:8px;border:1px dashed #FFC300;">
-          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#7a5200;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#FFC300;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            Indagación Previa — Art. 208 CGD
-          </div>
-          <div style="font-size:12px;color:#7a5200;line-height:1.6;">
-            La indagación previa tiene como finalidad identificar al posible autor y practicar pruebas urgentes. 
-            El término es de <strong>6 meses fijos sin prórroga</strong>. Al finalizar, solo hay dos opciones: 
-            <strong>archivar</strong> (si no hay mérito) o <strong>abrir investigación disciplinaria</strong> (si se identifica al autor).
-          </div>
-        </div>
-
       </div>
     </div>
 
