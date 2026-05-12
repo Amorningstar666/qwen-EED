@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Indagación Previa — EED PGN</title>
+  <title>Gestión de Investigación Disciplinaria — EED PGN</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -350,8 +350,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     </button>
     <div class="navbar-title">
-      Gestión de Indagación Previa
-      <span>Art. 208 CGD · EXP-2026-00487 · En curso</span>
+      Gestión de Investigación Disciplinaria
+      <span>Art. 211–216 CGD · EXP-2026-00487 · En curso</span>
     </div>
   </div>
   <div class="navbar-right">
@@ -364,9 +364,9 @@
       <option value="revisor">Rol: Revisor</option>
       <option value="jefe">Rol: Jefe</option>
     </select>
-    <button class="btn-accion-principal" onclick="openModal('modal-decision-indagacion')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      Decisión de indagación
+    <button class="btn-accion-principal" onclick="openModal('modal-evaluar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      Evaluar investigación
     </button>
   </div>
 </nav>
@@ -376,15 +376,15 @@
   <a href="#">Inicio</a><span class="sep">›</span>
   <a href="#">Mi bandeja</a><span class="sep">›</span>
   <a href="#">EXP-2026-00487</a><span class="sep">›</span>
-  <span class="current">Gestión de indagación previa</span>
+  <span class="current">Gestión de investigación</span>
 </div>
 
 <!-- LAYOUT 3 COLUMNAS -->
 <div class="editor-layout">
 
   <!-- ===== PANEL IZQUIERDO ===== -->
-  <nav class="panel-indice" aria-label="Secciones de indagación">
-    <div class="indice-title">Indagación Previa</div>
+  <nav class="panel-indice" aria-label="Secciones de investigación">
+    <div class="indice-title">Investigación</div>
 
     <div class="indice-item active" onclick="setTab('oficios',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -394,21 +394,29 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Documentos
     </div>
-    <div class="indice-item" onclick="setTab('pruebas-indagacion',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Pruebas de identificación
+    <div class="indice-item" onclick="setTab('testigos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Testigos
     </div>
-    <div class="indice-item" onclick="setTab('posible-autor',this)">
+    <div class="indice-item" onclick="setTab('descargos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Descargos
+    </div>
+    <div class="indice-item" onclick="setTab('sujetos',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Persona en averiguación
+      Sujetos procesales
+    </div>
+    <div class="indice-item" onclick="setTab('ampliaciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Ampliaciones
     </div>
     <div class="indice-item" onclick="setTab('notificaciones',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
       Notificaciones
     </div>
-    <div class="indice-item" onclick="setTab('decisiones',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      Decisiones
+    <div class="indice-item" onclick="setTab('audiencias',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Audiencias
     </div>
     <div class="indice-item" onclick="setTab('historial',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -417,41 +425,42 @@
 
     <div class="indice-sep"></div>
 
-    <!-- SEMÁFORO TÉRMINO - INDAGACIÓN 6 MESES -->
+    <!-- SEMÁFORO TÉRMINO -->
     <div class="term-widget verde" id="term-widget">
       <div class="term-label verde">
         <span class="term-dot verde"></span>
-        Término indagación previa
+        Término investigación
       </div>
-      <div class="term-days verde" id="term-days">124</div>
-      <div class="term-sublabel">días hábiles restantes (6 meses)</div>
+      <div class="term-days verde" id="term-days">156</div>
+      <div class="term-sublabel">días hábiles restantes</div>
       <div class="term-bar-track">
-        <div class="term-bar-fill verde" style="width:68%" id="term-bar"></div>
+        <div class="term-bar-fill verde" style="width:45%" id="term-bar"></div>
       </div>
       <div class="term-dates">
         <div>Inicio: <strong>15-May-2026</strong></div>
         <div>Vence: <strong>15-Nov-2026</strong></div>
-        <div style="color:#991B1B;font-weight:700;margin-top:4px;">Sin prórroga · Art. 208 CGD</div>
+        <div>Prescripción: <strong>15-May-2031</strong></div>
       </div>
-      <div style="margin-top:10px;padding:8px;background:#FEF9E7;border-radius:7px;border:1px solid var(--naranja);font-size:10px;color:#92400E;line-height:1.4;">
-        <strong>Nota:</strong> La indagación previa tiene un término máximo de 6 meses sin posibilidad de prórroga.
-      </div>
+      <button class="term-prorroga-btn" onclick="openModal('modal-prorroga')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Solicitar prórroga
+      </button>
     </div>
 
     <div class="indice-sep"></div>
     <div class="indice-title">Alertas</div>
 
     <div class="alerta-item alerta-critica" onclick="setTab('oficios',document.querySelector('[onclick*=oficios]'))">
-      <div class="alerta-titulo critica">Oficio #3 sin respuesta</div>
+      <div class="alerta-titulo critica">Oficio #5 sin respuesta</div>
       <div class="alerta-desc">Vence 10-Jul-2026 · 8 días hábiles</div>
     </div>
-    <div class="alerta-item alerta-advertencia" onclick="setTab('decisiones',document.querySelector('[onclick*=decisiones]'))">
-      <div class="alerta-titulo advertencia">Término indagación: 6 meses</div>
-      <div class="alerta-desc">Sin prórroga · Decisión: archivo o apertura</div>
+    <div class="alerta-item alerta-critica" onclick="setTab('testigos',document.querySelector('[onclick*=testigos]'))">
+      <div class="alerta-titulo critica">Testigo renuente</div>
+      <div class="alerta-desc">Juan Pérez · Requiere auto de multa</div>
     </div>
-    <div class="alerta-item alerta-info-color">
-      <div class="alerta-titulo info">No proceden recursos</div>
-      <div class="alerta-desc">Contra decisiones en indagación previa</div>
+    <div class="alerta-item alerta-advertencia">
+      <div class="alerta-titulo advertencia">Prescripción en 5 años</div>
+      <div class="alerta-desc">Recordatorio automático · Art. 33 CGD</div>
     </div>
   </nav>
 
@@ -469,30 +478,26 @@
           <div class="ent-dep">Veeduría — Oficina de Control Interno Disciplinario</div>
         </div>
       </div>
-      <div class="exp-chip">Gestión de Indagación Previa</div>
+      <div class="exp-chip">Gestión de Investigación Disciplinaria</div>
     </div>
 
-    <!-- TABLA DE METADATOS — adaptado para indagación -->
+    <!-- TABLA DE METADATOS — patrón idéntico al 08 -->
     <table class="meta-table">
       <tr>
         <td style="width:25%"><span class="meta-label">Radicado IUS</span><span class="meta-value">EXP-2026-00487</span></td>
         <td style="width:25%"><span class="meta-label">Radicado IUC</span><span class="meta-value">D-2026-0009874</span></td>
         <td style="width:25%"><span class="meta-label">Dependencia</span><span class="meta-value">Veeduría PGN</span></td>
-        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge" style="background:#FEF9E7;color:#7a5200;border-color:#FFC300;">Indagación Previa · Art. 208 CGD</div></td>
+        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge">Investigación · Art. 213 CGD</div></td>
       </tr>
       <tr>
-        <td><span class="meta-label">Motivo de la indagación</span><span class="meta-value">Duda sobre identidad del posible autor</span></td>
+        <td><span class="meta-label">Disciplinado</span><span class="meta-value">Carlos Eduardo Rojas Bermúdez</span></td>
         <td><span class="meta-label">Origen</span><span class="meta-value">Queja ciudadana</span></td>
         <td><span class="meta-label">Fecha hechos</span><span class="meta-value">2024 – 2025</span></td>
-        <td><span class="meta-label">Fecha auto apertura</span><span class="meta-value">15 de mayo de 2026</span></td>
-      </tr>
-      <tr>
-        <td colspan="2"><span class="meta-label">Persona en averiguación</span><span class="meta-value">Por determinar (se practican pruebas de identificación)</span></td>
-        <td colspan="2"><span class="meta-label">Término máximo</span><span class="meta-value" style="color:#991B1B;font-weight:700;">6 meses (sin prórroga) · Vence: 15-Nov-2026</span></td>
+        <td><span class="meta-label">Fecha auto apertura</span><span class="meta-value">05 de mayo de 2026</span></td>
       </tr>
     </table>
 
-    <!-- TABS - ADAPTADOS PARA INDAGACIÓN -->
+    <!-- TABS -->
     <div class="tabs-nav">
       <button class="tab-btn active" id="tbtn-oficios" onclick="setTab('oficios',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -504,23 +509,34 @@
         Documentos
         <span class="tab-counter">3</span>
       </button>
-      <button class="tab-btn" id="tbtn-pruebas-indagacion" onclick="setTab('pruebas-indagacion',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Pruebas identificación
-        <span class="tab-counter">4</span>
+      <button class="tab-btn" id="tbtn-testigos" onclick="setTab('testigos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Testigos
+        <span class="tab-counter alerta">1</span>
       </button>
-      <button class="tab-btn" id="tbtn-posible-autor" onclick="setTab('posible-autor',this)">
+      <button class="tab-btn" id="tbtn-descargos" onclick="setTab('descargos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Descargos
+        <span class="tab-counter">0</span>
+      </button>
+      <button class="tab-btn" id="tbtn-sujetos" onclick="setTab('sujetos',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Persona en averiguación
+        Sujetos
+        <span class="tab-counter">2</span>
+      </button>
+      <button class="tab-btn" id="tbtn-ampliaciones" onclick="setTab('ampliaciones',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Ampliaciones
       </button>
       <button class="tab-btn" id="tbtn-notificaciones" onclick="setTab('notificaciones',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
         Notificaciones
-        <span class="tab-counter">1</span>
+        <span class="tab-counter">2</span>
       </button>
-      <button class="tab-btn" id="tbtn-decisiones" onclick="setTab('decisiones',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Decisiones
+      <button class="tab-btn" id="tbtn-audiencias" onclick="setTab('audiencias',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Audiencias
+        <span class="tab-counter">1</span>
       </button>
       <button class="tab-btn" id="tbtn-historial" onclick="setTab('historial',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -760,204 +776,6 @@
             </button>
           </div>
         </div>
-
-    <!-- ===== PESTAÑA: PRUEBAS IDENTIFICACIÓN ===== -->
-    <div id="tab-pruebas-indagacion" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Pruebas para identificación del posible autor</div>
-          <div class="action-bar-btns">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Decretar prueba
-            </button>
-          </div>
-        </div>
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Documento</th>
-              <th>Tipo</th>
-              <th>Origen</th>
-              <th>Cargado</th>
-              <th>Tamaño</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Queja_inicial_25may2026.pdf</strong></td>
-              <td><span class="status-pill status-cumplido">Queja</span></td>
-              <td>Radicación inicial</td>
-              <td>25-May-2026</td>
-              <td>456 KB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Abriendo queja inicial...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Ver
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td><strong>Informe_seguridad_ingreso.pdf</strong></td>
-              <td><span class="status-pill status-cumplido">Documental</span></td>
-              <td>Administración Torre A</td>
-              <td>10-Jun-2026</td>
-              <td>1.8 MB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Abriendo informe...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Ver
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td><strong>Video_camaras_piso5.mp4</strong></td>
-              <td><span class="status-pill" style="background:#DBEAFE;color:#1E40AF;">Multimedia</span></td>
-              <td>Prueba identificación #1</td>
-              <td>15-Jun-2026</td>
-              <td>45.2 MB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Reproduciendo video...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  Reproducir
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td><strong>Acta_reconocimiento_rueda.pdf</strong></td>
-              <td><span class="status-pill status-cumplido">Acta</span></td>
-              <td>Prueba identificación #2</td>
-              <td>18-Jun-2026</td>
-              <td>2.1 MB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Abriendo acta...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Ver
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Zona upload -->
-        <div style="margin-top:20px;">
-          <div class="upload-zone" onclick="openModal('modal-cargar-doc')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:var(--gris-medio);margin-bottom:8px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            <span class="uz-title">Arrastra archivos aquí o haz clic para seleccionar</span>
-            <span class="uz-sub">PDF, DOCX, JPG, PNG, MP4 · Máx. 50 MB por archivo</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="tab-posible-autor" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Persona en averiguación</div>
-          <div class="action-bar-btns">
-            <button class="btn btn-secondary btn-sm" onclick="openModal('modal-agregar-sujeto')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Actualizar datos
-            </button>
-          </div>
-        </div>
-
-        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Durante la indagación previa no hay investigado formalmente vinculado. Los datos aquí consignados corresponden a la persona que se presume pudo haber cometido la conducta, una vez sea identificada mediante las pruebas practicadas.
-        </div>
-
-        <!-- Tarjeta de posible autor identificado -->
-        <div class="sujeto-card">
-          <div class="sujeto-header">
-            <span class="sujeto-tipo" style="background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;">Posible autor</span>
-            <div style="display:flex;gap:6px;">
-              <button class="oficio-link-btn" onclick="showToast('Ver historial de actuaciones relacionadas')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Historial
-              </button>
-            </div>
-          </div>
-          
-          <!-- Datos identificados -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px;">
-            <div>
-              <div class="sujeto-field-label">Nombre completo</div>
-              <div class="sujeto-field-value" style="font-size:14px;font-weight:700;color:var(--azul);">Jorge Alberto Méndez Torres</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Documento</div>
-              <div class="sujeto-field-value">C.C. 1.098.765.432</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Fecha identificación</div>
-              <div class="sujeto-field-value">15-Jun-2026</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Medio identificación</div>
-              <div class="sujeto-field-value">Reconocimiento en rueda + huellas</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Cargo (época hechos)</div>
-              <div class="sujeto-field-value">Auxiliar de servicios generales</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Entidad</div>
-              <div class="sujeto-field-value">Secretaría de Infraestructura</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Teléfono</div>
-              <div class="sujeto-field-value">310 456 7890</div>
-            </div>
-            <div>
-              <div class="sujeto-field-label">Correo</div>
-              <div class="sujeto-field-value">j.mendez@infraestructura.gov.co</div>
-            </div>
-          </div>
-
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gris-claro);">
-            <div class="sujeto-field-label" style="margin-bottom:6px;">Hechos atribuidos</div>
-            <div style="font-size:13px;line-height:1.6;color:var(--gris-oscuro);">Presunta realización de ingreso no autorizado al quinto piso de la Torre A el día 25 de mayo de 2026, fuera del horario laboral, sin contar con permiso o justificación para dicho acceso.</div>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-            <span class="status-pill" style="background:#DCFCE7;color:#166534;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>
-              Identificado
-            </span>
-            <span class="status-pill" style="background:#FEF3C7;color:#92400E;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Sin vincular formalmente
-            </span>
-          </div>
-        </div>
-
-        <!-- Acciones disponibles -->
-        <div style="margin-top:20px;background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:20px;">
-          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul-oscuro);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Próximos pasos
-          </div>
-          <div style="font-size:12px;color:var(--gris-medio);line-height:1.8;">
-            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;margin-top:2px;color:var(--verde);"><polyline points="20 6 9 17 4 12"/></svg>
-              Una vez identificado el posible autor, evaluar si hay mérito para abrir investigación disciplinaria.
-            </div>
-            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;margin-top:2px;color:var(--verde);"><polyline points="20 6 9 17 4 12"/></svg>
-              Si no hay mérito, proferir decisión de archivo de la indagación.
-            </div>
-            <div style="display:flex;align-items:flex-start;gap:8px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;margin-top:2px;color:var(--azul);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Contra las decisiones en indagación previa NO proceden recursos.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: NOTIFICACIONES ===== -->
-    <div id="tab-notificaciones" class="tab-pane">
         <table class="data-table">
           <thead>
             <tr>
@@ -1857,7 +1675,7 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Tipo de documento <span class="req">*</span></label>
-        <select class="form-select"><option>Prueba documental</option><option>Prueba pericial</option><option>Acta de inspección</option><option>Versión libre</option><option>Otro</option></select>
+        <select class="form-select"><option>Prueba documental</option><option>Prueba pericial</option><option>Acta de inspección</option><option>Versión libre</option><option>Escrito del disciplinado</option><option>Otro</option></select>
       </div>
       <div class="form-group">
         <label class="form-label">Oficio relacionado</label>
@@ -1882,91 +1700,6 @@
       <button class="btn btn-accent" onclick="closeModal('modal-cargar-doc');showToast('Documento incorporado al expediente')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         Incorporar
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: DECISIÓN INDAGACIÓN -->
-<div class="modal-overlay" id="modal-decision-indagacion">
-  <div class="modal" style="width:520px;">
-    <div class="modal-header">
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Decisión de indagación</h3>
-      <button class="modal-close-btn" onclick="closeModal('modal-decision-indagacion')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <div>
-          <strong>Importante:</strong> Contra las decisiones proferidas en indagación previa NO proceden recursos (Art. 208 CGD). La decisión debe estar debidamente motivada.
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Tipo de decisión <span class="req">*</span></label>
-        <select class="form-select" id="decision-type" onchange="toggleDecisionFields()">
-          <option value="">-- Seleccione --</option>
-          <option value="archivo">Archivar indagación</option>
-          <option value="apertura">Abrir investigación disciplinaria</option>
-        </select>
-      </div>
-
-      <!-- Campos para ARCHIVO -->
-      <div id="archivo-fields" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Motivo de archivo <span class="req">*</span></label>
-          <select class="form-select">
-            <option value="">-- Seleccione --</option>
-            <option>No se identificó al posible autor</option>
-            <option>No hay mérito para abrir investigación</option>
-            <option>Los hechos no configuran falta disciplinaria</option>
-            <option>Operó causal de prescripción</option>
-            <option>Otro</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Fundamentación fáctica</label>
-          <textarea class="form-textarea" rows="4" placeholder="Describa los hechos y pruebas que sustentan la decisión de archivar..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Fundamentación jurídica</label>
-          <textarea class="form-textarea" rows="3" placeholder="Cite las normas aplicables (Art. 208, 209 CGD)..."></textarea>
-        </div>
-      </div>
-
-      <!-- Campos para APERTURA -->
-      <div id="apertura-fields" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Persona a investigar <span class="req">*</span></label>
-          <input class="form-input" value="Jorge Alberto Méndez Torres" readonly style="background:#F3F4F6;">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Cargo investigado</label>
-          <input class="form-input" value="Auxiliar de servicios generales" readonly style="background:#F3F4F6;">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Entidad</label>
-          <input class="form-input" value="Secretaría de Infraestructura" readonly style="background:#F3F4F6;">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Fundamentación fáctica</label>
-          <textarea class="form-textarea" rows="4" placeholder="Describa los hechos que configuran la posible falta disciplinaria..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Fundamentación jurídica</label>
-          <textarea class="form-textarea" rows="3" placeholder="Cite las normas aplicables (Art. 211, 215 CGD)..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Pruebas a decretar en auto de apertura</label>
-          <div style="font-size:12px;color:var(--gris-medio);margin-top:4px;">Las pruebas podrán ser decretadas en el auto de apertura de investigación.</div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-decision-indagacion')">Cancelar</button>
-      <button class="btn btn-accent" onclick="confirmDecision()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Confirmar decisión
       </button>
     </div>
   </div>
@@ -2039,41 +1772,6 @@
     t.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function() { t.classList.remove('show'); }, 4000);
-  }
-
-  // DECISIÓN INDAGACIÓN — toggle campos
-  function toggleDecisionFields() {
-    var type = document.getElementById('decision-type').value;
-    var archivoFields = document.getElementById('archivo-fields');
-    var aperturaFields = document.getElementById('apertura-fields');
-    
-    if (type === 'archivo') {
-      archivoFields.style.display = 'block';
-      aperturaFields.style.display = 'none';
-    } else if (type === 'apertura') {
-      archivoFields.style.display = 'none';
-      aperturaFields.style.display = 'block';
-    } else {
-      archivoFields.style.display = 'none';
-      aperturaFields.style.display = 'none';
-    }
-  }
-
-  // Confirmar decisión
-  function confirmDecision() {
-    var type = document.getElementById('decision-type').value;
-    if (!type) {
-      showToast('⚠️ Seleccione un tipo de decisión');
-      return;
-    }
-    
-    if (type === 'archivo') {
-      closeModal('modal-decision-indagacion');
-      showToast('✓ Decisión de archivo proyectada. Pendiente firma del instructor.');
-    } else if (type === 'apertura') {
-      closeModal('modal-decision-indagacion');
-      showToast('✓ Auto de apertura de investigación proyectado. Pendiente firma.');
-    }
   }
 
   // SEMÁFORO DE TÉRMINOS — lógica dinámica
