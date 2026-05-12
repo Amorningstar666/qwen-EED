@@ -364,9 +364,9 @@
       <option value="revisor">Rol: Revisor</option>
       <option value="jefe">Rol: Jefe</option>
     </select>
-    <button class="btn-accion-principal" onclick="openModal('modal-evaluar')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-      Evaluar investigación
+    <button class="btn-accion-principal" onclick="openDecisionModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Decisión de indagación
     </button>
   </div>
 </nav>
@@ -376,47 +376,31 @@
   <a href="#">Inicio</a><span class="sep">›</span>
   <a href="#">Mi bandeja</a><span class="sep">›</span>
   <a href="#">EXP-2026-00487</a><span class="sep">›</span>
-  <span class="current">Gestión de investigación</span>
+  <span class="current">Gestión de indagación previa</span>
 </div>
 
 <!-- LAYOUT 3 COLUMNAS -->
 <div class="editor-layout">
 
   <!-- ===== PANEL IZQUIERDO ===== -->
-  <nav class="panel-indice" aria-label="Secciones de investigación">
-    <div class="indice-title">Investigación</div>
+  <nav class="panel-indice" aria-label="Secciones de indagación">
+    <div class="indice-title">Indagación Previa</div>
 
-    <div class="indice-item active" onclick="setTab('oficios',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      Oficios
+    <div class="indice-item active" onclick="setTab('pruebas',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Pruebas identificación
+    </div>
+    <div class="indice-item" onclick="setTab('persona',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Persona en averiguación
     </div>
     <div class="indice-item" onclick="setTab('documentos',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Documentos
     </div>
-    <div class="indice-item" onclick="setTab('testigos',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Testigos
-    </div>
-    <div class="indice-item" onclick="setTab('descargos',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Descargos
-    </div>
-    <div class="indice-item" onclick="setTab('sujetos',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Sujetos procesales
-    </div>
-    <div class="indice-item" onclick="setTab('ampliaciones',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Ampliaciones
-    </div>
-    <div class="indice-item" onclick="setTab('notificaciones',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-      Notificaciones
-    </div>
-    <div class="indice-item" onclick="setTab('audiencias',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Audiencias
+    <div class="indice-item" onclick="setTab('actuaciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 18H8"/><path d="M16 14H8"/></svg>
+      Actuaciones
     </div>
     <div class="indice-item" onclick="setTab('historial',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -429,38 +413,30 @@
     <div class="term-widget verde" id="term-widget">
       <div class="term-label verde">
         <span class="term-dot verde"></span>
-        Término investigación
+        Término indagación (6 meses fijos)
       </div>
-      <div class="term-days verde" id="term-days">156</div>
+      <div class="term-days verde" id="term-days">142</div>
       <div class="term-sublabel">días hábiles restantes</div>
       <div class="term-bar-track">
-        <div class="term-bar-fill verde" style="width:45%" id="term-bar"></div>
+        <div class="term-bar-fill verde" style="width:25%" id="term-bar"></div>
       </div>
       <div class="term-dates">
         <div>Inicio: <strong>15-May-2026</strong></div>
         <div>Vence: <strong>15-Nov-2026</strong></div>
-        <div>Prescripción: <strong>15-May-2031</strong></div>
+        <div style="color:#991B1B;font-weight:700;">Sin prórroga posible</div>
       </div>
-      <button class="term-prorroga-btn" onclick="openModal('modal-prorroga')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Solicitar prórroga
-      </button>
     </div>
 
     <div class="indice-sep"></div>
     <div class="indice-title">Alertas</div>
 
-    <div class="alerta-item alerta-critica" onclick="setTab('oficios',document.querySelector('[onclick*=oficios]'))">
-      <div class="alerta-titulo critica">Oficio #5 sin respuesta</div>
-      <div class="alerta-desc">Vence 10-Jul-2026 · 8 días hábiles</div>
+    <div class="alerta-item alerta-advertencia" onclick="setTab('pruebas',document.querySelector('[onclick*=pruebas]'))">
+      <div class="alerta-titulo advertencia">Prueba pendiente</div>
+      <div class="alerta-desc">Huella dactilar · Vence en 12 días</div>
     </div>
-    <div class="alerta-item alerta-critica" onclick="setTab('testigos',document.querySelector('[onclick*=testigos]'))">
-      <div class="alerta-titulo critica">Testigo renuente</div>
-      <div class="alerta-desc">Juan Pérez · Requiere auto de multa</div>
-    </div>
-    <div class="alerta-item alerta-advertencia">
-      <div class="alerta-titulo advertencia">Prescripción en 5 años</div>
-      <div class="alerta-desc">Recordatorio automático · Art. 33 CGD</div>
+    <div class="alerta-item alerta-info-color">
+      <div class="alerta-titulo info">Término improrrogable</div>
+      <div class="alerta-desc">Art. 208 CGD · 6 meses fijos</div>
     </div>
   </nav>
 
@@ -478,7 +454,7 @@
           <div class="ent-dep">Veeduría — Oficina de Control Interno Disciplinario</div>
         </div>
       </div>
-      <div class="exp-chip">Gestión de Investigación Disciplinaria</div>
+      <div class="exp-chip">Gestión de Indagación Previa</div>
     </div>
 
     <!-- TABLA DE METADATOS — patrón idéntico al 08 -->
@@ -487,56 +463,37 @@
         <td style="width:25%"><span class="meta-label">Radicado IUS</span><span class="meta-value">EXP-2026-00487</span></td>
         <td style="width:25%"><span class="meta-label">Radicado IUC</span><span class="meta-value">D-2026-0009874</span></td>
         <td style="width:25%"><span class="meta-label">Dependencia</span><span class="meta-value">Veeduría PGN</span></td>
-        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge">Investigación · Art. 213 CGD</div></td>
+        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge">Indagación Previa · Art. 208 CGD</div></td>
       </tr>
       <tr>
-        <td><span class="meta-label">Disciplinado</span><span class="meta-value">Carlos Eduardo Rojas Bermúdez</span></td>
+        <td><span class="meta-label">Motivo indagación</span><span class="meta-value">Duda sobre identidad del autor</span></td>
         <td><span class="meta-label">Origen</span><span class="meta-value">Queja ciudadana</span></td>
         <td><span class="meta-label">Fecha hechos</span><span class="meta-value">2024 – 2025</span></td>
-        <td><span class="meta-label">Fecha auto apertura</span><span class="meta-value">05 de mayo de 2026</span></td>
+        <td><span class="meta-label">Fecha auto apertura</span><span class="meta-value">15 de mayo de 2026</span></td>
       </tr>
     </table>
 
     <!-- TABS -->
     <div class="tabs-nav">
-      <button class="tab-btn active" id="tbtn-oficios" onclick="setTab('oficios',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        Oficios
-        <span class="tab-counter alerta">2</span>
+      <button class="tab-btn active" id="tbtn-pruebas" onclick="setTab('pruebas',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Pruebas identificación
+        <span class="tab-counter alerta">1</span>
+      </button>
+      <button class="tab-btn" id="tbtn-persona" onclick="setTab('persona',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Persona en averiguación
+        <span class="tab-counter">1</span>
       </button>
       <button class="tab-btn" id="tbtn-documentos" onclick="setTab('documentos',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Documentos
         <span class="tab-counter">3</span>
       </button>
-      <button class="tab-btn" id="tbtn-testigos" onclick="setTab('testigos',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        Testigos
-        <span class="tab-counter alerta">1</span>
-      </button>
-      <button class="tab-btn" id="tbtn-descargos" onclick="setTab('descargos',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Descargos
-        <span class="tab-counter">0</span>
-      </button>
-      <button class="tab-btn" id="tbtn-sujetos" onclick="setTab('sujetos',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Sujetos
+      <button class="tab-btn" id="tbtn-actuaciones" onclick="setTab('actuaciones',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 18H8"/><path d="M16 14H8"/></svg>
+        Actuaciones
         <span class="tab-counter">2</span>
-      </button>
-      <button class="tab-btn" id="tbtn-ampliaciones" onclick="setTab('ampliaciones',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Ampliaciones
-      </button>
-      <button class="tab-btn" id="tbtn-notificaciones" onclick="setTab('notificaciones',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
-        Notificaciones
-        <span class="tab-counter">2</span>
-      </button>
-      <button class="tab-btn" id="tbtn-audiencias" onclick="setTab('audiencias',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Audiencias
-        <span class="tab-counter">1</span>
       </button>
       <button class="tab-btn" id="tbtn-historial" onclick="setTab('historial',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -545,216 +502,102 @@
     </div>
 
     <!-- ===== PESTAÑA: OFICIOS ===== -->
-    <div id="tab-oficios" class="tab-pane active">
+    <!-- ===== PESTAÑA: PRUEBAS IDENTIFICACIÓN ===== -->
+    <div id="tab-pruebas" class="tab-pane active">
       <div class="tab-body">
         <div class="action-bar">
-          <div class="action-bar-title">Oficios decretados en el auto de apertura</div>
+          <div class="action-bar-title">Pruebas para identificación del posible autor</div>
           <div class="action-bar-btns">
-            <button class="btn btn-secondary btn-sm" onclick="openModal('modal-oficio')">
+            <button class="btn btn-primary btn-sm" onclick="showToast('Abriendo modal de nueva prueba...')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Nuevo oficio de oficio
+              Decretar prueba
             </button>
           </div>
         </div>
-
-        <!-- BLOQUE: PRACTICADOS -->
-        <div class="section-sep">
-          <span class="section-sep-icon normal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span class="section-sep-label">Oficios con respuesta</span>
-          <div class="section-sep-line"></div>
+        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          En la etapa de indagación previa se practican pruebas urgentes para identificar al posible autor. Una vez identificado, se decide si archiva o abre investigación disciplinaria (Art. 208 CGD).
         </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Prueba</th>
+              <th>Tipo</th>
+              <th>Objeto</th>
+              <th>Estado</th>
+              <th>Fecha práctica</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Revisión cámaras de seguridad</strong></td>
+              <td><span class="status-pill status-cumplido">Documental</span></td>
+              <td>Identificar persona en lugar de los hechos</td>
+              <td><span class="status-pill status-cumplido">Practicada</span></td>
+              <td>18-May-2026</td>
+              <td>
+                <button class="oficio-link-btn" onclick="showToast('Ver video de cámaras...')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Ver
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Cotejo de huellas dactilares</strong></td>
+              <td><span class="status-pill status-curso">Pericial</span></td>
+              <td>Comparar con base de datos Policía Nacional</td>
+              <td><span class="status-pill status-curso">Pendiente</span></td>
+              <td>Pendiente</td>
+              <td>
+                <button class="oficio-link-btn" onclick="showToast('Solicitando cotejo...')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Solicitar
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Declaración testigo presencial</strong></td>
+              <td><span class="status-pill status-cumplido">Testimonial</span></td>
+              <td>Confirmar identidad del posible autor</td>
+              <td><span class="status-pill status-cumplido">Practicada</span></td>
+              <td>20-May-2026</td>
+              <td>
+                <button class="oficio-link-btn" onclick="showToast('Ver acta de declaración...')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Ver acta
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-        <!-- Oficio 1 -->
-        <div class="oficio-card cumplido">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge">1</div>
-              <div>
-                <div class="oficio-titulo">Oficio #001 — Prueba documental</div>
-                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 215 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-cumplido">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              Respondido
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Destinatario</div><div class="oficio-field-value">Secretaría de Hacienda Distrital</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Canal</div><div class="oficio-field-value">DOKUS</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Enviado</div><div class="oficio-field-value">15-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Respuesta</div><div class="oficio-field-value">20-May-2026</div></div>
-          </div>
-          <div class="oficio-desc">Contrato laboral original, actas de calificación 2023–2026 y registros de asistencia del servidor investigado.</div>
-          <div class="oficio-obs">Respuesta recibida automáticamente por DOKUS. Documentos incorporados al expediente.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="showToast('Abriendo vista previa del oficio...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              Ver oficio
-            </button>
-            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar oficio
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Descargando PDF del oficio #001...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descargar
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Ver documentos recibidos del Oficio #001')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Ver respuesta (3 docs)
-            </button>
-          </div>
+    <!-- ===== PESTAÑA: PERSONA EN AVERIGUACIÓN ===== -->
+    <div id="tab-persona" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Persona en averiguación</div>
         </div>
-
-        <!-- Oficio 3 -->
-        <div class="oficio-card cumplido">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge">3</div>
-              <div>
-                <div class="oficio-titulo">Oficio #003 — Prueba de inspección</div>
-                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 215 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-cumplido">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              Practicado
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Lugar</div><div class="oficio-field-value">Secretaría de Hacienda Distrital — Piso 4</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Fecha</div><div class="oficio-field-value">22-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Practicó</div><div class="oficio-field-value">Dr. Carlos Rivas (Instructor)</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Resultado</div><div class="oficio-field-value">Acta levantada</div></div>
-          </div>
-          <div class="oficio-desc">Inspección ocular y documental de archivos correspondientes al período 2024–2025 en la oficina del investigado.</div>
-          <div class="oficio-obs">Acta de inspección levantada y firmada el 22-May-2026. Incorporada al expediente.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="showToast('Ver acta de inspección...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              Ver acta
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Descargando acta PDF...')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descargar
-            </button>
+        <div style="background:#FEF9E7;border:1.5px solid #FDE68A;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:#92400E;display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <strong>Importante:</strong> En esta etapa la persona NO está vinculada formalmente como investigado. Se le denomina "persona en averiguación" o "posible autor". Solo cuando se abra investigación disciplinaria adquirirá la calidad de investigado.
           </div>
         </div>
-
-        <!-- BLOQUE: SIN RESPUESTA -->
-        <div class="section-sep">
-          <span class="section-sep-icon alerta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
-          <span class="section-sep-label">Oficios sin respuesta</span>
-          <div class="section-sep-line"></div>
-        </div>
-
-        <!-- Oficio 2 — Renuente -->
-        <div class="oficio-card renuente">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:var(--rojo);">2</div>
-              <div>
-                <div class="oficio-titulo">Oficio #002 — Testimonio (Testigo renuente)</div>
-                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 165 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-renuente">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              Renuente
-            </span>
+        <div class="sujeto-card">
+          <div class="sujeto-header">
+            <span class="sujeto-tipo" style="background:#FEF9E7;color:#92400E;">Posible autor</span>
           </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Testigo</div><div class="oficio-field-value">Juan Pérez García (CC 1.234.567)</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Notificado</div><div class="oficio-field-value">16-May-2026 · Personal</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Término</div><div class="oficio-field-value alerta-rojo">Vencido sin presentarse</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Requiere</div><div class="oficio-field-value alerta-rojo">Auto de multa (Art. 165)</div></div>
-          </div>
-          <div class="oficio-desc">Testimonio sobre irregularidades en proceso contractual de Secretaría de Hacienda en 2024.</div>
-          <div class="oficio-obs critica">El testigo fue notificado personalmente y se negó a rendir testimonio sin invocar justa causa. El Art. 165 CGD ordena imponer multa e iniciar conducción coercitiva.</div>
-          <div class="oficio-acciones">
-            <button class="btn btn-danger btn-sm" onclick="openModal('modal-auto-multa')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Generar auto — Art. 165 CGD
-            </button>
-            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar oficio
-            </button>
-          </div>
-        </div>
-
-        <!-- Oficio 4 -->
-        <div class="oficio-card en-curso">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:var(--naranja);">4</div>
-              <div>
-                <div class="oficio-titulo">Oficio #004 — Registros administrativos</div>
-                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 215 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-curso">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              En curso
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Destinatario</div><div class="oficio-field-value">División de Gestión Humana</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Canal</div><div class="oficio-field-value">DOKUS — Enviado</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Enviado</div><div class="oficio-field-value">20-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Vence</div><div class="oficio-field-value alerta-naranja">20-Jul-2026 (39 días)</div></div>
-          </div>
-          <div class="oficio-desc">Hojas de vida, sanciones previas y registros de asistencia del período 2023–2026.</div>
-          <div class="oficio-obs alerta">Pendiente de respuesta. Si no responde antes del vencimiento, se iniciará trámite de renuencia institucional.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="openModal('modal-cargar-respuesta')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-              Cargar respuesta
-            </button>
-            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar oficio
-            </button>
-            <button class="oficio-link-btn" onclick="showToast('Ver oficio enviado en DOKUS')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              Ver en DOKUS
-            </button>
-          </div>
-        </div>
-
-        <!-- Oficio 5 — CRÍTICO -->
-        <div class="oficio-card sin-respuesta">
-          <div class="oficio-head">
-            <div class="oficio-num-tipo">
-              <div class="oficio-num-badge" style="background:var(--rojo);">5</div>
-              <div>
-                <div class="oficio-titulo">Oficio #005 — Peritación (Medicina Legal)</div>
-                <div class="oficio-subtitulo">Decretado de oficio por el instructor · Art. 150 CGD</div>
-              </div>
-            </div>
-            <span class="status-pill status-sinresp">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Vence en 8 días
-            </span>
-          </div>
-          <div class="oficio-grid">
-            <div class="oficio-field"><div class="oficio-field-label">Destinatario</div><div class="oficio-field-value">IML — Seccional Bogotá</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Canal</div><div class="oficio-field-value">DOKUS</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Enviado</div><div class="oficio-field-value">15-May-2026</div></div>
-            <div class="oficio-field"><div class="oficio-field-label">Vence</div><div class="oficio-field-value alerta-rojo">10-Jul-2026 (8 días hábiles)</div></div>
-          </div>
-          <div class="oficio-desc">Peritación psicológica y evaluación de capacidad laboral del disciplinado para la época de los hechos.</div>
-          <div class="oficio-obs critica">IML solicitó prórroga de 15 días. Pendiente decisión del instructor. Sin respuesta aprobada, el término vence y la prueba queda sin practicar.</div>
-          <div class="oficio-acciones">
-            <button class="oficio-link-btn" onclick="openModal('modal-cargar-respuesta')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-              Cargar respuesta
-            </button>
-            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar oficio
-            </button>
+          <div class="sujeto-nombre">Jorge Alberto Méndez Torres</div>
+          <div class="sujeto-meta">
+            <div><div class="sujeto-field-label">Cédula</div><div class="sujeto-field-value">79.485.312</div></div>
+            <div><div class="sujeto-field-label">Cargo (época hechos)</div><div class="sujeto-field-value">Jefe Oficina Jurídica</div></div>
+            <div><div class="sujeto-field-label">Entidad</div><div class="sujeto-field-value">Secretaría de Hacienda Distrital</div></div>
+            <div><div class="sujeto-field-label">Fecha identificación</div><div class="sujeto-field-value" style="color:#065F46;font-weight:700;">20-May-2026 · Por testimonio</div></div>
+            <div><div class="sujeto-field-label">Grado vinculación</div><div class="sujeto-field-value">Posible autor · Sin vinculación formal</div></div>
+            <div><div class="sujeto-field-label">Estado</div><div class="sujeto-field-value" style="color:#92400E;font-weight:700;">En averiguación · Art. 208 CGD</div></div>
           </div>
         </div>
       </div>
@@ -766,11 +609,7 @@
         <div class="action-bar">
           <div class="action-bar-title">Documentos del expediente</div>
           <div class="action-bar-btns">
-            <button class="btn btn-ghost btn-sm" onclick="openModal('modal-cargar-doc')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-              Cargue masivo
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-cargar-doc')">
+            <button class="btn btn-primary btn-sm" onclick="showToast('Cargar documento...')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Cargar documento
             </button>
@@ -789,314 +628,73 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>Contrato_laboral_2022.pdf</strong></td>
-              <td><span class="status-pill status-cumplido">Documental</span></td>
-              <td>Oficio #001 · DOKUS</td>
-              <td>20-May-2026</td>
-              <td>1.2 MB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Abriendo documento...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Ver
-                </button>
-              </td>
+              <td><strong>Auto_apertura_indagacion.pdf</strong></td>
+              <td><span class="status-pill status-cumplido">Acto administrativo</span></td>
+              <td>Instructor</td>
+              <td>15-May-2026</td>
+              <td>450 KB</td>
+              <td><button class="oficio-link-btn" onclick="showToast('Abriendo...')">Ver</button></td>
             </tr>
             <tr>
-              <td><strong>Acta_calificacion_2024.pdf</strong></td>
+              <td><strong>Queja_ciudadana_original.pdf</strong></td>
               <td><span class="status-pill status-cumplido">Documental</span></td>
-              <td>Oficio #001 · DOKUS</td>
+              <td>Quejoso</td>
+              <td>10-May-2026</td>
+              <td>1.2 MB</td>
+              <td><button class="oficio-link-btn" onclick="showToast('Abriendo...')">Ver</button></td>
+            </tr>
+            <tr>
+              <td><strong>Acta_declaracion_testigo.pdf</strong></td>
+              <td><span class="status-pill" style="background:#EEF4FF;color:var(--azul);">Testimonial</span></td>
+              <td>Practicada en indagación</td>
               <td>20-May-2026</td>
               <td>890 KB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Abriendo documento...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Ver
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td><strong>Acta_inspeccion_22may2026.pdf</strong></td>
-              <td><span class="status-pill" style="background:#EEF4FF;color:var(--azul);">Inspección</span></td>
-              <td>Oficio #003 · Manual</td>
-              <td>22-May-2026</td>
-              <td>2.4 MB</td>
-              <td>
-                <button class="oficio-link-btn" onclick="showToast('Abriendo acta de inspección...')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Ver
-                </button>
-              </td>
+              <td><button class="oficio-link-btn" onclick="showToast('Abriendo...')">Ver</button></td>
             </tr>
           </tbody>
         </table>
-
-        <!-- Zona upload -->
-        <div style="margin-top:20px;">
-          <div class="upload-zone" onclick="openModal('modal-cargar-doc')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:var(--gris-medio);margin-bottom:8px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            <span class="uz-title">Arrastra archivos aquí o haz clic para seleccionar</span>
-            <span class="uz-sub">PDF, DOCX, JPG, PNG · Máx. 20 MB por archivo</span>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- ===== PESTAÑA: TESTIGOS ===== -->
-    <div id="tab-testigos" class="tab-pane">
+    <!-- ===== PESTAÑA: ACTUACIONES ===== -->
+    <div id="tab-actuaciones" class="tab-pane">
       <div class="tab-body">
         <div class="action-bar">
-          <div class="action-bar-title">Testigos decretados</div>
+          <div class="action-bar-title">Actuaciones procesales</div>
           <div class="action-bar-btns">
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-agregar-testigo')">
+            <button class="btn btn-primary btn-sm" onclick="showToast('Registrar actuación...')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Citar testigo
+              Registrar actuación
             </button>
           </div>
         </div>
         <table class="data-table">
           <thead>
             <tr>
-              <th>Testigo</th>
-              <th>Cédula</th>
-              <th>Oficio</th>
-              <th>Citado</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Juan Pérez García</strong></td>
-              <td>1.234.567</td>
-              <td>Oficio #002</td>
-              <td>16-May-2026</td>
-              <td><span class="status-pill status-renuente">Renuente</span></td>
-              <td>
-                <button class="oficio-link-btn danger" onclick="openModal('modal-auto-multa')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  Auto multa
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td><strong>María López Sánchez</strong></td>
-              <td>52.456.789</td>
-              <td>Nuevo oficio</td>
-              <td>Pendiente</td>
-              <td><span class="status-pill status-curso">Pendiente citación</span></td>
-              <td>
-                <button class="oficio-link-btn" onclick="openModal('modal-oficio')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  Librar citación
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: DESCARGOS ===== -->
-    <div id="tab-descargos" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Descargos del disciplinado</div>
-          <div class="action-bar-btns">
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-cargar-doc')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-              Registrar descargo
-            </button>
-          </div>
-        </div>
-        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Los descargos son presentados obligatoriamente después de la notificación del pliego de cargos. Durante la investigación, el disciplinado puede presentar versión libre (Art. 130 CGD).
-        </div>
-        <div style="background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:40px;text-align:center;color:var(--gris-medio);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:36px;height:36px;margin:0 auto 12px;opacity:.4;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-bottom:6px;">Sin descargos registrados</div>
-          <div style="font-size:12px;">El disciplinado aún no ha presentado descargos formales.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: SUJETOS PROCESALES ===== -->
-    <div id="tab-sujetos" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Sujetos procesales</div>
-          <div class="action-bar-btns">
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-agregar-sujeto')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Agregar sujeto
-            </button>
-          </div>
-        </div>
-
-        <!-- Investigado -->
-        <div class="sujeto-card">
-          <div class="sujeto-header">
-            <span class="sujeto-tipo investigado">Investigado</span>
-            <div style="display:flex;gap:6px;">
-              <button class="oficio-link-btn" onclick="showToast('Ver historial del investigado')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Historial
-              </button>
-            </div>
-          </div>
-          <div class="sujeto-nombre">Carlos Eduardo Rojas Bermúdez</div>
-          <div class="sujeto-meta">
-            <div><div class="sujeto-field-label">Cédula</div><div class="sujeto-field-value">79.485.312</div></div>
-            <div><div class="sujeto-field-label">Cargo (época hechos)</div><div class="sujeto-field-value">Jefe Oficina Jurídica</div></div>
-            <div><div class="sujeto-field-label">Entidad</div><div class="sujeto-field-value">Secretaría de Hacienda Distrital</div></div>
-            <div><div class="sujeto-field-label">Notificado</div><div class="sujeto-field-value">15-May-2026 · Personal</div></div>
-            <div><div class="sujeto-field-label">Correo notificación</div><div class="sujeto-field-value">carlos.rojas@hacienda.gov.co</div></div>
-            <div><div class="sujeto-field-label">Versión libre</div><div class="sujeto-field-value" style="color:#065F46;font-weight:700;">Presentada · 18-May-2026</div></div>
-          </div>
-        </div>
-
-        <!-- Defensor -->
-        <div class="sujeto-card">
-          <div class="sujeto-header">
-            <span class="sujeto-tipo defensor">Defensor</span>
-            <div style="display:flex;gap:6px;">
-              <button class="poder-btn poder-revocar" onclick="openModal('modal-revocar-poder')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                Revocar poder
-              </button>
-            </div>
-          </div>
-          <div class="sujeto-nombre">Dra. María González Rodríguez</div>
-          <div class="sujeto-meta">
-            <div><div class="sujeto-field-label">Cédula</div><div class="sujeto-field-value">1.055.897.432</div></div>
-            <div><div class="sujeto-field-label">Tipo</div><div class="sujeto-field-value">Defensora de confianza</div></div>
-            <div><div class="sujeto-field-label">Poder aceptado</div><div class="sujeto-field-value" style="color:#065F46;font-weight:700;">Sí · 16-May-2026</div></div>
-            <div><div class="sujeto-field-label">Correo</div><div class="sujeto-field-value">m.gonzalez@defensoria.com</div></div>
-          </div>
-          <div style="padding-top:10px;border-top:1px solid var(--gris-claro);display:flex;gap:8px;">
-            <button class="btn btn-primary btn-sm" onclick="showToast('Abrir poder de representación')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Ver poder
-            </button>
-          </div>
-        </div>
-
-        <!-- Añadir otro defensor -->
-        <button class="btn btn-ghost" style="width:100%;" onclick="openModal('modal-agregar-sujeto')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Agregar sujeto procesal
-        </button>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: AMPLIACIONES ===== -->
-    <div id="tab-ampliaciones" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Ampliaciones de queja</div>
-          <div class="action-bar-btns">
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-ampliacion')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Registrar ampliación
-            </button>
-          </div>
-        </div>
-        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          La ampliación de queja es opcional y la puede presentar el quejoso en audiencia programada (Art. 208 CGD). Se debe citar al investigado y a su defensor si lo tiene.
-        </div>
-        <div style="background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:40px;text-align:center;color:var(--gris-medio);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:36px;height:36px;margin:0 auto 12px;opacity:.4;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-bottom:6px;">Sin ampliaciones registradas</div>
-          <div style="font-size:12px;">Aún no se han presentado ampliaciones de queja.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: NOTIFICACIONES ===== -->
-    <div id="tab-notificaciones" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Notificaciones enviadas</div>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Acto notificado</th>
-              <th>Destinatario</th>
-              <th>Vía</th>
-              <th>Enviada</th>
-              <th>Entendida</th>
+              <th>Actuación</th>
+              <th>Tipo</th>
+              <th>Responsable</th>
+              <th>Fecha</th>
               <th>Estado</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Auto de Apertura de Investigación</strong></td>
-              <td>Carlos Eduardo Rojas Bermúdez</td>
-              <td>Personal · Art. 121 CGD</td>
+              <td><strong>Auto de Apertura de Indagación Previa</strong></td>
+              <td><span class="status-pill status-cumplido">Acto administrativo</span></td>
+              <td>Dr. Carlos Rivas (Instructor)</td>
               <td>15-May-2026</td>
-              <td>15-May-2026</td>
-              <td><span class="status-pill status-cumplido">Surtida</span></td>
+              <td><span class="status-pill status-cumplido">Notificado</span></td>
             </tr>
             <tr>
-              <td><strong>Oficio #001 — Prueba documental</strong></td>
-              <td>Secretaría de Hacienda</td>
-              <td>DOKUS · Art. 122 CGD</td>
-              <td>15-May-2026</td>
-              <td>15-May-2026</td>
-              <td><span class="status-pill status-cumplido">Surtida</span></td>
-            </tr>
-            <tr>
-              <td><strong>Citación testimonial — Oficio #002</strong></td>
-              <td>Juan Pérez García</td>
-              <td>Personal · Art. 121 CGD</td>
-              <td>16-May-2026</td>
-              <td>16-May-2026</td>
-              <td><span class="status-pill status-renuente">Renuente</span></td>
+              <td><strong>Práctica de declaración testimonial</strong></td>
+              <td><span class="status-pill status-cumplido">Prueba</span></td>
+              <td>Dr. Carlos Rivas (Instructor)</td>
+              <td>20-May-2026</td>
+              <td><span class="status-pill status-cumplido">Completada</span></td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- ===== PESTAÑA: AUDIENCIAS ===== -->
-    <div id="tab-audiencias" class="tab-pane">
-      <div class="tab-body">
-        <div class="action-bar">
-          <div class="action-bar-title">Audiencias programadas</div>
-          <div class="action-bar-btns">
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-audiencia')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Programar audiencia
-            </button>
-          </div>
-        </div>
-        <div style="background:#EEF4FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:center;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Las audiencias se programan e integran con Microsoft Teams. Se generan invitaciones automáticas a los sujetos procesales.
-        </div>
-
-        <div class="audiencia-card">
-          <div class="audiencia-fecha-box">
-            <div class="audiencia-fecha-dia">28</div>
-            <div class="audiencia-fecha-mes">May</div>
-          </div>
-          <div class="audiencia-info">
-            <div class="audiencia-titulo">Testimonio — Juan Pérez García</div>
-            <div class="audiencia-meta">10:00 am · Sala de audiencias 204 · Instructor: Dr. Carlos Rivas</div>
-          </div>
-          <span class="audiencia-status audiencia-programada">Programada</span>
-          <a href="#" class="teams-link" onclick="showToast('Abriendo reunión en Teams...');return false;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.07A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.891L15 14"/><rect x="1" y="6" width="14" height="12" rx="2" ry="2"/></svg>
-            Teams
-          </a>
-        </div>
-
-        <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="openModal('modal-audiencia')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Programar nueva audiencia
-        </button>
       </div>
     </div>
 
@@ -1110,55 +708,30 @@
           <div class="timeline-item">
             <div class="tl-dot success"></div>
             <div class="tl-content">
-              <div class="tl-titulo">Auto de Apertura de Investigación firmado electrónicamente</div>
+              <div class="tl-titulo">Auto de Apertura de Indagación Previa firmado electrónicamente</div>
               <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15-May-2026 09:30 · Dr. Carlos Rivas (Instructor)</div>
-              <div class="tl-desc">Auto #VEED-0088-2026 firmado. Término de 6 meses activado (Art. 213 CGD). Notificación personal al disciplinado.</div>
+              <div class="tl-desc">Auto #VEED-0087-2026 firmado. Término de 6 meses activado (Art. 208 CGD). Objeto: Identificar al posible autor de la conducta descrita en la queja ciudadana.</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="tl-dot normal"></div>
             <div class="tl-content">
-              <div class="tl-titulo">Oficios #001 al #005 librados por DOKUS</div>
-              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15-May-2026 10:15 · Sistema (post-firma automático)</div>
-              <div class="tl-desc">5 oficios generados y enviados automáticamente a través de DOKUS al momento de la firma del auto de apertura.</div>
+              <div class="tl-titulo">Decreto de pruebas de identificación</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15-May-2026 10:15 · Dr. Carlos Rivas (Instructor)</div>
+              <div class="tl-desc">Se decretaron pruebas urgentes: revisión de cámaras, cotejo de huellas y citación de testigos para identificar al posible autor.</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="tl-dot success"></div>
             <div class="tl-content">
-              <div class="tl-titulo">Respuesta recibida — Oficio #001 (DOKUS)</div>
-              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>20-May-2026 14:22 · Recibido por DOKUS automáticamente</div>
-              <div class="tl-desc">Secretaría de Hacienda remitió 3 documentos: contrato laboral, actas de calificación y registros de asistencia. Incorporados al expediente.</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="tl-dot normal"></div>
-            <div class="tl-content">
-              <div class="tl-titulo">Versión libre presentada por el investigado</div>
-              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>18-May-2026 16:50 · Recibido por portal sujetos procesales</div>
-              <div class="tl-desc">Carlos Eduardo Rojas Bermúdez presentó su versión libre a través del portal del disciplinado. Documento adjuntado al expediente.</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="tl-dot success"></div>
-            <div class="tl-content">
-              <div class="tl-titulo">Acta de inspección levantada — Oficio #003</div>
-              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>22-May-2026 13:20 · Dr. Carlos Rivas (Instructor)</div>
-              <div class="tl-desc">Inspección documental practicada en instalaciones de la Secretaría de Hacienda. Acta firmada e incorporada.</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="tl-dot critico"></div>
-            <div class="tl-content">
-              <div class="tl-titulo">Testigo Juan Pérez García declarado renuente — Art. 165 CGD</div>
-              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>25-May-2026 11:45 · Registrado por Secretaría</div>
-              <div class="tl-desc">El testigo no se presentó a rendir testimonio sin invocar justa causa. Se requiere proferir auto que imponga multa y ordene conducción (Art. 165 CGD).</div>
+              <div class="tl-titulo">Práctica de declaración testimonial</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>20-May-2026 14:00 · Dr. Carlos Rivas (Instructor)</div>
+              <div class="tl-desc">Se recibió declaración del testigo presencial quien identificó a Jorge Alberto Méndez Torres como el posible autor de los hechos.</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </main>
 
   <!-- ===== PANEL DERECHO ===== -->
@@ -1438,82 +1011,69 @@
 </div>
 
 <!-- MODAL: CIERRE DE INVESTIGACIÓN -->
-<div class="modal-overlay" id="modal-evaluar">
+<div class="modal-overlay" id="modal-decision-indagacion">
   <div class="modal" style="width:580px;">
     <div class="modal-header">
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Evaluar investigación — Arts. 90, 222-223 CGD</h3>
-      <button class="modal-close-btn" onclick="closeModal('modal-evaluar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Decisión de indagación previa — Art. 208 CGD</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-decision-indagacion')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="modal-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Seleccione la decisión que corresponda según el resultado del análisis probatorio. Cada decisión genera un acto procesal distinto con efectos jurídicos diferentes.</div>
+      <div class="modal-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Seleccione la decisión que corresponda según el resultado de las pruebas practicadas en la indagación previa.</div>
 
-      <!-- ESTADO DE OFICIOS -->
+      <!-- ESTADO DE PRUEBAS -->
       <div style="background:#F8FAFC;border-radius:8px;padding:14px;margin-bottom:20px;">
-        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);text-transform:uppercase;margin-bottom:10px;">Estado de oficios al momento de evaluar</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#065F46;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#10B981;"><polyline points="20 6 9 17 4 12"/></svg>Oficio #001 — Respondido</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#991B1B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--rojo);"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Oficio #002 — Testigo renuente sin auto de multa</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#065F46;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#10B981;"><polyline points="20 6 9 17 4 12"/></svg>Oficio #003 — Practicado</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#92400E;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--naranja);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>Oficio #004 — Pendiente de respuesta</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#991B1B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--rojo);"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Oficio #005 — Sin respuesta · Vence en 8 días</div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);text-transform:uppercase;margin-bottom:10px;">Estado de pruebas practicadas</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#065F46;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#10B981;"><polyline points="20 6 9 17 4 12"/></svg>Revisión cámaras — Practicada</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#92400E;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--naranja);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>Cotejo huellas — Pendiente</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#065F46;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#10B981;"><polyline points="20 6 9 17 4 12"/></svg>Declaración testigo — Practicada</div>
       </div>
 
-      <!-- DECISIONES -->
+      <!-- DECISIONES INDAGACIÓN -->
       <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);text-transform:uppercase;margin-bottom:12px;">Seleccione la decisión</div>
       <div style="display:flex;flex-direction:column;gap:10px;">
 
-        <!-- Opción A: Cierre + Pliego -->
+        <!-- Opción A: Abrir investigación -->
         <label style="display:flex;gap:14px;padding:14px;border-radius:10px;border:2px solid var(--gris-claro);cursor:pointer;transition:all .15s;background:#FAFBFC;" onmouseover="this.style.borderColor='var(--azul-claro)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--gris-claro)'">
-          <input type="radio" name="decision-eval" value="pliego" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecision('pliego')">
+          <input type="radio" name="decision-indagacion" value="abrir" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecisionIndagacion('abrir')">
           <div>
-            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);margin-bottom:3px;">Cerrar y formular pliego de cargos</div>
-            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere el auto de cierre (Art. 220 CGD) y se formula el pliego de cargos (Arts. 222-223 CGD). El expediente pasa a juzgamiento. Requiere traslado de 10 días para alegatos precalificatorios.</div>
-            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#EEF4FF;color:var(--azul);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Arts. 220, 222-223 CGD</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);margin-bottom:3px;">Abrir investigación disciplinaria</div>
+            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere auto de apertura de investigación disciplinaria (Art. 213 CGD). La persona en averiguación pasa a ser investigado formalmente. Inicia término de 6 meses prorrogables.</div>
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#EEF4FF;color:var(--azul);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Art. 213 CGD</div>
           </div>
         </label>
 
-        <!-- Opción B: Solo Archivo -->
+        <!-- Opción B: Archivar -->
         <label style="display:flex;gap:14px;padding:14px;border-radius:10px;border:2px solid var(--gris-claro);cursor:pointer;transition:all .15s;background:#FAFBFC;" onmouseover="this.style.borderColor='var(--azul-claro)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--gris-claro)'">
-          <input type="radio" name="decision-eval" value="archivo" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecision('archivo')">
+          <input type="radio" name="decision-indagacion" value="archivo" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecisionIndagacion('archivo')">
           <div>
-            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;">Archivar definitivamente</div>
-            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere auto de terminación y archivo definitivo sin necesidad de cerrar previamente. Procede cuando el hecho no existió, no es constitutivo de falta, el disciplinado no lo cometió o hay causal de exclusión de responsabilidad.</div>
-            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#F0FDF4;color:#065F46;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Art. 90 CGD</div>
-          </div>
-        </label>
-
-        <!-- Opción C: Solo Cierre (sin pliego aún) -->
-        <label style="display:flex;gap:14px;padding:14px;border-radius:10px;border:2px solid var(--gris-claro);cursor:pointer;transition:all .15s;background:#FAFBFC;" onmouseover="this.style.borderColor='var(--azul-claro)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--gris-claro)'">
-          <input type="radio" name="decision-eval" value="cierre" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecision('cierre')">
-          <div>
-            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;">Solo cerrar investigación (alegatos precalificatorios)</div>
-            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere únicamente el auto de cierre para que los sujetos procesales presenten alegatos precalificatorios en 10 días. El pliego de cargos o el archivo se proyectarán después de los alegatos.</div>
-            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#FEF9E7;color:#7a5200;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Art. 220 CGD</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;">Archivar indagación previa</div>
+            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere auto de terminación de indagación previa. Procede cuando no se logró identificar al autor, el hecho no existió, o no es constitutivo de falta disciplinaria.</div>
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#F0FDF4;color:#065F46;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Art. 208 CGD</div>
           </div>
         </label>
       </div>
 
       <!-- CAMPO CAUSAL (solo para archivo) -->
-      <div id="campo-causal-archivo" style="display:none;margin-top:16px;">
+      <div id="campo-causal-archivo-indagacion" style="display:none;margin-top:16px;">
         <div class="form-group">
-          <label class="form-label">Causal de archivo <span style="color:var(--rojo);">*</span></label>
+          <label class="form-label">Causal de terminación <span style="color:var(--rojo);">*</span></label>
           <select class="form-select">
             <option value="">Seleccionar causal...</option>
+            <option>No se logró identificar al posible autor</option>
             <option>El hecho no existió</option>
             <option>La conducta no está prevista como falta</option>
-            <option>El disciplinado no la cometió</option>
             <option>Existe causal de exclusión de responsabilidad</option>
-            <option>La actuación no podía iniciarse o proseguirse</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Fundamento fáctico y jurídico <span style="color:var(--rojo);">*</span></label>
-          <textarea class="form-textarea" placeholder="Explique los fundamentos que llevan al archivo definitivo (Art. 90 CGD)..."></textarea>
+          <textarea class="form-textarea" placeholder="Explique los fundamentos que llevan a terminar la indagación previa..."></textarea>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-evaluar')">Cancelar</button>
-      <button class="btn btn-accent" id="btn-confirmar-eval" disabled onclick="confirmarEvaluacion()">
+      <button class="btn btn-secondary" onclick="closeModal('modal-decision-indagacion')">Cancelar</button>
+      <button class="btn btn-accent" id="btn-confirmar-decision-indagacion" disabled onclick="confirmarDecisionIndagacion()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         Proyectar acto
       </button>
@@ -1959,6 +1519,43 @@
     document.getElementById('campo-causal-archivo').style.display = 'none';
     document.getElementById('btn-confirmar-eval').disabled = true;
     document.getElementById('btn-confirmar-eval').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Proyectar acto';
+  }
+
+  // INDAGACIÓN — lógica de decisiones
+  function openDecisionModal() {
+    openModal('modal-decision-indagacion');
+  }
+  
+  function toggleDecisionIndagacion(tipo) {
+    var causal = document.getElementById('campo-causal-archivo-indagacion');
+    causal.style.display = tipo === 'archivo' ? 'block' : 'none';
+    document.getElementById('btn-confirmar-decision-indagacion').disabled = false;
+    var msgs = {
+      abrir: 'Proyectar auto de apertura de investigación disciplinaria',
+      archivo: 'Proyectar auto de terminación de indagación previa'
+    };
+    var btn = document.getElementById('btn-confirmar-decision-indagacion');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> ' + msgs[tipo];
+    document.querySelectorAll('[name="decision-indagacion"]').forEach(function(r) {
+      var lbl = r.closest('label');
+      lbl.style.borderColor = r.checked ? 'var(--azul)' : 'var(--gris-claro)';
+      lbl.style.background = r.checked ? '#EBF4FA' : '#FAFBFC';
+    });
+  }
+  
+  function confirmarDecisionIndagacion() {
+    var sel = document.querySelector('[name="decision-indagacion"]:checked');
+    if (!sel) return;
+    var toasts = {
+      abrir: 'Auto de apertura de investigación disciplinaria proyectado. La persona en averiguación pasa a ser investigado formal.',
+      archivo: 'Auto de terminación de indagación previa proyectado. Enviado a revisión.'
+    };
+    closeModal('modal-decision-indagacion');
+    showToast(toasts[sel.value]);
+    document.querySelectorAll('[name="decision-indagacion"]').forEach(function(r) { r.checked = false; });
+    document.getElementById('campo-causal-archivo-indagacion').style.display = 'none';
+    document.getElementById('btn-confirmar-decision-indagacion').disabled = true;
+    document.getElementById('btn-confirmar-decision-indagacion').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Proyectar acto';
   }
 
   // procuradurIA
