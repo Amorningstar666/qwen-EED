@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trámite y Seguimiento - Indagación Previa | EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --azul: #063853;
+      --azul-medio: #074C84;
+      --azul-claro: #4DBFE2;
+      --amarillo: #FFE601;
+      --amarillo-d: #FFC300;
+      --rojo: #E3201B;
+      --verde: #33FFCC;
+      --naranja: #FF9500;
+      --negro: #131313;
+      --gris-claro: #EDEDED;
+      --gris-medio: #949494;
+      --blanco: #FFFFFF;
+      --fondo: #F0F4F8;
+      --sidebar-w: 248px;
+      --navbar-h: 60px;
+      --tr: 0.22s ease;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: var(--fondo); color: var(--negro); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-h); background: var(--azul); display: flex; align-items: center; padding: 0 20px 0 0; z-index: 100; gap: 12px; box-shadow: 0 2px 10px rgba(6,56,83,0.25); }
+    .navbar-brand { width: var(--sidebar-w); min-width: var(--sidebar-w); height: 100%; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.1); }
+    .logo-mark { width: 32px; height: 32px; min-width: 32px; background: var(--amarillo); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--azul); font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 16px; }
+    .brand-text { overflow: hidden; }
+    .brand-text .sigla { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 13px; color: var(--amarillo); letter-spacing: 0.08em; line-height: 1; display: block; }
+    .brand-text .nombre { font-size: 10px; color: rgba(255,255,255,0.6); line-height: 1.3; display: block; }
+    .btn-toggle { width: 36px; height: 36px; border: none; background: rgba(255,255,255,0.08); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; transition: background var(--tr); flex-shrink: 0; }
+    .btn-toggle:hover { background: rgba(255,255,255,0.16); }
+    .navbar-search { flex: 1; max-width: 420px; position: relative; }
+    .navbar-search input { width: 100%; height: 36px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0 12px 0 36px; font-family: 'Poppins', sans-serif; font-size: 13px; color: white; outline: none; }
+    .navbar-search input::placeholder { color: rgba(255,255,255,0.4); }
+    .navbar-search input:focus { background: rgba(255,255,255,0.15); border-color: var(--amarillo); }
+    .navbar-search .s-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); }
+    .navbar-spacer { flex: 1; }
+    .navbar-actions { display: flex; align-items: center; gap: 6px; }
+    .nav-icon-btn { width: 36px; height: 36px; border: none; background: transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.75); transition: all var(--tr); position: relative; }
+    .nav-icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+    .notif-badge { position: absolute; top: 4px; right: 4px; width: 16px; height: 16px; background: var(--rojo); border-radius: 50%; font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; border: 2px solid var(--azul); }
+    .nav-sep { width: 1px; height: 28px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+    .nav-user { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 6px; border-radius: 10px; cursor: pointer; transition: background var(--tr); }
+    .nav-user:hover { background: rgba(255,255,255,0.08); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--amarillo); display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; color: var(--azul); flex-shrink: 0; }
+    .user-info { display: flex; flex-direction: column; }
+    .user-name { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px; color: white; line-height: 1.2; }
+    .user-role-txt { font-size: 10px; color: rgba(255,255,255,0.55); }
+
+    /* LAYOUT */
+    .app-layout { display: flex; padding-top: var(--navbar-h); min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { position: fixed; top: var(--navbar-h); left: 0; bottom: 0; width: var(--sidebar-w); background: white; border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; overflow: hidden; transition: width var(--tr); z-index: 90; }
+    .sidebar.collapsed { width: 64px; }
+    .sidebar-rol { padding: 14px; border-bottom: 1px solid var(--gris-claro); display: flex; align-items: center; gap: 10px; min-height: 62px; overflow: hidden; }
+    .rol-icon { width: 36px; height: 36px; min-width: 36px; border-radius: 10px; background: rgba(6,56,83,0.06); display: flex; align-items: center; justify-content: center; color: var(--azul); flex-shrink: 0; }
+    .rol-text { overflow: hidden; }
+    .rol-label { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.08em; }
+    .rol-nombre { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--azul); }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 8px; }
+    .nav-group { margin-bottom: 4px; }
+    .nav-group-label { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris-medio); padding: 10px 8px 4px; white-space: nowrap; }
+    .sidebar.collapsed .nav-group-label { opacity: 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; transition: all var(--tr); color: #475569; text-decoration: none; white-space: nowrap; margin-bottom: 1px; position: relative; }
+    .nav-item:hover { background: rgba(6,56,83,0.05); color: var(--azul); }
+    .nav-item.active { background: rgba(6,56,83,0.08); color: var(--azul); }
+    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px; background: var(--azul); border-radius: 0 3px 3px 0; }
+    .nav-icon { width: 20px; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-label { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; overflow: hidden; }
+    .nav-chip { margin-left: auto; min-width: 20px; height: 18px; padding: 0 5px; background: var(--rojo); border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-chip.warn { background: var(--amarillo-d); color: var(--negro); }
+    .sidebar.collapsed .nav-label, .sidebar.collapsed .nav-chip { opacity: 0; pointer-events: none; }
+    .sidebar.collapsed .nav-item { justify-content: center; padding: 9px; }
+
+    /* MAIN CONTENT */
+    .main-content { margin-left: var(--sidebar-w); flex: 1; transition: margin-left var(--tr); display: flex; flex-direction: column; min-height: calc(100vh - var(--navbar-h)); }
+    .main-content.collapsed { margin-left: 64px; }
+    .page-header { background: white; border-bottom: 1px solid #E2E8F0; padding: 16px 28px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gris-medio); margin-bottom: 6px; }
+    .breadcrumb a { color: var(--azul-medio); text-decoration: none; }
+    .breadcrumb .sep { color: #CBD5E1; }
+    .breadcrumb .cur { color: var(--negro); font-weight: 500; }
+    .page-title-row { display: flex; align-items: center; justify-content: space-between; }
+    .page-title { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; color: var(--azul); }
+    .page-sub { font-size: 13px; color: var(--gris-medio); margin-top: 2px; }
+    .header-actions { display: flex; gap: 8px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; }
+    .btn svg { width: 14px; height: 14px; }
+    .btn-primary { background: var(--amarillo); color: var(--azul); }
+    .btn-primary:hover { background: #e6cf00; }
+    .btn-secondary { background: white; color: var(--azul); border: 1px solid var(--gris-claro); }
+    .btn-secondary:hover { background: var(--gris-claro); }
+    .btn-outline { background: transparent; color: var(--azul); border: 1px solid var(--azul); }
+    .btn-outline:hover { background: rgba(6,56,83,0.05); }
+
+    /* PAGE BODY */
+    .page-body { padding: 24px 28px; flex: 1; display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+
+    /* EXPEDIENTE HEADER CARD */
+    .expediente-card { background: white; border-radius: 14px; border: 1px solid #E2E8F0; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(6,56,83,0.04); }
+    .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .exp-radicado { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.06em; }
+    .exp-numero { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 900; color: var(--azul); letter-spacing: -0.02em; }
+    .exp-stage-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stage-indagacion { background: rgba(77,191,226,0.15); color: var(--azul-claro); border: 1px solid rgba(77,191,226,0.3); }
+    .exp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .exp-field { display: flex; flex-direction: column; gap: 4px; }
+    .exp-label { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.06em; }
+    .exp-value { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--negro); }
+    .exp-value strong { font-weight: 600; color: var(--azul); }
+
+    /* TERM SEMAPHORE WIDGET */
+    .term-widget { background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%); border-radius: 12px; padding: 16px; color: white; margin-bottom: 20px; }
+    .term-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .term-title { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.9; }
+    .term-days { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; color: var(--amarillo); line-height: 1; }
+    .term-progress { height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+    .term-bar { height: 100%; border-radius: 3px; transition: width 0.3s ease, background-color 0.3s ease; }
+    .term-bar.green { background: var(--verde); }
+    .term-bar.yellow { background: var(--amarillo); }
+    .term-bar.orange { background: var(--naranja); }
+    .term-bar.red { background: var(--rojo); }
+    .term-dates { display: flex; justify-content: space-between; font-size: 11px; opacity: 0.8; }
+    .term-alert { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(255,255,255,0.1); border-radius: 8px; margin-top: 10px; font-size: 11px; }
+    .term-alert svg { width: 16px; height: 16px; color: var(--amarillo); flex-shrink: 0; }
+
+    /* TABS */
+    .tabs-container { background: white; border-radius: 14px; border: 1px solid #E2E8F0; overflow: hidden; box-shadow: 0 2px 8px rgba(6,56,83,0.04); }
+    .tabs-header { display: flex; border-bottom: 1px solid var(--gris-claro); background: #FAFAFA; }
+    .tab-btn { display: flex; align-items: center; gap: 8px; padding: 14px 20px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; color: var(--gris-medio); background: transparent; border: none; cursor: pointer; transition: all 0.15s; border-bottom: 3px solid transparent; }
+    .tab-btn svg { width: 16px; height: 16px; }
+    .tab-btn:hover { color: var(--azul); background: rgba(6,56,83,0.03); }
+    .tab-btn.active { color: var(--azul); border-bottom-color: var(--amarillo); background: white; }
+    .tab-btn .tab-count { margin-left: auto; padding: 2px 8px; background: var(--gris-claro); border-radius: 999px; font-size: 10px; font-weight: 700; }
+    .tab-btn.active .tab-count { background: var(--amarillo); color: var(--azul); }
+    .tab-content { display: none; padding: 20px; }
+    .tab-content.active { display: block; }
+
+    /* DOCUMENTS TREE */
+    .doc-tree { display: flex; flex-direction: column; gap: 8px; }
+    .doc-folder { border: 1px solid var(--gris-claro); border-radius: 10px; overflow: hidden; }
+    .doc-folder-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #FAFAFA; cursor: pointer; transition: background 0.15s; }
+    .doc-folder-header:hover { background: var(--gris-claro); }
+    .doc-folder-header svg { width: 18px; height: 18px; color: var(--amarillo-d); }
+    .doc-folder-title { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; color: var(--azul); flex: 1; }
+    .doc-folder-count { font-size: 11px; color: var(--gris-medio); }
+    .doc-folder-content { display: none; padding: 8px; background: white; }
+    .doc-folder-content.open { display: block; }
+    .doc-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+    .doc-item:hover { background: rgba(6,56,83,0.04); }
+    .doc-item svg { width: 16px; height: 16px; color: var(--gris-medio); }
+    .doc-item-name { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--negro); flex: 1; }
+    .doc-item-meta { font-size: 11px; color: var(--gris-medio); }
+    .doc-item-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+    .doc-item:hover .doc-item-actions { opacity: 1; }
+    .doc-action-btn { width: 28px; height: 28px; border: none; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gris-medio); transition: all 0.15s; }
+    .doc-action-btn:hover { background: var(--azul); color: white; }
+
+    /* PRUEBAS CHECKLIST */
+    .pruebas-checklist { display: flex; flex-direction: column; gap: 12px; }
+    .prueba-item { border: 1px solid var(--gris-claro); border-radius: 10px; overflow: hidden; transition: all 0.15s; }
+    .prueba-item:hover { border-color: var(--azul-claro); box-shadow: 0 2px 8px rgba(6,56,83,0.06); }
+    .prueba-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #FAFAFA; }
+    .prueba-checkbox { width: 20px; height: 20px; border: 2px solid var(--gris-medio); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+    .prueba-checkbox.checked { background: var(--verde); border-color: var(--verde); }
+    .prueba-checkbox.checked svg { width: 14px; height: 14px; color: white; }
+    .prueba-info { flex: 1; }
+    .prueba-titulo { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; color: var(--azul); margin-bottom: 2px; }
+    .prueba-meta { font-size: 11px; color: var(--gris-medio); display: flex; gap: 12px; }
+    .prueba-status { padding: 3px 8px; border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+    .status-pendiente { background: rgba(148,148,148,0.15); color: var(--gris-medio); }
+    .status-decretada { background: rgba(7,76,132,0.15); color: var(--azul-medio); }
+    .status-practicada { background: rgba(51,255,204,0.2); color: #0d9488; }
+    .status-vencida { background: rgba(227,32,27,0.15); color: var(--rojo); }
+    .prueba-actions { display: flex; gap: 6px; }
+    .prueba-detail { display: none; padding: 16px; border-top: 1px solid var(--gris-claro); background: white; }
+    .prueba-detail.open { display: block; }
+    .prueba-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+    .prueba-detail-field { display: flex; flex-direction: column; gap: 4px; }
+    .prueba-detail-label { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--gris-medio); text-transform: uppercase; }
+    .prueba-detail-value { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--negro); }
+    .prueba-timeline { display: flex; flex-direction: column; gap: 8px; }
+    .timeline-item { display: flex; gap: 10px; padding: 8px 0; border-left: 2px solid var(--gris-claro); padding-left: 16px; position: relative; }
+    .timeline-item::before { content: ''; position: absolute; left: -6px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--gris-medio); }
+    .timeline-item.completed::before { background: var(--verde); }
+    .timeline-item.current::before { background: var(--amarillo-d); }
+    .timeline-date { font-size: 10px; color: var(--gris-medio); min-width: 80px; }
+    .timeline-desc { font-size: 12px; color: var(--negro); }
+
+    /* OFICIOS TABLE */
+    .oficios-table { width: 100%; border-collapse: collapse; }
+    .oficios-table th { text-align: left; padding: 12px 16px; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 2px solid var(--gris-claro); }
+    .oficios-table td { padding: 14px 16px; font-size: 12px; color: var(--negro); border-bottom: 1px solid var(--gris-claro); }
+    .oficios-table tr:hover { background: rgba(6,56,83,0.02); }
+    .oficio-estado { padding: 4px 10px; border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-block; }
+    .estado-por-librar { background: rgba(255,149,0,0.15); color: var(--naranja); }
+    .estado-librado { background: rgba(77,191,226,0.15); color: var(--azul-claro); }
+    .estado-contestado { background: rgba(51,255,204,0.2); color: #0d9488; }
+    .estado-vencido { background: rgba(227,32,27,0.15); color: var(--rojo); }
+    .btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
+
+    /* CALENDAR MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-radius: 14px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--gris-claro); }
+    .modal-title { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: var(--azul); }
+    .modal-close { width: 32px; height: 32px; border: none; background: transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gris-medio); transition: all 0.15s; }
+    .modal-close:hover { background: var(--gris-claro); color: var(--negro); }
+    .modal-body { padding: 24px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--gris-claro); background: #FAFAFA; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--gris-claro); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--negro); outline: none; transition: border-color 0.15s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--azul); }
+    .form-textarea { min-height: 100px; resize: vertical; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; }
+    .calendar-day-header { text-align: center; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--gris-medio); padding: 8px 0; text-transform: uppercase; }
+    .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 12px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+    .calendar-day:hover { background: rgba(6,56,83,0.05); }
+    .calendar-day.selected { background: var(--amarillo); color: var(--azul); font-weight: 600; }
+    .calendar-day.disabled { color: var(--gris-medio); opacity: 0.4; cursor: not-allowed; }
+    .calendar-day.today { border: 2px solid var(--azul); }
+
+    /* RIGHT PANEL */
+    .right-panel { display: flex; flex-direction: column; gap: 16px; }
+    .panel-card { background: white; border-radius: 14px; border: 1px solid #E2E8F0; padding: 16px; box-shadow: 0 2px 8px rgba(6,56,83,0.04); }
+    .panel-title { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--azul); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .panel-title svg { width: 18px; height: 18px; color: var(--amarillo-d); }
+    .quick-action { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.15s; margin-bottom: 8px; border: 1px solid transparent; }
+    .quick-action:hover { background: rgba(6,56,83,0.04); border-color: var(--gris-claro); }
+    .quick-action svg { width: 20px; height: 20px; color: var(--azul); flex-shrink: 0; }
+    .quick-action-text { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--negro); }
+    .checklist-summary { display: flex; flex-direction: column; gap: 8px; }
+    .checklist-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--gris-claro); }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .checklist-dot.pending { background: var(--gris-medio); }
+    .checklist-dot.done { background: var(--verde); }
+    .checklist-label { font-size: 11px; color: var(--negro); flex: 1; }
+    .decision-box { background: linear-gradient(135deg, rgba(6,56,83,0.03) 0%, rgba(6,56,83,0.06) 100%); border-radius: 10px; padding: 14px; border: 1px solid var(--gris-claro); }
+    .decision-title { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--azul); margin-bottom: 8px; text-transform: uppercase; }
+    .decision-options { display: flex; flex-direction: column; gap: 8px; }
+    .decision-btn { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--gris-claro); background: white; cursor: pointer; transition: all 0.15s; text-align: left; }
+    .decision-btn:hover { border-color: var(--azul); background: rgba(6,56,83,0.03); }
+    .decision-btn svg { width: 18px; height: 18px; color: var(--gris-medio); }
+    .decision-btn-label { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: var(--azul); }
+    .decision-btn-desc { font-size: 10px; color: var(--gris-medio); margin-top: 2px; }
+    .decision-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+    .decision-btn.disabled:hover { border-color: var(--gris-claro); background: white; }
+
+    /* PROCURADURIA WIDGET */
+    .procuraduria-widget { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--amarillo); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 20px rgba(255,230,1,0.4); transition: all 0.2s; z-index: 500; }
+    .procuraduria-widget:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(255,230,1,0.5); }
+    .procuraduria-widget svg { width: 28px; height: 28px; color: var(--azul); }
+    .procuraduria-tooltip { position: absolute; right: 64px; top: 50%; transform: translateY(-50%); background: white; padding: 8px 12px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: var(--azul); white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.1); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .procuraduria-widget:hover .procuraduria-tooltip { opacity: 1; }
+
+    /* TOAST NOTIFICATION */
+    .toast-container { position: fixed; bottom: 100px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 600; }
+    .toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-left: 4px solid var(--azul); animation: slideIn 0.3s ease; min-width: 280px; }
+    .toast.success { border-left-color: var(--verde); }
+    .toast.warning { border-left-color: var(--amarillo-d); }
+    .toast.error { border-left-color: var(--rojo); }
+    .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .toast.success svg { color: var(--verde); }
+    .toast.warning svg { color: var(--amarillo-d); }
+    .toast.error svg { color: var(--rojo); }
+    .toast-message { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--negro); flex: 1; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* RESERVATION BADGE */
+    .reservation-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(227,32,27,0.1); border: 1px solid rgba(227,32,27,0.2); border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; color: var(--rojo); text-transform: uppercase; letter-spacing: 0.05em; }
+    .reservation-badge svg { width: 14px; height: 14px; }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="logo-mark">PGN</div>
+      <div class="brand-text">
+        <span class="sigla">EED</span>
+        <span class="nombre">Expediente Electrónico Disciplinario</span>
+      </div>
+    </div>
+    <button class="btn-toggle" onclick="toggleSidebar()">
+      <i data-lucide="menu"></i>
+    </button>
+    <div class="navbar-search">
+      <i data-lucide="search" class="s-icon"></i>
+      <input type="text" placeholder="Buscar expediente, sujeto, documento...">
+    </div>
+    <div class="navbar-spacer"></div>
+    <div class="navbar-actions">
+      <button class="nav-icon-btn" title="Notificaciones">
+        <i data-lucide="bell"></i>
+        <span class="notif-badge">3</span>
+      </button>
+      <div class="nav-sep"></div>
+      <div class="nav-user">
+        <div class="avatar">DR</div>
+        <div class="user-info">
+          <span class="user-name">Dr. Rodríguez</span>
+          <span class="user-role-txt">Instructor Disciplinario</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- APP LAYOUT -->
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-rol">
+        <div class="rol-icon"><i data-lucide="shield-check"></i></div>
+        <div class="rol-text">
+          <div class="rol-label">Rol Activo</div>
+          <div class="rol-nombre">Instructor</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group">
+          <div class="nav-group-label">Expedientes</div>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="folder"></i></div>
+            <span class="nav-label">Bandeja de Entrada</span>
+            <span class="nav-chip warn">5</span>
+          </a>
+          <a class="nav-item active" href="#">
+            <div class="nav-icon"><i data-lucide="file-text"></i></div>
+            <span class="nav-label">Mi Expediente</span>
+          </a>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="clock"></i></div>
+            <span class="nav-label">Términos</span>
+            <span class="nav-chip">2</span>
+          </a>
+        </div>
+        <div class="nav-sep-line"></div>
+        <div class="nav-group">
+          <div class="nav-group-label">Gestión</div>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="users"></i></div>
+            <span class="nav-label">Sujetos Procesales</span>
+          </a>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="scale"></i></div>
+            <span class="nav-label">Pruebas</span>
+          </a>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="mail"></i></div>
+            <span class="nav-label">Oficios</span>
+            <span class="nav-chip warn">4</span>
+          </a>
+        </div>
+        <div class="nav-sep-line"></div>
+        <div class="nav-group">
+          <div class="nav-group-label">Consultas</div>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="search"></i></div>
+            <span class="nav-label">Búsqueda Avanzada</span>
+          </a>
+          <a class="nav-item" href="#">
+            <div class="nav-icon"><i data-lucide="bar-chart"></i></div>
+            <span class="nav-label">Reportes</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+      <!-- PAGE HEADER -->
+      <header class="page-header">
+        <div class="breadcrumb">
+          <a href="#">Auto de Indagación</a>
+          <span class="sep">/</span>
+          <span class="cur">Trámite y Seguimiento</span>
+        </div>
+        <div class="page-title-row">
+          <div>
+            <h1 class="page-title">Trámite y Seguimiento - Indagación Previa</h1>
+            <p class="page-sub">Gestione las pruebas, oficios y términos del expediente en curso</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" onclick="showToast('info', 'Vista previa generada')">
+              <i data-lucide="eye"></i> Vista Previa
+            </button>
+            <button class="btn btn-primary" onclick="openModal('programarPrueba')">
+              <i data-lucide="calendar-plus"></i> Programar Prueba
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE BODY -->
+      <div class="page-body">
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+          <!-- EXPEDIENTE CARD -->
+          <div class="expediente-card">
+            <div class="exp-header">
+              <div>
+                <div class="exp-radicado">Número de Radicado</div>
+                <div class="exp-numero">2024-001234-REG</div>
+              </div>
+              <div class="exp-stage-badge stage-indagacion">
+                <i data-lucide="circle-alert"></i>
+                Indagación Previa
+              </div>
+            </div>
+            <div class="exp-grid">
+              <div class="exp-field">
+                <div class="exp-label">Quejoso</div>
+                <div class="exp-value"><strong>Ciudadano Anónimo</strong></div>
+              </div>
+              <div class="exp-field">
+                <div class="exp-label">Investigado</div>
+                <div class="exp-value"><strong>Dr. Juan Pérez Gómez</strong></div>
+              </div>
+              <div class="exp-field">
+                <div class="exp-label">Fecha Firma Auto</div>
+                <div class="exp-value"><strong>15 de Enero 2025</strong></div>
+              </div>
+              <div class="exp-field">
+                <div class="exp-label">Estado Reserva</div>
+                <div class="exp-value"><span class="reservation-badge"><i data-lucide="lock"></i> Total - Art. 115 CGD</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TERM WIDGET -->
+          <div class="term-widget" id="termWidget">
+            <div class="term-header">
+              <div class="term-title">Término Indagación Previa (6 meses)</div>
+              <div class="term-days" id="termDays">142 días</div>
+            </div>
+            <div class="term-progress">
+              <div class="term-bar green" id="termBar" style="width: 25%;"></div>
+            </div>
+            <div class="term-dates">
+              <span>Inicio: 15 Ene 2025</span>
+              <span>Vence: 15 Jul 2025</span>
+            </div>
+            <div class="term-alert" id="termAlert">
+              <i data-lucide="clock"></i>
+              <span><strong>Alarma:</strong> El término vence en 6 meses calendario desde la firma del auto. Faltan 142 días hábiles.</span>
+            </div>
+          </div>
+
+          <!-- TABS CONTAINER -->
+          <div class="tabs-container">
+            <div class="tabs-header">
+              <button class="tab-btn active" onclick="switchTab('documentos')">
+                <i data-lucide="folder-open"></i>
+                Documentos
+                <span class="tab-count">24</span>
+              </button>
+              <button class="tab-btn" onclick="switchTab('pruebas')">
+                <i data-lucide="scale"></i>
+                Pruebas
+                <span class="tab-count">8</span>
+              </button>
+              <button class="tab-btn" onclick="switchTab('oficios')">
+                <i data-lucide="mail"></i>
+                Oficios
+                <span class="tab-count">4</span>
+              </button>
+              <button class="tab-btn" onclick="switchTab('timeline')">
+                <i data-lucide="activity"></i>
+                Timeline
+              </button>
+            </div>
+
+            <!-- TAB: DOCUMENTOS -->
+            <div class="tab-content active" id="tab-documentos">
+              <div class="doc-tree">
+                <div class="doc-folder">
+                  <div class="doc-folder-header" onclick="toggleFolder(this)">
+                    <i data-lucide="folder"></i>
+                    <span class="doc-folder-title">Noticia Disciplinaria</span>
+                    <span class="doc-folder-count">3 docs</span>
+                  </div>
+                  <div class="doc-folder-content open">
+                    <div class="doc-item">
+                      <i data-lucide="file-text"></i>
+                      <span class="doc-item-name">Formulario Radicación Queja.pdf</span>
+                      <span class="doc-item-meta">15 Dic 2024</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                    <div class="doc-item">
+                      <i data-lucide="file-text"></i>
+                      <span class="doc-item-name">Anexos Queja Inicial.zip</span>
+                      <span class="doc-item-meta">15 Dic 2024</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                    <div class="doc-item">
+                      <i data-lucide="file-text"></i>
+                      <span class="doc-item-name">Acta Recepción Noticia.pdf</span>
+                      <span class="doc-item-meta">16 Dic 2024</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="doc-folder">
+                  <div class="doc-folder-header" onclick="toggleFolder(this)">
+                    <i data-lucide="folder"></i>
+                    <span class="doc-folder-title">Evaluación Preliminar</span>
+                    <span class="doc-folder-count">2 docs</span>
+                  </div>
+                  <div class="doc-folder-content">
+                    <div class="doc-item">
+                      <i data-lucide="file-text"></i>
+                      <span class="doc-item-name">Informe Evaluación Noticia.pdf</span>
+                      <span class="doc-item-meta">20 Dic 2024</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                    <div class="doc-item">
+                      <i data-lucide="file-text"></i>
+                      <span class="doc-item-name">Memorando Asignación Instructor.pdf</span>
+                      <span class="doc-item-meta">2 Jan 2025</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="doc-folder">
+                  <div class="doc-folder-header" onclick="toggleFolder(this)">
+                    <i data-lucide="folder"></i>
+                    <span class="doc-folder-title">Auto de Indagación Previa</span>
+                    <span class="doc-folder-count">2 docs</span>
+                  </div>
+                  <div class="doc-folder-content open">
+                    <div class="doc-item">
+                      <i data-lucide="file-signed"></i>
+                      <span class="doc-item-name"><strong>Auto Apertura Indagación Previa.pdf</strong></span>
+                      <span class="doc-item-meta">15 Ene 2025 • Firmado</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                    <div class="doc-item">
+                      <i data-lucide="stamp"></i>
+                      <span class="doc-item-name">Constancia Firma Jefe Dependencia.pdf</span>
+                      <span class="doc-item-meta">15 Ene 2025</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="doc-folder">
+                  <div class="doc-folder-header" onclick="toggleFolder(this)">
+                    <i data-lucide="folder"></i>
+                    <span class="doc-folder-title">Pruebas Practicadas</span>
+                    <span class="doc-folder-count">5 docs</span>
+                  </div>
+                  <div class="doc-folder-content">
+                    <div class="doc-item">
+                      <i data-lucide="mic"></i>
+                      <span class="doc-item-name">Acta Testimonio María López.pdf</span>
+                      <span class="doc-item-meta">22 Ene 2025</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                    <div class="doc-item">
+                      <i data-lucide="file"></i>
+                      <span class="doc-item-name">Documento Aportado #1.pdf</span>
+                      <span class="doc-item-meta">25 Ene 2025</span>
+                      <div class="doc-item-actions">
+                        <button class="doc-action-btn" title="Ver"><i data-lucide="eye"></i></button>
+                        <button class="doc-action-btn" title="Descargar"><i data-lucide="download"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: PRUEBAS -->
+            <div class="tab-content" id="tab-pruebas">
+              <div class="pruebas-checklist">
+                <!-- Prueba 1: Decretada en Auto -->
+                <div class="prueba-item">
+                  <div class="prueba-header">
+                    <div class="prueba-checkbox checked" onclick="togglePruebaCheck(this)">
+                      <i data-lucide="check"></i>
+                    </div>
+                    <div class="prueba-info">
+                      <div class="prueba-titulo">Testimonio de María López (Decretada en Auto)</div>
+                      <div class="prueba-meta">
+                        <span>Decreto: 15 Ene 2025</span>
+                        <span>Tipo: Testimonial</span>
+                        <span class="prueba-status status-practicada">Practicada</span>
+                      </div>
+                    </div>
+                    <div class="prueba-actions">
+                      <button class="btn btn-sm btn-secondary" onclick="togglePruebaDetail(this)"><i data-lucide="chevron-down"></i></button>
+                    </div>
+                  </div>
+                  <div class="prueba-detail">
+                    <div class="prueba-detail-grid">
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Testigo</div>
+                        <div class="prueba-detail-value">María López Ramírez</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Fecha Práctica</div>
+                        <div class="prueba-detail-value">22 Ene 2025 - 10:00 AM</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Lugar</div>
+                        <div class="prueba-detail-value">Sala Audiencias PGN</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Funcionario</div>
+                        <div class="prueba-detail-value">Dr. Rodríguez (Instructor)</div>
+                      </div>
+                    </div>
+                    <div class="prueba-timeline">
+                      <div class="timeline-item completed">
+                        <div class="timeline-date">15 Ene</div>
+                        <div class="timeline-desc">Decretada en Auto de Indagación</div>
+                      </div>
+                      <div class="timeline-item completed">
+                        <div class="timeline-date">18 Ene</div>
+                        <div class="timeline-desc">Citación librada al testigo</div>
+                      </div>
+                      <div class="timeline-item completed">
+                        <div class="timeline-date">22 Ene</div>
+                        <div class="timeline-desc">Practicada - Acta firmada</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Prueba 2: Por practicar -->
+                <div class="prueba-item">
+                  <div class="prueba-header">
+                    <div class="prueba-checkbox" onclick="togglePruebaCheck(this)">
+                      <i data-lucide="check"></i>
+                    </div>
+                    <div class="prueba-info">
+                      <div class="prueba-titulo">Documentos entidad financiera (Decretada en Auto)</div>
+                      <div class="prueba-meta">
+                        <span>Decreto: 15 Ene 2025</span>
+                        <span>Tipo: Documental</span>
+                        <span class="prueba-status status-decretada">En trámite</span>
+                      </div>
+                    </div>
+                    <div class="prueba-actions">
+                      <button class="btn btn-sm btn-secondary" onclick="togglePruebaDetail(this)"><i data-lucide="chevron-down"></i></button>
+                    </div>
+                  </div>
+                  <div class="prueba-detail">
+                    <div class="prueba-detail-grid">
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Entidad Solicitada</div>
+                        <div class="prueba-detail-value">Banco de Bogotá S.A.</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Oficio N°</div>
+                        <div class="prueba-detail-value">2025-0045-E</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Fecha Libramiento</div>
+                        <div class="prueba-detail-value">16 Ene 2025</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Término Respuesta</div>
+                        <div class="prueba-detail-value">10 días hábiles</div>
+                      </div>
+                    </div>
+                    <div class="prueba-timeline">
+                      <div class="timeline-item completed">
+                        <div class="timeline-date">15 Ene</div>
+                        <div class="timeline-desc">Decretada en Auto de Indagación</div>
+                      </div>
+                      <div class="timeline-item current">
+                        <div class="timeline-date">16 Ene</div>
+                        <div class="timeline-desc">Oficio librado - Esperando respuesta</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Prueba 3: Ampliación de queja -->
+                <div class="prueba-item">
+                  <div class="prueba-header">
+                    <div class="prueba-checkbox" onclick="togglePruebaCheck(this)">
+                      <i data-lucide="check"></i>
+                    </div>
+                    <div class="prueba-info">
+                      <div class="prueba-titulo">Ampliación de Queja (Por programar)</div>
+                      <div class="prueba-meta">
+                        <span>Solicitud: 20 Ene 2025</span>
+                        <span>Tipo: Declaración</span>
+                        <span class="prueba-status status-pendiente">Pendiente</span>
+                      </div>
+                    </div>
+                    <div class="prueba-actions">
+                      <button class="btn btn-sm btn-secondary" onclick="togglePruebaDetail(this)"><i data-lucide="chevron-down"></i></button>
+                      <button class="btn btn-sm btn-primary" onclick="openModal('programarPrueba')"><i data-lucide="calendar"></i> Programar</button>
+                    </div>
+                  </div>
+                  <div class="prueba-detail">
+                    <div class="prueba-detail-grid">
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Quejoso</div>
+                        <div class="prueba-detail-value">Ciudadano Anónimo</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Motivo</div>
+                        <div class="prueba-detail-value">Aportar nuevos elementos probatorios</div>
+                      </div>
+                    </div>
+                    <div class="prueba-timeline">
+                      <div class="timeline-item">
+                        <div class="timeline-date">20 Ene</div>
+                        <div class="timeline-desc">Solicitud recibida</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Prueba 4: Ratificación -->
+                <div class="prueba-item">
+                  <div class="prueba-header">
+                    <div class="prueba-checkbox" onclick="togglePruebaCheck(this)">
+                      <i data-lucide="check"></i>
+                    </div>
+                    <div class="prueba-info">
+                      <div class="prueba-titulo">Ratificación de Testigo Carlos Mendoza</div>
+                      <div class="prueba-meta">
+                        <span>Solicitud: 23 Ene 2025</span>
+                        <span>Tipo: Testimonial</span>
+                        <span class="prueba-status status-pendiente">Pendiente</span>
+                      </div>
+                    </div>
+                    <div class="prueba-actions">
+                      <button class="btn btn-sm btn-secondary" onclick="togglePruebaDetail(this)"><i data-lucide="chevron-down"></i></button>
+                      <button class="btn btn-sm btn-primary" onclick="openModal('programarPrueba')"><i data-lucide="calendar"></i> Programar</button>
+                    </div>
+                  </div>
+                  <div class="prueba-detail">
+                    <div class="prueba-detail-grid">
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Testigo</div>
+                        <div class="prueba-detail-value">Carlos Mendoza</div>
+                      </div>
+                      <div class="prueba-detail-field">
+                        <div class="prueba-detail-label">Motivo</div>
+                        <div class="prueba-detail-value">Profundizar aspectos del testimonio inicial</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: OFICIOS -->
+            <div class="tab-content" id="tab-oficios">
+              <table class="oficios-table">
+                <thead>
+                  <tr>
+                    <th>N° Oficio</th>
+                    <th>Destinatario</th>
+                    <th>Asunto</th>
+                    <th>Fecha Libramiento</th>
+                    <th>Vence</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>2025-0045-E</strong></td>
+                    <td>Banco de Bogotá S.A.</td>
+                    <td>Solicitud extractos cuenta #123456</td>
+                    <td>16 Ene 2025</td>
+                    <td>30 Ene 2025</td>
+                    <td><span class="oficio-estado estado-librado">Librado</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-secondary"><i data-lucide="eye"></i></button>
+                      <button class="btn btn-sm btn-secondary"><i data-lucide="download"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>2025-0046-E</strong></td>
+                    <td>Hospital San José</td>
+                    <td>Solicitud historia clínica</td>
+                    <td>17 Ene 2025</td>
+                    <td>31 Ene 2025</td>
+                    <td><span class="oficio-estado estado-librado">Librado</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-secondary"><i data-lucide="eye"></i></button>
+                      <button class="btn btn-sm btn-secondary"><i data-lucide="download"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>2025-0047-E</strong></td>
+                    <td>María López Ramírez</td>
+                    <td>Citación testimonio</td>
+                    <td>18 Ene 2025</td>
+                    <td>22 Ene 2025</td>
+                    <td><span class="oficio-estado estado-contestado">Contestado</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-secondary"><i data-lucide="eye"></i></button>
+                      <button class="btn btn-sm btn-secondary"><i data-lucide="download"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>2025-0048-E</strong></td>
+                    <td>Carlos Mendoza</td>
+                    <td>Citación ampliación testimonio</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="oficio-estado estado-por-librar">Por librar</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" onclick="librarOficio()"><i data-lucide="send"></i> Librar</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- TAB: TIMELINE -->
+            <div class="tab-content" id="tab-timeline">
+              <div class="prueba-timeline" style="padding: 20px 0;">
+                <div class="timeline-item completed">
+                  <div class="timeline-date">15 Dic 2024</div>
+                  <div class="timeline-desc"><strong>Radicación de Queja</strong> - Ciudadano presenta formulario de radicación</div>
+                </div>
+                <div class="timeline-item completed">
+                  <div class="timeline-date">16 Dic 2024</div>
+                  <div class="timeline-desc"><strong>Recepción de Noticia</strong> - Acta de recepción elaborada</div>
+                </div>
+                <div class="timeline-item completed">
+                  <div class="timeline-date">20 Dic 2024</div>
+                  <div class="timeline-desc"><strong>Evaluación Preliminar</strong> - Informe de evaluación completado</div>
+                </div>
+                <div class="timeline-item completed">
+                  <div class="timeline-date">2 Ene 2025</div>
+                  <div class="timeline-desc"><strong>Asignación de Instructor</strong> - Memorando de asignación expedido</div>
+                </div>
+                <div class="timeline-item completed">
+                  <div class="timeline-date">15 Ene 2025</div>
+                  <div class="timeline-desc"><strong>Auto de Indagación Previa</strong> - Auto firmado por Jefe de Dependencia. Se decreten pruebas testimoniales y documentales.</div>
+                </div>
+                <div class="timeline-item completed">
+                  <div class="timeline-date">16 Ene 2025</div>
+                  <div class="timeline-desc"><strong>Libramiento de Oficios</strong> - Oficios 2025-0045-E y 2025-0046-E librados</div>
+                </div>
+                <div class="timeline-item completed">
+                  <div class="timeline-date">22 Ene 2025</div>
+                  <div class="timeline-desc"><strong>Práctica de Testimonio</strong> - Declaración de María López Ramírez practicada y acta firmada</div>
+                </div>
+                <div class="timeline-item current">
+                  <div class="timeline-date">Hoy</div>
+                  <div class="timeline-desc"><strong>Seguimiento de Pruebas</strong> - Esperando respuestas de oficios librados</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <aside class="right-panel">
+          <!-- CHECKLIST SUMMARY -->
+          <div class="panel-card">
+            <div class="panel-title">
+              <i data-lucide="clipboard-check"></i>
+              Checklist de Pruebas (Auto)
+            </div>
+            <div class="checklist-summary">
+              <div class="checklist-item">
+                <div class="checklist-dot done"></div>
+                <div class="checklist-label">Testimonio María López</div>
+                <i data-lucide="check-circle" style="color: var(--verde); width: 16px;"></i>
+              </div>
+              <div class="checklist-item">
+                <div class="checklist-dot pending"></div>
+                <div class="checklist-label">Documentos Banco Bogotá</div>
+              </div>
+              <div class="checklist-item">
+                <div class="checklist-dot pending"></div>
+                <div class="checklist-label">Historia Clínica Hospital</div>
+              </div>
+              <div class="checklist-item">
+                <div class="checklist-dot pending"></div>
+                <div class="checklist-label">Ampliación de Queja</div>
+              </div>
+              <div class="checklist-item">
+                <div class="checklist-dot pending"></div>
+                <div class="checklist-label">Ratificación C. Mendoza</div>
+              </div>
+            </div>
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gris-claro);">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--gris-medio);">
+                <span>Progreso: 1/5 completadas</span>
+                <span style="font-weight: 600; color: var(--azul);">20%</span>
+              </div>
+              <div style="height: 6px; background: var(--gris-claro); border-radius: 3px; margin-top: 6px; overflow: hidden;">
+                <div style="width: 20%; height: 100%; background: var(--amarillo); border-radius: 3px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUICK ACTIONS -->
+          <div class="panel-card">
+            <div class="panel-title">
+              <i data-lucide="zap"></i>
+              Acciones Rápidas
+            </div>
+            <div class="quick-action" onclick="openModal('programarPrueba')">
+              <i data-lucide="calendar-plus"></i>
+              <span class="quick-action-text">Programar Prueba</span>
+            </div>
+            <div class="quick-action" onclick="librarOficio()">
+              <i data-lucide="send"></i>
+              <span class="quick-action-text">Librar Oficio</span>
+            </div>
+            <div class="quick-action">
+              <i data-lucide="upload"></i>
+              <span class="quick-action-text">Incorporar Documento</span>
+            </div>
+            <div class="quick-action">
+              <i data-lucide="users"></i>
+              <span class="quick-action-text">Gestionar Sujetos</span>
+            </div>
+            <div class="quick-action">
+              <i data-lucide="printer"></i>
+              <span class="quick-action-text">Imprimir Expediente</span>
+            </div>
+          </div>
+
+          <!-- DECISION BOX -->
+          <div class="panel-card">
+            <div class="panel-title">
+              <i data-lucide="scale"></i>
+              Decisión de Cierre (Indagación)
+            </div>
+            <div class="decision-box">
+              <div class="decision-title">Evaluar mérito probatorio para decidir</div>
+              <div class="decision-options">
+                <button class="decision-btn disabled" title="Complete al menos 80% del checklist de pruebas">
+                  <i data-lucide="file-check"></i>
+                  <div>
+                    <div class="decision-btn-label">Proyectar Auto de Archivo</div>
+                    <div class="decision-btn-desc">Cuando no haya mérito para investigar</div>
+                  </div>
+                </button>
+                <button class="decision-btn disabled" title="Complete al menos 80% del checklist de pruebas">
+                  <i data-lucide="file-warning"></i>
+                  <div>
+                    <div class="decision-btn-label">Proyectar Auto de Apertura Investigación</div>
+                    <div class="decision-btn-desc">Cuando haya mérito para investigar</div>
+                  </div>
+                </button>
+              </div>
+              <div style="margin-top: 12px; padding: 10px; background: rgba(255,149,0,0.1); border-radius: 8px; border-left: 3px solid var(--naranja);">
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                  <i data-lucide="alert-triangle" style="width: 16px; height: 16px; color: var(--naranja); flex-shrink: 0; margin-top: 1px;"></i>
+                  <div style="font-size: 10px; color: var(--negro); line-height: 1.4;">
+                    <strong>Requisito:</strong> Complete al menos el 80% de las pruebas decretadas antes de proyectar decisión de cierre.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ALERTAS -->
+          <div class="panel-card">
+            <div class="panel-title">
+              <i data-lucide="bell-ring"></i>
+              Alertas Activas
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="padding: 10px; background: rgba(255,149,0,0.1); border-radius: 8px; border-left: 3px solid var(--naranja);">
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                  <i data-lucide="clock" style="width: 16px; height: 16px; color: var(--naranja); flex-shrink: 0; margin-top: 1px;"></i>
+                  <div style="font-size: 11px; color: var(--negro); line-height: 1.4;">
+                    <strong>Vencimiento término indagación:</strong> 15 Jul 2025 (142 días hábiles restantes)
+                  </div>
+                </div>
+              </div>
+              <div style="padding: 10px; background: rgba(227,32,27,0.1); border-radius: 8px; border-left: 3px solid var(--rojo);">
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                  <i data-lucide="alert-circle" style="width: 16px; height: 16px; color: var(--rojo); flex-shrink: 0; margin-top: 1px;"></i>
+                  <div style="font-size: 11px; color: var(--negro); line-height: 1.4;">
+                    <strong>Oficio por contestar:</strong> 2025-0045-E vence el 30 Ene 2025
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL PROGRAMAR PRUEBA -->
+  <div class="modal-overlay" id="modal-programarPrueba">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Programar Práctica de Prueba</div>
+        <button class="modal-close" onclick="closeModal('programarPrueba')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tipo de Prueba</label>
+          <select class="form-select" id="tipoPrueba">
+            <option value="">Seleccione...</option>
+            <option value="testimonio">Testimonio</option>
+            <option value="ampliacion">Ampliación de Queja</option>
+            <option value="ratificacion">Ratificación de Testigo</option>
+            <option value="documento">Aporte Documental</option>
+            <option value="peritaje">Peritaje</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Persona / Entidad</label>
+          <input type="text" class="form-input" placeholder="Nombre completo o razón social">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha Programada</label>
+          <div class="calendar-grid" id="calendarGrid">
+            <div class="calendar-day-header">Dom</div>
+            <div class="calendar-day-header">Lun</div>
+            <div class="calendar-day-header">Mar</div>
+            <div class="calendar-day-header">Mié</div>
+            <div class="calendar-day-header">Jue</div>
+            <div class="calendar-day-header">Vie</div>
+            <div class="calendar-day-header">Sáb</div>
+            <!-- Días generados dinámicamente -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hora</label>
+          <select class="form-select">
+            <option value="">Seleccione...</option>
+            <option value="09:00">09:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="14:00">02:00 PM</option>
+            <option value="15:00">03:00 PM</option>
+            <option value="16:00">04:00 PM</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lugar / Modalidad</label>
+          <select class="form-select">
+            <option value="">Seleccione...</option>
+            <option value="presencial">Presencial - Sala Audiencias PGN</option>
+            <option value="virtual">Virtual - Videoconferencia</option>
+            <option value="telefonica">Telefónica</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observaciones</label>
+          <textarea class="form-textarea" placeholder="Detalles adicionales sobre la práctica de la prueba..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('programarPrueba')">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardarProgramacion()">
+          <i data-lucide="calendar-check"></i> Programar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCURADURIA WIDGET -->
+  <div class="procuraduria-widget" onclick="showToast('info', 'Asistente procuradurIA disponible')">
+    <i data-lucide="bot"></i>
+    <div class="procuraduria-tooltip">procuradurIA</div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Toggle sidebar
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('mainContent').classList.toggle('collapsed');
+    }
+
+    // Switch tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // Toggle folder
+    function toggleFolder(header) {
+      const content = header.nextElementSibling;
+      content.classList.toggle('open');
+      const icon = header.querySelector('svg');
+      icon.setAttribute('data-lucide', content.classList.contains('open') ? 'folder-open' : 'folder');
+      lucide.createIcons();
+    }
+
+    // Toggle prueba check
+    function togglePruebaCheck(checkbox) {
+      checkbox.classList.toggle('checked');
+      updateChecklistProgress();
+    }
+
+    // Toggle prueba detail
+    function togglePruebaDetail(btn) {
+      const header = btn.closest('.prueba-header');
+      const detail = header.nextElementSibling;
+      detail.classList.toggle('open');
+      btn.querySelector('svg').setAttribute('data-lucide', detail.classList.contains('open') ? 'chevron-up' : 'chevron-down');
+      lucide.createIcons();
+    }
+
+    // Update checklist progress
+    function updateChecklistProgress() {
+      const checked = document.querySelectorAll('.prueba-checkbox.checked').length;
+      const total = document.querySelectorAll('.prueba-checkbox').length;
+      const percentage = Math.round((checked / total) * 100);
+      
+      // Update decision buttons
+      const decisionBtns = document.querySelectorAll('.decision-btn');
+      decisionBtns.forEach(btn => {
+        if (percentage >= 80) {
+          btn.classList.remove('disabled');
+          btn.removeAttribute('title');
+        } else {
+          btn.classList.add('disabled');
+          btn.setAttribute('title', 'Complete al menos 80% del checklist de pruebas');
+        }
+      });
+    }
+
+    // Open modal
+    function openModal(modalId) {
+      document.getElementById('modal-' + modalId).classList.add('open');
+      generateCalendar();
+    }
+
+    // Close modal
+    function closeModal(modalId) {
+      document.getElementById('modal-' + modalId).classList.remove('open');
+    }
+
+    // Generate calendar
+    function generateCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      const today = new Date();
+      const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+      
+      // Clear previous days (keep headers)
+      const headers = grid.querySelectorAll('.calendar-day-header');
+      grid.innerHTML = '';
+      headers.forEach(h => grid.appendChild(h));
+      
+      // Empty cells for days before first day
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day disabled';
+        grid.appendChild(empty);
+      }
+      
+      // Days of month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'calendar-day';
+        dayEl.textContent = day;
+        if (day === today.getDate()) {
+          dayEl.classList.add('today');
+        }
+        dayEl.onclick = function() {
+          document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+          this.classList.add('selected');
+        };
+        grid.appendChild(dayEl);
+      }
+    }
+
+    // Save scheduling
+    function guardarProgramacion() {
+      closeModal('programarPrueba');
+      showToast('success', 'Prueba programada exitosamente. Citación generada.');
+    }
+
+    // Librar oficio
+    function librarOficio() {
+      showToast('success', 'Oficio librado correctamente. Enviado al destinatario.');
+    }
+
+    // Show toast notification
+    function showToast(type, message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      
+      let icon = 'info';
+      if (type === 'success') icon = 'check-circle';
+      if (type === 'warning') icon = 'alert-triangle';
+      if (type === 'error') icon = 'x-circle';
+      
+      toast.innerHTML = `
+        <i data-lucide="${icon}"></i>
+        <div class="toast-message">${message}</div>
+      `;
+      
+      container.appendChild(toast);
+      lucide.createIcons();
+      
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Calculate term days (mock)
+    function calculateTermDays() {
+      const startDate = new Date('2025-01-15');
+      const endDate = new Date('2025-07-15');
+      const today = new Date();
+      
+      const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      const remainingDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+      const percentage = ((totalDays - remainingDays) / totalDays) * 100;
+      
+      document.getElementById('termDays').textContent = remainingDays + ' días';
+      document.getElementById('termBar').style.width = percentage + '%';
+      
+      // Update bar color based on remaining days
+      const bar = document.getElementById('termBar');
+      bar.classList.remove('green', 'yellow', 'orange', 'red');
+      if (remainingDays > 60) bar.classList.add('green');
+      else if (remainingDays > 30) bar.classList.add('yellow');
+      else if (remainingDays > 15) bar.classList.add('orange');
+      else bar.classList.add('red');
+      
+      // Update alert message
+      const alert = document.getElementById('termAlert');
+      if (remainingDays <= 30) {
+        alert.style.background = 'rgba(227,32,27,0.2)';
+        alert.querySelector('span').innerHTML = '<strong>¡ALERTA CRÍTICA!</strong> El término vence en ' + remainingDays + ' días hábiles. Considere solicitar prórroga.';
+      }
+    }
+
+    // Initialize
+    calculateTermDays();
+  </script>
+</body>
+</html>
