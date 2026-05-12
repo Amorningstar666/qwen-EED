@@ -430,7 +430,539 @@
         <div class="auto-section" id="asunto">
           <div class="auto-section-title"><span class="section-num">1</span>ASUNTO POR TRATAR</div>
           <textarea class="auto-textarea" rows="3" aria-label="Asunto">Se procede a evaluar las diligencias radicadas bajo el Nro. EXP-2026-00521 / D-2026-0012345, con el fin de tomar la decisión que en derecho corresponda.</textarea>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto - Remisión por Poder Preferente | EED PGN</title>
+    <!-- Fuentes Oficiales -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Paleta Oficial PGN */
+            --pgn-blue: #063853;
+            --pgn-blue-light: #0B4F75;
+            --pgn-yellow: #FFE601;
+            --pgn-red: #E3201B;
+            --pgn-green: #33FFCC;
+            --pgn-gray-bg: #F4F6F8;
+            --pgn-text: #333333;
+            --pgn-border: #D1D5DB;
+            
+            /* UI Variables */
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--pgn-gray-bg);
+            color: var(--pgn-text);
+            line-height: 1.6;
+            padding-bottom: 80px; /* Espacio para barra de acciones */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Header */
+        .header-pgn {
+            background-color: var(--pgn-blue);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo img {
+            height: 40px;
+            background: white;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .header-title h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title span {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            background: white;
+            padding: 0.8rem 2rem;
+            border-bottom: 1px solid var(--pgn-border);
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .breadcrumbs span {
+            color: var(--pgn-blue);
+            font-weight: 600;
+        }
+
+        /* Layout Principal */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 320px; /* Contenido + Sidebar Quejoso */
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Tarjetas */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid var(--pgn-blue);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .card-title {
+            color: var(--pgn-blue);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Índice del Expediente */
+        .expediente-index {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .index-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--pgn-yellow);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .index-item:hover {
+            background: #eef2f5;
+            transform: translateY(-2px);
+        }
+
+        .index-item i {
+            color: var(--pgn-blue);
+            margin-right: 8px;
+        }
+
+        /* Selector Positivo/Negativo */
+        .decision-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .decision-option {
+            flex: 1;
+            padding: 1.5rem;
+            border: 2px solid var(--pgn-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .decision-option h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .decision-option p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        /* Estilos Positivo */
+        .decision-option.positivo:hover,
+        .decision-option.positivo.active {
+            border-color: var(--pgn-green);
+            background-color: rgba(51, 255, 204, 0.05);
+            box-shadow: 0 0 15px rgba(51, 255, 204, 0.2);
+        }
+        .decision-option.positivo.active i {
+            color: var(--pgn-green);
+            animation: pulse 1s infinite;
+        }
+
+        /* Estilos Negativo */
+        .decision-option.negativo:hover,
+        .decision-option.negativo.active {
+            border-color: var(--pgn-red);
+            background-color: rgba(227, 32, 27, 0.05);
+            box-shadow: 0 0 15px rgba(227, 32, 27, 0.2);
+        }
+        .decision-option.negativo.active i {
+            color: var(--pgn-red);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Formularios Condicionales */
+        .conditional-form {
+            display: none;
+            animation: slideDown 0.4s ease-out;
+            background: #fafafa;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid #eee;
+            margin-top: 1rem;
+        }
+
+        .conditional-form.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--pgn-blue);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--pgn-border);
+            border-radius: var(--radius-md);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--pgn-blue);
+            box-shadow: 0 0 0 3px rgba(6, 56, 83, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Selector Órgano Receptor (Estilo Pantalla 09) */
+        .organo-receptor-section {
+            background: white;
+            border: 1px solid var(--pgn-red);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .organo-receptor-header {
+            color: var(--pgn-red);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Sidebar Quejoso */
+        .sidebar-quejoso {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .quejoso-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            padding: 1.5rem;
+            border-top: 4px solid var(--pgn-yellow);
+        }
+
+        .quejoso-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quejoso-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--pgn-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            font-weight: 600;
+        }
+
+        .quejoso-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .quejoso-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .quejoso-value {
+            font-weight: 600;
+            color: var(--pgn-text);
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .btn-contact {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--pgn-blue);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: var(--transition);
+        }
+
+        .btn-contact:hover {
+            background: var(--pgn-blue-light);
+        }
+
+        /* Upload Zone Auto Proyectado */
+        .upload-zone {
+            border: 2px dashed var(--pgn-border);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            background: #fafafa;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--pgn-blue);
+            background: #f0f4f8;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--pgn-blue);
+            margin-bottom: 1rem;
+        }
+
+        .file-info {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: #eef2f5;
+            border-radius: var(--radius-md);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-info.show {
+            display: flex;
+        }
+
+        /* Barra de Acciones Inferior */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 90;
+        }
+
+        .workflow-steps {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .step.active {
+            color: var(--pgn-blue);
+            font-weight: 600;
+        }
+
+        .step-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .step.active .step-circle {
+            background: var(--pgn-blue);
+            color: white;
+        }
+
+        .step.completed .step-circle {
+            background: var(--pgn-green);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-secondary {
+            background: #eee;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #ddd;
+        }
+
+        .btn-primary {
+            background: var(--pgn-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--pgn-blue-light);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-quejoso {
+                position: static;
+                order: -1; /* Mover arriba en móviles si se desea, o quitar para dejar abajo */
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header PGN -->
+    <header class="header-pgn">
+        <div class="header-logo">
+            <!-- Placeholder logo -->
+            <div style="background:white; width:40px; height:40px; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#063853; font-weight:bold;">PGN</div>
+            <div class="header-title">
+                <h1>Expediente Electrónico Disciplinario</h1>
+                <span>Procuraduría General de la Nación</span>
+            </div>
         </div>
+        <div class="user-profile">
+            <span style="font-size: 0.9rem;">Dr. Instructor</span>
+        </div>
+    </header>
 
         <!-- S2: HECHOS -->
         <div class="auto-section" id="hechos">
@@ -1404,5 +1936,273 @@ Veedor — Procuraduría General de la Nación</textarea>
 
 })();
 </script>
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+        Inicio / Mis Asignados / EXP-2023-001234 / Actuaciones / <span>Remisión por Poder Preferente</span>
+    </nav>
+
+    <div class="main-container">
+        
+        <!-- Columna Izquierda: Contenido Principal -->
+        <main>
+            <!-- Índice del Expediente -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-folder-open"></i> Índice del Expediente</h2>
+                </div>
+                <div class="expediente-index">
+                    <div class="index-item"><i class="fas fa-file-alt"></i> La Queja</div>
+                    <div class="index-item"><i class="fas fa-user"></i> El Quejoso</div>
+                    <div class="index-item"><i class="fas fa-paperclip"></i> Anexos de la Queja</div>
+                    <div class="index-item"><i class="fas fa-list-ol"></i> Rol de Actuación</div>
+                </div>
+            </div>
+
+            <!-- Decisión Poder Preferente -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-balance-scale"></i> Decisión sobre Poder Preferente</h2>
+                </div>
+                
+                <p style="margin-bottom: 1.5rem; color: #555;">
+                    Seleccione la decisión respecto a la asunción de competencia por Poder Preferente conforme al Art. 93 CGD.
+                </p>
+
+                <div class="decision-container">
+                    <!-- Opción POSITIVO -->
+                    <div class="decision-option positivo" onclick="selectDecision('positivo')">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                        <h3>POSITIVO</h3>
+                        <p>La PGN decide <strong>LLEVAR</strong> la actuación.<br>Asume competencia.</p>
+                    </div>
+
+                    <!-- Opción NEGATIVO -->
+                    <div class="decision-option negativo" onclick="selectDecision('negativo')">
+                        <i class="fas fa-times-circle fa-2x"></i>
+                        <h3>NEGATIVO</h3>
+                        <p>La PGN decide <strong>NO LLEVAR</strong> la actuación.<br>Se remite al competente.</p>
+                    </div>
+                </div>
+
+                <!-- Formulario Condicional: POSITIVO -->
+                <div id="form-positivo" class="conditional-form">
+                    <h3 style="color: var(--pgn-green); margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
+                        <i class="fas fa-arrow-down"></i> Asunción de Competencia
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">Fundamentos de Hecho y Derecho para Asumir</label>
+                        <textarea class="form-control" placeholder="Describa las razones jurídicas y fácticas por las cuales la PGN asume la competencia..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Considerandos Adicionales</label>
+                        <textarea class="form-control" rows="3" placeholder="Considere los artículos 3 y 93 del CGD..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Formulario Condicional: NEGATIVO -->
+                <div id="form-negativo" class="conditional-form">
+                    <h3 style="color: var(--pgn-red); margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
+                        <i class="fas fa-exchange-alt"></i> Remisión a Competente
+                    </h3>
+                    
+                    <!-- Sección Reutilizada de Órgano Receptor (Estilo Pantalla 09) -->
+                    <div class="organo-receptor-section">
+                        <div class="organo-receptor-header">
+                            <i class="fas fa-building"></i> ÓRGANO RECEPTOR Y TIPO DE REMISIÓN
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Entidad / Dependencia Receptora</label>
+                                <select class="form-control" id="entidad-receptora">
+                                    <option value="">Seleccione...</option>
+                                    <option value="procuraduria_regional">Procuraduría Regional</option>
+                                    <option value="procuraduria_seccional">Procuraduría Seccional</option>
+                                    <option value="procuraduria_distrital">Procuraduría Distrital</option>
+                                    <option value="personeria_municipal">Personería Municipal</option>
+                                    <option value="personeria_distrital">Personería Distrital</option>
+                                    <option value="otro_ente">Otro Ente de Control</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tipo de Remisión</label>
+                                <select class="form-control">
+                                    <option value="">Seleccione...</option>
+                                    <option value="competencia_territorial">Por Competencia Territorial</option>
+                                    <option value="competencia_funcional">Por Competencia Funcional</option>
+                                    <option value="faltas_leves">Faltas Leves</option>
+                                    <option value="conexidad">Por Conexidad</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Motivo de la Remisión (Considerandos)</label>
+                            <textarea class="form-control" rows="4" placeholder="Exponga por qué no hay lugar a ejercer poder preferente y fundamente la remisión..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carga del Auto Proyectado -->
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: var(--pgn-blue); margin-bottom: 1rem; font-size: 1rem;">
+                        <i class="fas fa-file-word"></i> Cargar Auto Proyectado
+                    </h3>
+                    <div class="upload-zone" onclick="document.getElementById('auto-file').click()">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Arrastre el archivo Word aquí o haga clic para buscar</h4>
+                        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">Solo se permite cargar el documento del Auto (.docx)</p>
+                        <input type="file" id="auto-file" accept=".docx,.doc" style="display: none;" onchange="handleFileUpload(this)">
+                    </div>
+                    <div id="file-info" class="file-info">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-file-word" style="color: var(--pgn-blue); font-size: 1.5rem;"></i>
+                            <span id="file-name" style="font-weight: 500;">nombre_archivo.docx</span>
+                        </div>
+                        <button onclick="removeFile()" style="background: none; border: none; color: var(--pgn-red); cursor: pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Columna Derecha: Sidebar Quejoso (Fijo) -->
+        <aside class="sidebar-quejoso">
+            <div class="quejoso-card">
+                <div class="quejoso-header">
+                    <div class="quejoso-avatar">QJ</div>
+                    <h3>Datos del Quejoso</h3>
+                    <span style="font-size: 0.8rem; color: #666;">Información para notificación</span>
+                </div>
+
+                <div class="quejoso-info-row">
+                    <span class="quejoso-label">Nombre:</span>
+                    <span class="quejoso-value">Juan Pérez Rodríguez</span>
+                </div>
+                <div class="quejoso-info-row">
+                    <span class="quejoso-label">Identificación:</span>
+                    <span class="quejoso-value">C.C. 12.345.678</span>
+                </div>
+                <div class="quejoso-info-row">
+                    <span class="quejoso-label">Email:</span>
+                    <span class="quejoso-value">juan.perez@email.com</span>
+                </div>
+                <div class="quejoso-info-row">
+                    <span class="quejoso-label">Teléfono:</span>
+                    <span class="quejoso-value">+57 300 123 4567</span>
+                </div>
+                <div class="quejoso-info-row">
+                    <span class="quejoso-label">Dirección:</span>
+                    <span class="quejoso-value" style="text-align: right;">Calle 123 #45-67<br>Bogotá D.C.</span>
+                </div>
+
+                <button class="btn-contact">
+                    <i class="fas fa-envelope"></i>Comunicar al Quejoso
+                </button>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Barra de Acciones Inferior -->
+    <div class="action-bar">
+        <div class="workflow-steps">
+            <div class="step completed">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <span>Proyecto</span>
+            </div>
+            <div class="step active">
+                <div class="step-circle">2</div>
+                <span>Revisión</span>
+            </div>
+            <div class="step">
+                <div class="step-circle">3</div>
+                <span>Aprobación</span>
+            </div>
+            <div class="step">
+                <div class="step-circle">4</div>
+                <span>Jefe</span>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary">Guardar Borrador</button>
+            <button class="btn btn-primary" onclick="confirmAction()">Enviar a Revisión</button>
+        </div>
+    </div>
+
+    <script>
+        let currentDecision = null;
+
+        function selectDecision(type) {
+            currentDecision = type;
+            
+            // Resetear clases activas
+            document.querySelectorAll('.decision-option').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.conditional-form').forEach(el => el.classList.remove('active'));
+
+            // Activar selección
+            const selectedOption = document.querySelector(`.decision-option.${type}`);
+            const selectedForm = document.getElementById(`form-${type}`);
+
+            if (selectedOption) selectedOption.classList.add('active');
+            if (selectedForm) selectedForm.classList.add('active');
+        }
+
+        function handleFileUpload(input) {
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                document.getElementById('file-name').textContent = fileName;
+                document.getElementById('file-info').classList.add('show');
+                
+                // Cambiar estilo de la zona de carga
+                const zone = document.querySelector('.upload-zone');
+                zone.style.borderColor = 'var(--pgn-green)';
+                zone.style.background = '#f0fff4';
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('auto-file').value = '';
+            document.getElementById('file-info').classList.remove('show');
+            
+            const zone = document.querySelector('.upload-zone');
+            zone.style.borderColor = 'var(--pgn-border)';
+            zone.style.background = '#fafafa';
+        }
+
+        function confirmAction() {
+            if (!currentDecision) {
+                alert('Por favor seleccione una decisión (Positivo o Negativo).');
+                return;
+            }
+
+            const fileInput = document.getElementById('auto-file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Es obligatorio cargar el Auto Proyectado en formato Word.');
+                return;
+            }
+
+            if (currentDecision === 'negativo') {
+                const entidad = document.getElementById('entidad-receptora').value;
+                if (!entidad) {
+                    alert('En caso de decisión Negativa, debe seleccionar la Entidad Receptora.');
+                    return;
+                }
+            }
+
+            // Simulación de envío
+            const msg = currentDecision === 'positivo' 
+                ? '¿Confirmar envío del Auto de Asunción de Competencia a revisión?' 
+                : '¿Confirmar envío del Auto de Remisión a revisión?';
+            
+            if (confirm(msg)) {
+                alert('El auto ha sido enviado exitosamente a la etapa de Revisión.');
+                // Aquí iría la lógica real de backend
+            }
+        }
+    </script>
 </body>
 </html>
