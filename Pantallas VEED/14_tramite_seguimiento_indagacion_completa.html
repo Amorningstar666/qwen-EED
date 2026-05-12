@@ -4,562 +4,702 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trámite y Seguimiento - Indagación Previa | VEED</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        pgd: {
-                            blue: '#1e3a8a',
-                            lightBlue: '#3b82f6',
-                            gray: '#f3f4f6',
-                            dark: '#1f2937',
-                            success: '#10b981',
-                            warning: '#f59e0b',
-                            danger: '#ef4444'
-                        }
-                    }
-                }
+    <style>
+        :root {
+            --color-primary: #006847; /* Verde Institucional Procuraduría */
+            --color-secondary: #6c757d;
+            --color-accent: #a6ce39; /* Verde claro complementario si se usa, o mantener sobrio */
+            --color-bg-light: #f4f6f9;
+            --color-border: #dee2e6;
+            --color-text-dark: #212529;
+            --shadow-card: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background-color: var(--color-bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--color-text-dark);
+        }
+
+        /* Header Institucional */
+        .header-institucional {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .breadcrumb-item a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Layout Grid */
+        .main-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 280px; /* Izquierda fijo, Centro flexible, Derecha fijo */
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
             }
         }
-    </script>
-    <style>
-        .timeline-line::before {
-            content: '';
+
+        /* Cards Generales */
+        .card-custom {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 20px;
+            border-top: 3px solid var(--color-primary);
+        }
+
+        .card-header-custom {
+            background-color: white;
+            border-bottom: 1px solid var(--color-border);
+            padding: 15px 20px;
+            font-weight: 600;
+            color: var(--color-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Sidebar Izquierdo (Documentos) */
+        .sidebar-section {
+            grid-column: 1;
+        }
+        
+        .doc-tree ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        .doc-tree li {
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        .doc-icon {
+            color: var(--color-primary);
+            margin-right: 8px;
+        }
+
+        /* Sección Central (Contenido Principal) */
+        .content-section {
+            grid-column: 2;
+        }
+
+        /* Timeline Vertical */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px solid var(--color-primary);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .timeline-dot {
             position: absolute;
+            left: -36px;
             top: 0;
-            bottom: 0;
-            left: 20px;
-            width: 2px;
-            background: #e5e7eb;
-            z-index: 0;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-radius: 50%;
         }
-        .card-hover:hover {
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--color-secondary);
+            font-weight: bold;
+        }
+
+        /* Tablas y Oficios */
+        .table-custom thead th {
+            background-color: #e9ecef;
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
+        }
+        
+        .oficio-card {
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #fff;
+            transition: transform 0.2s;
+        }
+        .oficio-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        /* Scrollbar personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
+        .status-pendiente { background-color: #fff3cd; color: #856404; }
+        .status-librado { background-color: #d1ecf1; color: #0c5460; }
+        .status-recibido { background-color: #d4edda; color: #155724; }
+
+        /* Sidebar Derecho (Alertas y Checklist) */
+        .alerts-section {
+            grid-column: 3;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
+
+        .alert-widget {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
+        .alert-warning { border-color: #ffc107; }
+        .alert-danger { border-color: #dc3545; }
+        .alert-success { border-color: #28a745; }
+
+        .vencimiento-box {
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
         }
+        .vencimiento-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .checklist-item input {
+            margin-top: 5px;
+            margin-right: 10px;
+            accent-color: var(--color-primary);
+        }
+
+        /* Audit Log */
+        .audit-log {
+            background: #fff;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { color: var(--color-secondary); font-size: 0.75rem; }
+
+        /* Botones Institucionales */
+        .btn-institucional {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+        }
+        .btn-institucional:hover {
+            background-color: #004d33;
+            color: white;
+        }
+
+        /* Modal */
+        .modal-header {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        .modal-title { font-weight: 600; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 h-screen flex overflow-hidden">
+<body>
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-pgd-blue text-white flex-shrink-0 flex flex-col transition-all duration-300">
-        <div class="p-4 border-b border-blue-800">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-pgd-blue font-bold">
-                    <i class="fas fa-balance-scale"></i>
-                </div>
+    <!-- Header -->
+    <header class="header-institucional">
+        <div class="container-fluid px-4">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="font-bold text-sm tracking-wide">VEED</h1>
-                    <p class="text-xs text-blue-200">Expediente Electrónico</p>
-                </div>
-            </div>
-        </div>
-
-        <nav class="flex-1 overflow-y-auto py-4">
-            <ul class="space-y-1">
-                <li>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-blue-200 hover:bg-blue-800 hover:text-white transition-colors">
-                        <i class="fas fa-home w-5"></i>
-                        <span class="text-sm font-medium">Inicio</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-800 text-white border-l-4 border-white transition-colors">
-                        <i class="fas fa-folder-open w-5"></i>
-                        <span class="text-sm font-medium">Mis Expedientes</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-blue-200 hover:bg-blue-800 hover:text-white transition-colors">
-                        <i class="fas fa-tasks w-5"></i>
-                        <span class="text-sm font-medium">Bandeja de Entrada</span>
-                        <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">3</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-blue-200 hover:bg-blue-800 hover:text-white transition-colors">
-                        <i class="fas fa-chart-pie w-5"></i>
-                        <span class="text-sm font-medium">Reportes</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-blue-200 hover:bg-blue-800 hover:text-white transition-colors">
-                        <i class="fas fa-cog w-5"></i>
-                        <span class="text-sm font-medium">Configuración</span>
-                    </a>
-                </li>
-            </ul>
-            
-            <div class="mt-8 px-4">
-                <p class="text-xs font-semibold text-blue-300 uppercase tracking-wider mb-3">Accesos Rápidos</p>
-                <ul class="space-y-2">
-                    <li><a href="#" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white"><i class="fas fa-file-signature w-4"></i> Firmar Documentos</a></li>
-                    <li><a href="#" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white"><i class="fas fa-calendar-check w-4"></i> Agenda Audiencias</a></li>
-                    <li><a href="#" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white"><i class="fas fa-users w-4"></i> Directorio Testigos</a></li>
-                </ul>
-            </div>
-        </nav>
-
-        <div class="p-4 border-t border-blue-800 bg-blue-900">
-            <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=random" alt="Usuario" class="w-9 h-9 rounded-full border-2 border-white">
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-white truncate">Dr. Juan Pérez</p>
-                    <p class="text-xs text-blue-300 truncate">Profesional Especializado</p>
-                </div>
-                <button class="text-blue-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
-        <!-- Top Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200 z-10">
-            <div class="px-6 py-4 flex justify-between items-center">
-                <div>
-                    <nav class="flex text-sm text-gray-500 mb-1">
-                        <a href="#" class="hover:text-pgd-blue">Expedientes</a>
-                        <span class="mx-2">/</span>
-                        <a href="#" class="hover:text-pgd-blue">Indagación Previa</a>
-                        <span class="mx-2">/</span>
-                        <span class="text-gray-900 font-medium">Rad. 2023-00158</span>
+                    <h4 class="mb-0"><i class="fas fa-balance-scale me-2"></i>VEED - Expediente Electrónico Disciplinario</h4>
+                    <nav aria-label="breadcrumb" class="mt-1">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="#">Mis Expedientes</a></li>
+                            <li class="breadcrumb-item"><a href="#">Indagación Previa</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Trámite y Seguimiento</li>
+                        </ol>
                     </nav>
-                    <h2 class="text-xl font-bold text-gray-900">Gestión de Indagación Previa</h2>
                 </div>
-                
-                <!-- Widget Compacto de Vencimiento -->
-                <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-xs text-gray-500 uppercase font-semibold">Vencimiento Indagación</p>
-                        <div class="flex items-center justify-end gap-2">
-                            <span class="text-2xl font-bold text-pgd-danger">178</span>
-                            <span class="text-sm text-gray-600">días restantes</span>
+                <div class="text-end">
+                    <span class="badge bg-light text-dark"><i class="fas fa-user-circle me-1"></i>Usuario Actual</span>
+                    <small class="d-block mt-1" style="font-size: 0.8rem;">Procuraduría Regional</small>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- COLUMNA IZQUIERDA: Documentación (250px) -->
+        <aside class="sidebar-section">
+            <div class="card card-custom h-100">
+                <div class="card-header-custom">
+                    <span><i class="fas fa-folder-open me-2"></i>Expediente Digital</span>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-download"></i></button>
+                </div>
+                <div class="card-body doc-tree">
+                    <ul class="list-unstyled">
+                        <li>
+                            <strong><i class="fas fa-folder doc-icon"></i>01. Noticia Disciplinaria</strong>
+                            <ul>
+                                <li><a href="#" class="text-decoration-none text-dark"><i class="fas fa-file-pdf doc-icon"></i>Queja Inicial.pdf</a></li>
+                                <li><a href="#" class="text-decoration-none text-dark"><i class="fas fa-file-word doc-icon"></i>Anexos Queja.docx</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong><i class="fas fa-folder doc-icon"></i>02. Actuaciones Internas</strong>
+                            <ul>
+                                <li><a href="#" class="text-decoration-none text-dark"><i class="fas fa-file-alt doc-icon"></i>Informe de Análisis</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong><i class="fas fa-folder doc-icon text-primary"></i>03. Auto de Indagación</strong>
+                            <ul>
+                                <li>
+                                    <a href="#" class="text-decoration-none text-dark fw-bold">
+                                        <i class="fas fa-file-signature doc-icon"></i>Auto Apertura Firmado.pdf
+                                    </a>
+                                    <div class="ms-4 text-muted" style="font-size: 0.75rem;">Firmado: 15/10/2023</div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong><i class="fas fa-folder doc-icon"></i>04. Notificaciones</strong>
+                            <ul>
+                                <li><i class="fas fa-clock doc-icon text-muted"></i>Pendientes</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong><i class="fas fa-folder doc-icon"></i>05. Pruebas</strong>
+                            <ul>
+                                <li><i class="fas fa-plus-circle doc-icon text-primary"></i>Agregar documento</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- COLUMNA CENTRAL: Gestión y Tracking (Ancha) -->
+        <main class="content-section">
+            
+            <!-- Encabezado del Expediente -->
+            <div class="card card-custom mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Radicado</label>
+                            <div class="fw-bold">2023-001234-REG</div>
                         </div>
-                        <div class="w-32 h-1.5 bg-gray-200 rounded-full mt-1 ml-auto overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-green-400 to-red-500" style="width: 65%"></div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Estado Actual</label>
+                            <div><span class="badge bg-primary">INDAGACIÓN PREVIA</span></div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Fecha Firma Auto</label>
+                            <div class="fw-bold text-primary"><i class="far fa-calendar-check me-1"></i>15/10/2023</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Vencimiento Etapa</label>
+                            <div class="fw-bold text-danger">15/04/2024</div>
+                        </div>
+                        
+                        <hr class="my-2">
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Quejoso</label>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-2"><i class="fas fa-user text-secondary"></i></div>
+                                <div>
+                                    <div class="fw-bold">Ciudadano Demandante</div>
+                                    <small class="text-muted">CC. 123.456.789</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Servidor Público Objeto de Control</label>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-2"><i class="fas fa-user-tie text-secondary"></i></div>
+                                <div>
+                                    <div class="fw-bold">Dr. Juan Pérez (Cargo)</div>
+                                    <small class="text-muted">Entidad: Secretaría de Salud</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button class="bg-pgd-blue hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md transition-colors flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Nueva Actuación
+                </div>
+            </div>
+
+            <!-- Panel de Acciones Rápidas -->
+            <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-institucional" data-bs-toggle="modal" data-bs-target="#modalAgendarPrueba">
+                    <i class="fas fa-calendar-plus me-2"></i>Programar Prueba
+                </button>
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-envelope-open-text me-2"></i>Librar Oficio
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fas fa-upload me-2"></i>Subir Documento
+                </button>
+                <div class="ms-auto">
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCierre">
+                        <i class="fas fa-gavel me-2"></i>Decisión Final
                     </button>
                 </div>
             </div>
-        </header>
 
-        <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto p-6">
-            
-            <!-- Info Card Principal -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
-                <div class="grid grid-cols-12 gap-6">
-                    <div class="col-span-3 border-r border-gray-100 pr-4">
-                        <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Radicado</p>
-                        <p class="text-lg font-bold text-pgd-blue">2023-00158</p>
-                        <p class="text-xs text-gray-500 mt-1">Origen: Secretaría General</p>
-                    </div>
-                    <div class="col-span-3 border-r border-gray-100 pr-4">
-                        <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Estado Actual</p>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            En Indagación Previa
-                        </span>
-                        <p class="text-xs text-gray-500 mt-1">Auto firmado: 15 Oct 2023</p>
-                    </div>
-                    <div class="col-span-3 border-r border-gray-100 pr-4">
-                        <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Servidor Objeto de Control</p>
-                        <p class="text-sm font-medium text-gray-900">Carlos Rodríguez M.</p>
-                        <p class="text-xs text-gray-500">Cargo: Director Administrativo</p>
-                    </div>
-                    <div class="col-span-3">
-                        <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Quejoso / Denunciante</p>
-                        <p class="text-sm font-medium text-gray-900">María González L.</p>
-                        <p class="text-xs text-gray-500">Ciudadano Particular</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Tabs de Seguimiento -->
+            <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active text-primary fw-bold" id="timeline-tab" data-bs-toggle="tab" data-bs-target="#timeline" type="button">Línea de Tiempo</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-primary fw-bold" id="oficios-tab" data-bs-toggle="tab" data-bs-target="#oficios" type="button">Seguimiento Oficios</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-primary fw-bold" id="pruebas-tab" data-bs-toggle="tab" data-bs-target="#pruebas" type="button">Pruebas Decretadas</button>
+                </li>
+            </ul>
 
-            <div class="grid grid-cols-12 gap-6">
+            <div class="tab-content" id="myTabContent">
                 
-                <!-- Columna Izquierda: Acciones y Checklist (4 cols) -->
-                <div class="col-span-4 space-y-6">
-                    
-                    <!-- Panel de Acciones Principales -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                            <h3 class="font-semibold text-gray-800 text-sm"><i class="fas fa-bolt text-yellow-500 mr-2"></i>Actuaciones Requeridas</h3>
-                        </div>
-                        <div class="p-4 space-y-3">
-                            <button onclick="openModal('programarPrueba')" class="w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors group">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-medium text-pgd-blue text-sm">Programar Prueba</span>
-                                    <i class="fas fa-calendar-plus text-blue-300 group-hover:text-blue-500"></i>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Testimonios, Inspecciones, Peritajes</p>
-                            </button>
-
-                            <button class="w-full text-left px-4 py-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-lg transition-colors group">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-medium text-orange-800 text-sm">Librar Oficio / Citación</span>
-                                    <i class="fas fa-envelope-open-text text-orange-300 group-hover:text-orange-500"></i>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Solicitar informes a entidades</p>
-                            </button>
-
-                            <button class="w-full text-left px-4 py-3 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors group">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-medium text-green-800 text-sm">Proyecto de Decisión</span>
-                                    <i class="fas fa-file-contract text-green-300 group-hover:text-green-500"></i>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Archivamiento o Apertura Investigación</p>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Checklist de Pruebas Decretadas -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="font-semibold text-gray-800 text-sm">Checklist Pruebas (Auto)</h3>
-                            <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-md">3/5 Pendientes</span>
-                        </div>
-                        <div class="p-0">
-                            <ul class="divide-y divide-gray-100">
-                                <li class="p-3 hover:bg-gray-50 transition-colors">
-                                    <div class="flex items-start gap-3">
-                                        <input type="checkbox" class="mt-1 h-4 w-4 text-pgd-blue border-gray-300 rounded focus:ring-pgd-blue">
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">Informe de Auditoría</p>
-                                            <p class="text-xs text-gray-500">Entidad: Control Interno</p>
-                                            <span class="inline-block mt-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-[10px] rounded-full">Pendiente Recepción</span>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="p-3 hover:bg-gray-50 transition-colors">
-                                    <div class="flex items-start gap-3">
-                                        <input type="checkbox" class="mt-1 h-4 w-4 text-pgd-blue border-gray-300 rounded focus:ring-pgd-blue">
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">Declaración Quejoso</p>
-                                            <p class="text-xs text-gray-500">Tipo: Ampliación de Queja</p>
-                                            <span class="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-[10px] rounded-full">Agendada: 25 Oct</span>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="p-3 hover:bg-gray-50 transition-colors opacity-60">
-                                    <div class="flex items-start gap-3">
-                                        <input type="checkbox" checked class="mt-1 h-4 w-4 text-pgd-blue border-gray-300 rounded focus:ring-pgd-blue">
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900 line-through">Copia Documento Identidad</p>
-                                            <p class="text-xs text-gray-500">Recibido: 16 Oct 2023</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-2 border-t border-gray-200 text-center">
-                            <button class="text-xs text-pgd-blue font-medium hover:underline">Ver detalle de decretos</button>
-                        </div>
-                    </div>
-
-                    <!-- Alertas Compactas -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                        <h3 class="font-semibold text-gray-800 text-sm mb-3"><i class="fas fa-bell text-red-500 mr-2"></i>Alertas del Sistema</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-start gap-2 p-2 bg-red-50 border border-red-100 rounded-md">
-                                <i class="fas fa-exclamation-triangle text-red-500 mt-0.5 text-xs"></i>
-                                <p class="text-xs text-red-700">Oficio #004 sin respuesta después de 10 días hábiles.</p>
+                <!-- Tab Línea de Tiempo -->
+                <div class="tab-pane fade show active" id="timeline">
+                    <div class="card card-custom p-4">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-date">15/10/2023 - 09:30 AM</div>
+                                <div class="fw-bold text-primary">Auto de Apertura de Indagación Previa</div>
+                                <p class="mb-1 text-muted small">Firmado electrónicamente por el Jefe de Dependencia.</p>
+                                <a href="#" class="small"><i class="fas fa-eye"></i> Ver documento</a>
                             </div>
-                            <div class="flex items-start gap-2 p-2 bg-yellow-50 border border-yellow-100 rounded-md">
-                                <i class="fas fa-clock text-yellow-600 mt-0.5 text-xs"></i>
-                                <p class="text-xs text-yellow-700">Falta menos de 1 mes para vencer término de indagación si no se practican pruebas pendientes.</p>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-date">14/10/2023 - 04:15 PM</div>
+                                <div class="fw-bold">Proyecto de Auto subido</div>
+                                <p class="mb-1 text-muted small">Elaborado por el sustanciador.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-date">10/10/2023 - 10:00 AM</div>
+                                <div class="fw-bold">Recepción de Noticia Disciplinaria</div>
+                                <p class="mb-1 text-muted small">Radicado inicial del expediente.</p>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- Columna Central: Timeline y Oficios (8 cols) -->
-                <div class="col-span-8 space-y-6">
-                    
-                    <!-- Pestañas de Navegación Interna -->
-                    <div class="border-b border-gray-200">
-                        <nav class="-mb-px flex space-x-6">
-                            <a href="#" class="border-pgd-blue text-pgd-blue whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                Línea de Tiempo
-                            </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                Gestión de Oficios
-                            </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                Documentos del Expediente
-                            </a>
-                        </nav>
-                    </div>
-
-                    <!-- Contenido: Línea de Tiempo -->
-                    <div class="relative pl-4 timeline-line pb-4">
-                        <!-- Item 1 -->
-                        <div class="relative mb-8 pl-8">
-                            <div class="absolute left-0 top-1 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center border-2 border-white shadow-sm z-10">
-                                <i class="fas fa-file-import text-green-600 text-sm"></i>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 card-hover">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-gray-900 text-sm">Recepción Noticia Disciplinaria</h4>
-                                    <span class="text-xs text-gray-500">01 Sep 2023 - 08:30 AM</span>
+                <!-- Tab Oficios (Estilo Cards limpio) -->
+                <div class="tab-pane fade" id="oficios">
+                    <div class="row">
+                        <!-- Oficio Pendiente -->
+                        <div class="col-md-6">
+                            <div class="oficio-card border-start border-4 border-warning">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-bold mb-1">Oficio No. 2023-EE-001</h6>
+                                    <span class="status-badge status-pendiente">Pendiente de Libramiento</span>
                                 </div>
-                                <p class="text-sm text-gray-600 mb-2">Ingreso radicado inicial por parte de Secretaría General.</p>
-                                <div class="flex gap-2">
-                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">PDF</span>
-                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Anexos</span>
+                                <p class="small text-muted mb-2">Destinatario: Secretaría de Hacienda</p>
+                                <p class="small mb-3">Solicitud de certificados laborales del servidor público.</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> Librar Ahora</button>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i> Editar</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Item 2 -->
-                        <div class="relative mb-8 pl-8">
-                            <div class="absolute left-0 top-1 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center border-2 border-white shadow-sm z-10">
-                                <i class="fas fa-search text-blue-600 text-sm"></i>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 card-hover">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-gray-900 text-sm">Auto de Apertura a Indagación Previa</h4>
-                                    <span class="text-xs text-gray-500">15 Oct 2023 - 04:15 PM</span>
+                        
+                        <!-- Oficio Librado -->
+                        <div class="col-md-6">
+                            <div class="oficio-card border-start border-4 border-info">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-bold mb-1">Oficio No. 2023-EE-002</h6>
+                                    <span class="status-badge status-librado">Librado</span>
                                 </div>
-                                <p class="text-sm text-gray-600 mb-2">Decreto de pruebas documentales y testimoniales iniciales. Firmado digitalmente por el Jefe de Dependencia.</p>
-                                <div class="flex gap-2 mt-2">
-                                    <button class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded border border-blue-200 hover:bg-blue-100"><i class="fas fa-eye mr-1"></i> Ver Auto</button>
-                                    <button class="text-xs bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200 hover:bg-gray-100"><i class="fas fa-download mr-1"></i> Descargar</button>
+                                <p class="small text-muted mb-2">Destinatario: Banco Popular</p>
+                                <p class="small mb-3">Solicitud de extractos bancarios (Orden Judicial).</p>
+                                <div class="alert alert-light border small py-1 mb-2">
+                                    <i class="fas fa-clock"></i> Enviado el: 16/10/2023
                                 </div>
+                                <button class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-search"></i> Ver Constancia de Envío</button>
                             </div>
                         </div>
 
-                        <!-- Item 3 (Actual) -->
-                        <div class="relative mb-8 pl-8">
-                            <div class="absolute left-0 top-1 w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-4 ring-yellow-50 z-10">
-                                <i class="fas fa-clock text-yellow-600 text-sm"></i>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm border border-yellow-200 card-hover relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-50 rounded-bl-full -mr-4 -mt-4 z-0"></div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h4 class="font-bold text-gray-900 text-sm">Práctica de Pruebas en Curso</h4>
-                                        <span class="text-xs text-yellow-600 font-semibold">ACTUAL</span>
-                                    </div>
-                                    <p class="text-sm text-gray-600">Se están recabando los informes solicitados a las entidades de control.</p>
+                         <!-- Oficio Recibido -->
+                         <div class="col-md-6">
+                            <div class="oficio-card border-start border-4 border-success">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-bold mb-1">Respuesta Oficio 002</h6>
+                                    <span class="status-badge status-recibido">Recibido</span>
+                                </div>
+                                <p class="small text-muted mb-2">Remitente: Banco Popular</p>
+                                <p class="small mb-3">Se adjuntan los extractos solicitados.</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-success"><i class="fas fa-file-import"></i> Vincular al Expediente</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Sección de Oficios (Estilo Cards Modernas) -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-8">
-                        <div class="bg-gray-50 px-5 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="font-bold text-gray-800 text-base">Seguimiento a Oficios Librados</h3>
-                            <button class="text-sm text-pgd-blue font-medium hover:underline">+ Librar Nuevo Oficio</button>
-                        </div>
-                        <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            
-                            <!-- Card Oficio 1 -->
-                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow relative">
-                                <div class="absolute top-3 right-3">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Pendiente Respuesta
-                                    </span>
-                                </div>
-                                <div class="mb-3">
-                                    <p class="text-xs text-gray-500 uppercase font-semibold">Oficio No. 2023-ER-089</p>
-                                    <p class="text-sm font-bold text-gray-900 mt-1">Solicitud Informe Financiero</p>
-                                    <p class="text-xs text-gray-600 mt-1">Destinatario: Contraloría Auxiliar</p>
-                                </div>
-                                <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                                    <div class="text-xs text-gray-500">
-                                        <i class="far fa-calendar mr-1"></i> Envío: 16 Oct
-                                        <br>
-                                        <span class="text-red-500 font-medium">Vence: 30 Oct</span>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button class="text-gray-400 hover:text-pgd-blue" title="Ver documento"><i class="fas fa-file-pdf"></i></button>
-                                        <button class="text-gray-400 hover:text-green-600" title="Recordar"><i class="fas fa-bell"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Card Oficio 2 -->
-                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow relative">
-                                <div class="absolute top-3 right-3">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                        Recibido
-                                    </span>
-                                </div>
-                                <div class="mb-3">
-                                    <p class="text-xs text-gray-500 uppercase font-semibold">Oficio No. 2023-ER-085</p>
-                                    <p class="text-sm font-bold text-gray-900 mt-1">Certificado Laboral</p>
-                                    <p class="text-xs text-gray-600 mt-1">Destinatario: RRHH Central</p>
-                                </div>
-                                <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                                    <div class="text-xs text-gray-500">
-                                        <i class="far fa-calendar mr-1"></i> Envío: 10 Oct
-                                        <br>
-                                        <span class="text-green-600 font-medium">Respuesta: 12 Oct</span>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button class="text-gray-400 hover:text-pgd-blue" title="Ver documento"><i class="fas fa-file-pdf"></i></button>
-                                        <button class="text-gray-400 hover:text-indigo-600" title="Agregar al expediente"><i class="fas fa-link"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                             <!-- Card Oficio 3 -->
-                             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow relative opacity-75">
-                                <div class="absolute top-3 right-3">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                                        Borrador
-                                    </span>
-                                </div>
-                                <div class="mb-3">
-                                    <p class="text-xs text-gray-500 uppercase font-semibold">Nuevo Oficio</p>
-                                    <p class="text-sm font-bold text-gray-900 mt-1">Citación Testigo Presencial</p>
-                                    <p class="text-xs text-gray-600 mt-1">Destinatario: Juan Doe</p>
-                                </div>
-                                <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                                    <div class="text-xs text-gray-500">
-                                        Creado: Hoy
-                                    </div>
-                                    <button class="bg-pgd-blue text-white px-3 py-1 rounded text-xs hover:bg-blue-800">Editar y Enviar</button>
-                                </div>
-                            </div>
-
-                        </div>
+                <!-- Tab Pruebas -->
+                <div class="tab-pane fade" id="pruebas">
+                    <div class="card card-custom p-3">
+                        <table class="table table-hover table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Objeto / Persona</th>
+                                    <th>Fecha Programada</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fas fa-user-edit text-primary"></i> Testimonio</td>
+                                    <td>Carlos Ruiz (Testigo presencial)</td>
+                                    <td>25/10/2023 - 10:00 AM</td>
+                                    <td><span class="badge bg-info text-dark">Agendada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-video"></i></button>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-search text-warning"></i> Inspección</td>
+                                    <td>Sede Administrativa (Piso 3)</td>
+                                    <td>--/--/--</td>
+                                    <td><span class="badge bg-warning text-dark">Por Programar</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="document.getElementById('modalAgendarPrueba').click()"><i class="fas fa-calendar"></i> Agendar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- Modal Programar Prueba -->
-    <div id="modalProgramarPrueba" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform transition-all">
-            <div class="bg-pgd-blue px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-white">Programar Prueba - Indagación</h3>
-                <button onclick="closeModal('programarPrueba')" class="text-blue-200 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+            <!-- Audit Log (Trazabilidad) -->
+            <div class="card card-custom mt-4">
+                <div class="card-header-custom bg-light">
+                    <span><i class="fas fa-history me-2"></i>Audit Log - Trazabilidad del Expediente</span>
+                    <button class="btn btn-sm btn-link text-decoration-none">Ver completo</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="audit-log">
+                        <div class="log-entry d-flex justify-content-between">
+                            <span><strong>Usuario Admin</strong> descargó el Auto de Indagación</span>
+                            <span class="log-time">Hace 10 min</span>
+                        </div>
+                        <div class="log-entry d-flex justify-content-between">
+                            <span><strong>Sistema</strong> generó alerta de vencimiento (6 meses)</span>
+                            <span class="log-time">Hace 1 hora</span>
+                        </div>
+                        <div class="log-entry d-flex justify-content-between">
+                            <span><strong>Jefe Dependencia</strong> firmó digitalmente el Auto No. 001</span>
+                            <span class="log-time">15/10/2023 09:30 AM</span>
+                        </div>
+                        <div class="log-entry d-flex justify-content-between">
+                            <span><strong>Usuario Admin</strong> subió proyecto de auto</span>
+                            <span class="log-time">14/10/2023 04:15 PM</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+        </main>
+
+        <!-- COLUMNA DERECHA: Alertas y Checklist (280px) -->
+        <aside class="alerts-section">
             
-            <div class="p-6 space-y-4">
-                <!-- Tipo de Prueba -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Actuación</label>
-                    <select class="w-full border-gray-300 rounded-lg shadow-sm focus:border-pgd-blue focus:ring focus:ring-pgd-blue focus:ring-opacity-50 p-2.5 border">
-                        <option value="">Seleccione...</option>
-                        <option value="testimonio">Testimonio (Escuchar Declara)</option>
-                        <option value="ampliacion">Ampliación de Queja</option>
-                        <option value="ratificacion">Ratificación de Queja</option>
-                        <option value="inspeccion">Inspección Disciplinaria</option>
-                        <option value="peritazgo">Peritazgo Técnico</option>
-                    </select>
+            <!-- Widget Vencimiento Compacto -->
+            <div class="alert-widget alert-warning">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0 fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Vencimiento</h6>
+                    <i class="fas fa-hourglass-half text-warning"></i>
                 </div>
-
-                <!-- Participantes -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Persona a Interrogar/Citar</label>
-                        <input type="text" placeholder="Nombre completo" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-pgd-blue focus:ring focus:ring-pgd-blue focus:ring-opacity-50 p-2.5 border">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Documento / Rol</label>
-                        <input type="text" placeholder="Ej: Quejoso, Testigo" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-pgd-blue focus:ring focus:ring-pgd-blue focus:ring-opacity-50 p-2.5 border">
-                    </div>
+                <p class="small mb-1">Etapa de Indagación</p>
+                <div class="vencimiento-box">
+                    <div class="vencimiento-number">179</div>
+                    <small class="text-muted">días restantes</small>
                 </div>
-
-                <!-- Fecha y Hora -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Propuesta</label>
-                        <input type="date" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-pgd-blue focus:ring focus:ring-pgd-blue focus:ring-opacity-50 p-2.5 border">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-                        <input type="time" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-pgd-blue focus:ring focus:ring-pgd-blue focus:ring-opacity-50 p-2.5 border">
-                    </div>
+                <div class="progress mt-2" style="height: 5px;">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 15%"></div>
                 </div>
+                <small class="d-block mt-2 text-muted" style="font-size: 0.7rem;">
+                    Vence: 15/04/2024<br>
+                    Término: 6 meses calendario
+                </small>
+            </div>
 
-                <!-- Modalidad -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Modalidad</label>
-                    <div class="flex gap-4 mt-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="modalidad" class="text-pgd-blue focus:ring-pgd-blue" checked>
-                            <span class="ml-2 text-sm text-gray-700">Presencial (Despacho)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="modalidad" class="text-pgd-blue focus:ring-pgd-blue">
-                            <span class="ml-2 text-sm text-gray-700">Virtual (Videoconferencia)</span>
+            <!-- Checklist de Pruebas (Ligado al Auto) -->
+            <div class="card card-custom">
+                <div class="card-header-custom py-2">
+                    <span class="small fw-bold"><i class="fas fa-list-check me-2"></i>Checklist Pruebas (Auto)</span>
+                </div>
+                <div class="card-body py-3">
+                    <p class="small text-muted mb-2">Pruebas decretadas en el Auto de Indagación:</p>
+                    
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p1">
+                        <label for="p1" class="small mb-0">
+                            <strong>Testimonio:</strong> Carlos Ruiz
+                            <div class="text-success small"><i class="fas fa-check"></i> Recibido</div>
                         </label>
                     </div>
-                </div>
 
-                <!-- Observaciones -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Objeto / Preguntas Clave</label>
-                    <textarea rows="3" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-pgd-blue focus:ring focus:ring-pgd-blue focus:ring-opacity-50 p-2.5 border" placeholder="Describa brevemente sobre qué versará la prueba..."></textarea>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p2">
+                        <label for="p2" class="small mb-0">
+                            <strong>Documento:</strong> Cert. Laboral
+                            <div class="text-warning small"><i class="fas fa-clock"></i> Pendiente</div>
+                        </label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p3">
+                        <label for="p3" class="small mb-0">
+                            <strong>Inspección:</strong> Sede Admin
+                            <div class="text-danger small"><i class="fas fa-times"></i> No realizada</div>
+                        </label>
+                    </div>
+
+                    <hr class="my-2">
+                    <div class="text-center">
+                        <small class="text-muted d-block">Evaluación Probatoria</small>
+                        <div class="btn-group w-100 mt-2">
+                            <button class="btn btn-outline-secondary btn-sm">Archivar</button>
+                            <button class="btn btn-outline-primary btn-sm">Investigación</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3">
-                <button onclick="closeModal('programarPrueba')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-sm">Cancelar</button>
-                <button class="px-4 py-2 bg-pgd-blue text-white rounded-lg hover:bg-blue-800 font-medium text-sm shadow-md">Generar Citación y Agendar</button>
+            <!-- Widget ProcuradurIA -->
+            <div class="card card-custom border-primary">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-robot fa-2x text-primary mb-2"></i>
+                    <h6 class="fw-bold">ProcuradurIA</h6>
+                    <p class="small text-muted">Asistente Virtual</p>
+                    <button class="btn btn-sm btn-outline-primary w-100">Consultar Jurisprudencia</button>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- Modal Agendar Prueba -->
+    <div class="modal fade" id="modalAgendarPrueba" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-plus me-2"></i>Programar Prueba</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipo de Prueba</label>
+                            <select class="form-select">
+                                <option value="">Seleccione...</option>
+                                <option value="testimonio">Testimonio</option>
+                                <option value="peritazgo">Peritazgo</option>
+                                <option value="inspeccion">Inspección Disciplinaria</option>
+                                <option value="documento">Solicitud de Documentos</option>
+                                <option value="ratificacion">Ratificación / Ampliación de Queja</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Hora</label>
+                                <input type="time" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción / Objeto</label>
+                            <textarea class="form-control" rows="3" placeholder="Detalle qué se va a probar..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Participantes</label>
+                            <input type="text" class="form-control" placeholder="Nombres, cargos, correos...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-institucional">Guardar Programación</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Script Funcionalidad Básica -->
-    <script>
-        function openModal(id) {
-            document.getElementById('modal' + id.charAt(0).toUpperCase() + id.slice(1)).classList.remove('hidden');
-            document.getElementById('modal' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('flex');
-        }
+    <!-- Modal Decisión Final -->
+    <div class="modal fade" id="modalCierre" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title">Decisión de Cierre de Indagación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-4">Con base en las pruebas recaudadas, ¿cuál es su decisión?</p>
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-success p-3">
+                            <i class="fas fa-archive fa-2x mb-2"></i>
+                            <h5>Proyectar Auto de Archivo</h5>
+                            <small>No hay mérito para continuar</small>
+                        </button>
+                        <button class="btn btn-outline-primary p-3">
+                            <i class="fas fa-search-plus fa-2x mb-2"></i>
+                            <h5>Proyectar Auto de Apertura de Investigación</h5>
+                            <small>Existen causales probables</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function closeModal(id) {
-            const modal = document.getElementById('modal' + id.charAt(0).toUpperCase() + id.slice(1));
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        // Cerrar modal al hacer click fuera
-        window.onclick = function(event) {
-            if (event.target.classList.contains('fixed')) {
-                event.target.classList.add('hidden');
-                event.target.classList.remove('flex');
-            }
-        }
-    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
