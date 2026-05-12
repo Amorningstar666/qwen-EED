@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Investigación Disciplinaria — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853; --amarillo:#FFE601; --rojo:#E3201B;
+      --azul-medio:#074C84; --azul-claro:#4DBFE2;
+      --naranja:#FFC300; --verde:#33FFCC;
+      --negro:#131313; --gris-claro:#EDEDED; --gris-medio:#949494;
+      --blanco:#FFFFFF; --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR — idéntico al 08 */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .back-btn:hover{background:rgba(255,255,255,0.2);}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT 3 COLUMNAS — idéntico al 08 */
+    .editor-layout{display:grid;grid-template-columns:200px 1fr 300px;flex:1;height:calc(100vh - 96px);}
+
+    /* PANEL IZQUIERDO */
+    .panel-indice{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:20px 0;}
+    .indice-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;padding:0 16px 12px;}
+    .indice-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--negro);border-left:3px solid transparent;transition:all .15s;}
+    .indice-item:hover{background:#F8FAFC;color:var(--azul);}
+    .indice-item.active{border-left-color:var(--azul);background:#EBF4FA;color:var(--azul);font-weight:600;}
+    .indice-item svg{width:14px;height:14px;flex-shrink:0;color:var(--gris-medio);}
+    .indice-item.active svg{color:var(--azul);}
+    .indice-sep{height:1px;background:var(--gris-claro);margin:8px 16px;}
+
+    /* SEMÁFORO TÉRMINO */
+    .term-widget{margin:16px;padding:14px;border-radius:10px;border:2px solid;}
+    .term-widget.verde{border-color:rgba(51,255,204,.4);background:rgba(51,255,204,.06);}
+    .term-widget.amarillo{border-color:rgba(255,230,1,.5);background:rgba(255,230,1,.06);}
+    .term-widget.naranja{border-color:rgba(255,195,0,.5);background:rgba(255,195,0,.06);}
+    .term-widget.rojo{border-color:rgba(227,32,27,.4);background:rgba(227,32,27,.06);}
+    .term-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+    .term-label.verde{color:#065F46;}
+    .term-label.amarillo{color:#7a5200;}
+    .term-label.naranja{color:#92400E;}
+    .term-label.rojo{color:#991B1B;}
+    .term-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .term-dot.verde{background:var(--verde);}
+    .term-dot.amarillo{background:var(--amarillo);}
+    .term-dot.naranja{background:var(--naranja);}
+    .term-dot.rojo{background:var(--rojo);}
+    .term-days{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;line-height:1;}
+    .term-days.verde{color:#065F46;}
+    .term-days.amarillo{color:#7a5200;}
+    .term-days.naranja{color:#92400E;}
+    .term-days.rojo{color:#991B1B;}
+    .term-sublabel{font-size:11px;color:var(--gris-medio);margin-top:2px;}
+    .term-bar-track{width:100%;height:6px;background:var(--gris-claro);border-radius:3px;margin:10px 0;overflow:hidden;}
+    .term-bar-fill{height:100%;border-radius:3px;transition:width .3s;}
+    .term-bar-fill.verde{background:var(--verde);}
+    .term-bar-fill.amarillo{background:var(--amarillo);}
+    .term-bar-fill.naranja{background:var(--naranja);}
+    .term-bar-fill.rojo{background:var(--rojo);}
+    .term-dates{font-size:11px;color:var(--gris-medio);line-height:1.8;}
+    .term-dates strong{color:var(--negro);font-weight:700;}
+    .term-prorroga-btn{width:100%;margin-top:10px;padding:8px;border:1.5px solid var(--azul);background:transparent;color:var(--azul);border-radius:7px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+    .term-prorroga-btn:hover{background:var(--azul);color:var(--blanco);}
+    .term-prorroga-btn svg{width:12px;height:12px;}
+
+    /* ALERTAS EN SIDEBAR */
+    .alerta-item{margin:0 12px 6px;padding:9px 12px;border-radius:8px;border-left:3px solid;cursor:pointer;transition:all .15s;}
+    .alerta-item:hover{opacity:.85;}
+    .alerta-critica{background:#FEF2F2;border-left-color:var(--rojo);}
+    .alerta-advertencia{background:#FFFBEB;border-left-color:var(--naranja);}
+    .alerta-info-color{background:#EFF6FF;border-left-color:var(--azul-claro);}
+    .alerta-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;}
+    .alerta-titulo.critica{color:#991B1B;}
+    .alerta-titulo.advertencia{color:#92400E;}
+    .alerta-titulo.info{color:var(--azul-medio);}
+    .alerta-desc{font-size:10px;color:var(--gris-medio);margin-top:1px;}
+
+    /* CONTENIDO CENTRAL */
+    .main-content{overflow-y:auto;display:flex;flex-direction:column;}
+
+    /* CABECERA EXPEDIENTE — igual al doc-header-oficial del 08 */
+    .exp-header{background:var(--azul);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;}
+    .exp-logo-area{display:flex;align-items:center;gap:12px;}
+    .exp-logo-box{width:40px;height:40px;background:var(--amarillo);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .exp-logo-box svg{width:22px;height:22px;color:var(--azul);}
+    .exp-entidad .ent-name{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--blanco);}
+    .exp-entidad .ent-dep{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px;}
+    .exp-chip{background:var(--amarillo);color:var(--azul);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:6px 16px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase;}
+
+    /* TABLA METADATOS — igual al doc-meta-table del 08 */
+    .meta-table{width:100%;border-collapse:collapse;border-bottom:2px solid var(--gris-claro);background:var(--blanco);}
+    .meta-table td{padding:10px 18px;font-size:12px;border-right:1px solid var(--gris-claro);border-bottom:1px solid var(--gris-claro);vertical-align:top;}
+    .meta-table td:last-child{border-right:none;}
+    .meta-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px;}
+    .meta-value{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);}
+    .meta-badge{display:inline-flex;align-items:center;gap:5px;background:#FEF9E7;color:#7a5200;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--naranja);}
+
+    /* TABS */
+    .tabs-nav{background:var(--blanco);border-bottom:2px solid var(--gris-claro);display:flex;overflow-x:auto;padding:0 20px;}
+    .tab-btn{border:none;background:transparent;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:var(--gris-medio);padding:14px 16px;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;}
+    .tab-btn:hover{color:var(--azul-medio);}
+    .tab-btn.active{color:var(--azul);border-bottom-color:var(--azul);}
+    .tab-btn svg{width:13px;height:13px;}
+    .tab-counter{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;background:var(--gris-claro);color:var(--gris-medio);}
+    .tab-btn.active .tab-counter{background:rgba(6,56,83,.12);color:var(--azul);}
+    .tab-counter.alerta{background:var(--rojo);color:var(--blanco);}
+
+    /* CONTENIDO DE PESTAÑAS */
+    .tab-pane{display:none;}
+    .tab-pane.active{display:block;}
+    .tab-body{padding:24px;}
+
+    /* BARRA DE ACCIONES */
+    .action-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .action-bar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--azul);}
+    .action-bar-btns{display:flex;gap:8px;}
+    .btn{border:none;cursor:pointer;border-radius:8px;padding:9px 16px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;transition:all .15s;}
+    .btn svg{width:13px;height:13px;}
+    .btn-primary{background:var(--azul);color:var(--blanco);}
+    .btn-primary:hover{background:var(--azul-medio);}
+    .btn-accent{background:var(--amarillo);color:var(--azul);}
+    .btn-accent:hover{background:#e6cf00;}
+    .btn-secondary{background:transparent;color:var(--azul);border:2px solid var(--azul);}
+    .btn-secondary:hover{background:rgba(6,56,83,.05);}
+    .btn-ghost{background:transparent;color:var(--azul-medio);border:1.5px dashed #CBD5E1;}
+    .btn-ghost:hover{border-color:var(--azul-medio);}
+    .btn-danger{background:var(--rojo);color:var(--blanco);}
+    .btn-danger:hover{background:#C1160E;}
+    .btn-sm{padding:6px 12px;font-size:11px;}
+
+    /* CARDS DE OFICIOS */
+    .oficio-card{background:var(--blanco);border-radius:10px;border:1.5px solid;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(6,56,83,.05);transition:all .15s;}
+    .oficio-card:hover{box-shadow:0 4px 16px rgba(6,56,83,.1);}
+    .oficio-card.cumplido{border-color:#BBF7D0;}
+    .oficio-card.en-curso{border-color:#FDE68A;}
+    .oficio-card.sin-respuesta{border-color:var(--naranja);}
+    .oficio-card.renuente{border-color:var(--rojo);background:#FEF9F9;}
+    .oficio-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px;}
+    .oficio-num-tipo{display:flex;align-items:center;gap:8px;}
+    .oficio-num-badge{width:28px;height:28px;border-radius:6px;background:var(--azul);color:var(--blanco);font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .oficio-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);}
+    .oficio-subtitulo{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+    .status-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;}
+    .status-pill svg{width:10px;height:10px;}
+    .status-cumplido{background:#D1FAE5;color:#065F46;}
+    .status-curso{background:#FEF3C7;color:#92400E;}
+    .status-sinresp{background:#FEE2E2;color:#991B1B;}
+    .status-renuente{background:#FEE2E2;color:#991B1B;}
+    .oficio-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--gris-claro);}
+    .oficio-field{display:flex;flex-direction:column;gap:2px;}
+    .oficio-field-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;color:var(--gris-medio);text-transform:uppercase;}
+    .oficio-field-value{font-size:12px;color:var(--negro);font-weight:600;}
+    .oficio-field-value.alerta-rojo{color:var(--rojo);font-weight:700;}
+    .oficio-field-value.alerta-naranja{color:#92400E;font-weight:700;}
+    .oficio-desc{font-size:12px;color:var(--negro);line-height:1.5;margin-bottom:8px;}
+    .oficio-obs{font-size:11px;color:var(--gris-medio);font-style:italic;margin-bottom:10px;padding:6px 10px;background:#F8FAFC;border-radius:5px;border-left:2px solid var(--gris-claro);}
+    .oficio-obs.alerta{background:#FEF9E7;border-left-color:var(--naranja);color:#92400E;font-style:normal;}
+    .oficio-obs.critica{background:#FEF2F2;border-left-color:var(--rojo);color:#991B1B;font-style:normal;}
+    .oficio-acciones{display:flex;flex-wrap:wrap;gap:6px;}
+    .oficio-link-btn{border:none;background:transparent;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul-medio);cursor:pointer;padding:5px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;transition:all .15s;}
+    .oficio-link-btn:hover{background:rgba(7,76,132,.08);}
+    .oficio-link-btn svg{width:12px;height:12px;}
+    .oficio-link-btn.danger{color:var(--rojo);}
+    .oficio-link-btn.danger:hover{background:rgba(227,32,27,.08);}
+
+    /* SECCIÓN SEPARADORA */
+    .section-sep{display:flex;align-items:center;gap:10px;margin:24px 0 16px;}
+    .section-sep-line{flex:1;height:1px;background:var(--gris-claro);}
+    .section-sep-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+    .section-sep-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;}
+    .section-sep-icon.alerta{background:var(--rojo);color:var(--blanco);}
+    .section-sep-icon.normal{background:var(--azul);color:var(--blanco);}
+    .section-sep-icon svg{width:11px;height:11px;}
+
+    /* TABLA DOCUMENTOS / TESTIGOS / NOTIFICACIONES */
+    .data-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--blanco);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(6,56,83,.06);}
+    .data-table thead{background:var(--azul);}
+    .data-table th{padding:11px 14px;text-align:left;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--blanco);text-transform:uppercase;letter-spacing:.04em;}
+    .data-table td{padding:11px 14px;border-bottom:1px solid var(--gris-claro);vertical-align:middle;}
+    .data-table tbody tr:hover{background:#F8FAFC;}
+    .data-table tbody tr:last-child td{border-bottom:none;}
+
+    /* CARDS SUJETOS */
+    .sujeto-card{background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:16px;margin-bottom:12px;}
+    .sujeto-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .sujeto-tipo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:999px;}
+    .sujeto-tipo.investigado{background:#EEF4FF;color:var(--azul);}
+    .sujeto-tipo.defensor{background:#F0FDF4;color:#065F46;}
+    .sujeto-tipo.quejoso{background:#FEF9E7;color:#7a5200;}
+    .sujeto-nombre{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--negro);margin-bottom:4px;}
+    .sujeto-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+    .sujeto-field-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;color:var(--gris-medio);text-transform:uppercase;margin-bottom:2px;}
+    .sujeto-field-value{font-size:12px;color:var(--negro);font-weight:600;}
+    .poder-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid;}
+    .poder-aceptar{border-color:#BBF7D0;background:#F0FDF4;color:#065F46;}
+    .poder-aceptar:hover{background:#DCFCE7;}
+    .poder-revocar{border-color:#FECACA;background:#FEF2F2;color:#991B1B;}
+    .poder-revocar:hover{background:#FEE2E2;}
+
+    /* AUDIENCIAS */
+    .audiencia-card{background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:14px;}
+    .audiencia-fecha-box{width:48px;height:52px;background:var(--azul);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+    .audiencia-fecha-dia{font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:var(--blanco);line-height:1;}
+    .audiencia-fecha-mes{font-family:'Montserrat',sans-serif;font-weight:600;font-size:9px;color:rgba(255,255,255,.7);text-transform:uppercase;margin-top:2px;}
+    .audiencia-info{flex:1;}
+    .audiencia-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;}
+    .audiencia-meta{font-size:11px;color:var(--gris-medio);}
+    .audiencia-status{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;}
+    .audiencia-programada{background:#EEF4FF;color:var(--azul);}
+    .audiencia-realizada{background:#D1FAE5;color:#065F46;}
+    .teams-link{display:flex;align-items:center;gap:4px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul-medio);text-decoration:none;padding:4px 8px;border-radius:4px;transition:all .15s;}
+    .teams-link:hover{background:rgba(7,76,132,.08);}
+    .teams-link svg{width:12px;height:12px;}
+
+    /* TIMELINE */
+    .timeline{padding-left:28px;position:relative;}
+    .timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--gris-claro);}
+    .timeline-item{position:relative;margin-bottom:18px;}
+    .tl-dot{position:absolute;left:-24px;width:14px;height:14px;border-radius:50%;border:2px solid var(--blanco);top:4px;z-index:1;}
+    .tl-dot.success{background:var(--verde);}
+    .tl-dot.normal{background:var(--azul-medio);}
+    .tl-dot.critico{background:var(--rojo);}
+    .tl-dot.advertencia{background:var(--naranja);}
+    .tl-content{background:var(--blanco);border-radius:8px;padding:12px 14px;border:1px solid var(--gris-claro);box-shadow:0 1px 4px rgba(6,56,83,.04);}
+    .tl-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:2px;}
+    .tl-fecha{font-size:11px;color:var(--gris-medio);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+    .tl-fecha svg{width:11px;height:11px;}
+    .tl-desc{font-size:12px;color:var(--gris-medio);line-height:1.5;}
+
+    /* PANEL DERECHO */
+    .panel-tools{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;display:flex;flex-direction:column;}
+    .tools-section{border-bottom:1px solid var(--gris-claro);}
+    .tools-section-header{padding:12px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+    .tools-section-header h4{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex:1;}
+    .tools-section-header svg{width:14px;height:14px;color:var(--azul-medio);}
+    .tools-section-body{padding:12px 16px;}
+
+    /* TRACKER DE OFICIOS */
+    .tracker-item{padding:10px 12px;border-radius:9px;border:1.5px solid;cursor:pointer;transition:all .15s;margin-bottom:6px;}
+    .tracker-item.dec{border-color:#BFDBFE;background:#EEF4FF;}
+    .tracker-item.env{border-color:#FDE68A;background:#FEF9E7;}
+    .tracker-item.rec{border-color:#BBF7D0;background:#F0FDF4;}
+    .tracker-item.ren{border-color:#FECACA;background:#FEF2F2;}
+    .tracker-head{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+    .tracker-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .dec .tracker-dot{background:var(--azul-medio);}
+    .env .tracker-dot{background:var(--naranja);}
+    .rec .tracker-dot{background:#10B981;}
+    .ren .tracker-dot{background:var(--rojo);}
+    .tracker-dest{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;flex:1;}
+    .dec .tracker-dest{color:var(--azul-medio);}
+    .env .tracker-dest{color:#92400E;}
+    .rec .tracker-dest{color:#065F46;}
+    .ren .tracker-dest{color:#991B1B;}
+    .tracker-estado{font-family:'Montserrat',sans-serif;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.06em;}
+    .dec .tracker-estado{color:var(--azul-medio);}
+    .env .tracker-estado{color:#92400E;}
+    .rec .tracker-estado{color:#10B981;}
+    .ren .tracker-estado{color:#991B1B;}
+    .tracker-tipo{font-size:11px;color:var(--gris-medio);}
+    .tracker-add-btn{display:flex;align-items:center;gap:6px;background:none;border:1.5px dashed #CBD5E1;border-radius:8px;width:100%;padding:9px 12px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);cursor:pointer;transition:all .15s;margin-top:4px;}
+    .tracker-add-btn:hover{border-color:var(--azul-medio);color:var(--azul-medio);}
+    .tracker-add-btn svg{width:14px;height:14px;}
+    .tracker-legend{display:flex;flex-direction:column;gap:4px;margin-top:10px;padding:10px;background:#F8FAFC;border-radius:8px;}
+    .tracker-legend-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gris-medio);}
+    .tracker-legend-dot{width:8px;height:8px;border-radius:50%;}
+
+    /* EXP REF */
+    .exp-ref-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+    .exp-ref-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;}
+    .exp-ref-value{font-size:12px;color:var(--negro);text-align:right;max-width:60%;}
+
+    /* UPLOAD ZONE */
+    .upload-zone{border:2px dashed #CBD5E1;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:#FAFBFC;}
+    .upload-zone:hover,.upload-zone.dragover{border-color:var(--azul-claro);background:#EBF4FA;}
+    .uz-title{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);display:block;margin-bottom:2px;}
+    .uz-sub{font-size:10px;color:var(--gris-medio);}
+    .uploaded-file{display:none;align-items:center;gap:10px;border:1px solid #BBF7D0;border-radius:8px;background:#F0FDF4;padding:8px 12px;margin-top:8px;}
+    .uploaded-file.visible{display:flex;}
+    .uf-name{font-size:12px;font-weight:600;color:#065F46;flex:1;}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,56,83,0.5);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--blanco);border-radius:16px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(6,56,83,.25);animation:slideIn .2s ease;}
+    @keyframes slideIn{from{transform:translateY(-16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    .modal-header{background:var(--azul);padding:18px 24px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
+    .modal-header h3{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--blanco);display:flex;align-items:center;gap:8px;}
+    .modal-header h3 svg{width:18px;height:18px;color:var(--amarillo);}
+    .modal-close-btn{background:rgba(255,255,255,.1);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--blanco);display:flex;align-items:center;justify-content:center;}
+    .modal-close-btn:hover{background:rgba(255,255,255,.2);}
+    .modal-body{padding:24px;}
+    .modal-aviso{background:#EEF4FF;border-radius:8px;padding:12px 14px;font-size:12px;color:var(--azul-medio);margin-bottom:16px;display:flex;gap:8px;line-height:1.5;}
+    .modal-aviso svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:10px;justify-content:flex-end;}
+
+    /* FORM */
+    .form-group{margin-bottom:14px;}
+    .form-label{display:block;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+    .form-label .req{color:var(--rojo);}
+    .form-input,.form-select,.form-textarea{width:100%;border:1.5px solid #CBD5E1;border-radius:7px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);outline:none;transition:all .15s;background:var(--blanco);}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--azul-claro);background:#F8FBFF;}
+    .form-textarea{resize:vertical;min-height:80px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .form-hint{font-size:11px;color:var(--gris-medio);margin-top:4px;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:var(--blanco);padding:12px 18px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:2000;max-width:340px;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast svg{width:16px;height:16px;color:var(--verde);}
+
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:10px;}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="back-btn" aria-label="Volver">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="navbar-title">
+      Gestión de Investigación Disciplinaria
+      <span>Art. 211–216 CGD · EXP-2026-00487 · En curso</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="autosave-indicator">
+      <span class="autosave-dot"></span>
+      Guardado automáticamente
+    </div>
+    <select class="rol-select">
+      <option value="instructor">Rol: Instructor</option>
+      <option value="revisor">Rol: Revisor</option>
+      <option value="jefe">Rol: Jefe</option>
+    </select>
+    <button class="btn-accion-principal" onclick="openModal('modal-evaluar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      Evaluar investigación
+    </button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="#">Inicio</a><span class="sep">›</span>
+  <a href="#">Mi bandeja</a><span class="sep">›</span>
+  <a href="#">EXP-2026-00487</a><span class="sep">›</span>
+  <span class="current">Gestión de investigación</span>
+</div>
+
+<!-- LAYOUT 3 COLUMNAS -->
+<div class="editor-layout">
+
+  <!-- ===== PANEL IZQUIERDO ===== -->
+  <nav class="panel-indice" aria-label="Secciones de investigación">
+    <div class="indice-title">Investigación</div>
+
+    <div class="indice-item active" onclick="setTab('oficios',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Oficios
+    </div>
+    <div class="indice-item" onclick="setTab('documentos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Documentos
+    </div>
+    <div class="indice-item" onclick="setTab('testigos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Testigos
+    </div>
+    <div class="indice-item" onclick="setTab('descargos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Descargos
+    </div>
+    <div class="indice-item" onclick="setTab('sujetos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Sujetos procesales
+    </div>
+    <div class="indice-item" onclick="setTab('ampliaciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Ampliaciones
+    </div>
+    <div class="indice-item" onclick="setTab('notificaciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      Notificaciones
+    </div>
+    <div class="indice-item" onclick="setTab('audiencias',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Audiencias
+    </div>
+    <div class="indice-item" onclick="setTab('historial',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Historial
+    </div>
+
+    <div class="indice-sep"></div>
+
+    <!-- SEMÁFORO TÉRMINO -->
+    <div class="term-widget verde" id="term-widget">
+      <div class="term-label verde">
+        <span class="term-dot verde"></span>
+        Término investigación
+      </div>
+      <div class="term-days verde" id="term-days">156</div>
+      <div class="term-sublabel">días hábiles restantes</div>
+      <div class="term-bar-track">
+        <div class="term-bar-fill verde" style="width:45%" id="term-bar"></div>
+      </div>
+      <div class="term-dates">
+        <div>Inicio: <strong>15-May-2026</strong></div>
+        <div>Vence: <strong>15-Nov-2026</strong></div>
+        <div>Prescripción: <strong>15-May-2031</strong></div>
+      </div>
+      <button class="term-prorroga-btn" onclick="openModal('modal-prorroga')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Solicitar prórroga
+      </button>
+    </div>
+
+    <div class="indice-sep"></div>
+    <div class="indice-title">Alertas</div>
+
+    <div class="alerta-item alerta-critica" onclick="setTab('oficios',document.querySelector('[onclick*=oficios]'))">
+      <div class="alerta-titulo critica">Oficio #5 sin respuesta</div>
+      <div class="alerta-desc">Vence 10-Jul-2026 · 8 días hábiles</div>
+    </div>
+    <div class="alerta-item alerta-critica" onclick="setTab('testigos',document.querySelector('[onclick*=testigos]'))">
+      <div class="alerta-titulo critica">Testigo renuente</div>
+      <div class="alerta-desc">Juan Pérez · Requiere auto de multa</div>
+    </div>
+    <div class="alerta-item alerta-advertencia">
+      <div class="alerta-titulo advertencia">Prescripción en 5 años</div>
+      <div class="alerta-desc">Recordatorio automático · Art. 33 CGD</div>
+    </div>
+  </nav>
+
+  <!-- ===== CONTENIDO CENTRAL ===== -->
+  <main class="main-content">
+
+    <!-- CABECERA EXPEDIENTE — patrón idéntico al 08 -->
+    <div class="exp-header">
+      <div class="exp-logo-area">
+        <div class="exp-logo-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        </div>
+        <div class="exp-entidad">
+          <div class="ent-name">Procuraduría General de la Nación</div>
+          <div class="ent-dep">Veeduría — Oficina de Control Interno Disciplinario</div>
+        </div>
+      </div>
+      <div class="exp-chip">Gestión de Investigación Disciplinaria</div>
+    </div>
+
+    <!-- TABLA DE METADATOS — patrón idéntico al 08 -->
+    <table class="meta-table">
+      <tr>
+        <td style="width:25%"><span class="meta-label">Radicado IUS</span><span class="meta-value">EXP-2026-00487</span></td>
+        <td style="width:25%"><span class="meta-label">Radicado IUC</span><span class="meta-value">D-2026-0009874</span></td>
+        <td style="width:25%"><span class="meta-label">Dependencia</span><span class="meta-value">Veeduría PGN</span></td>
+        <td style="width:25%"><span class="meta-label">Etapa</span><div class="meta-badge">Investigación · Art. 213 CGD</div></td>
+      </tr>
+      <tr>
+        <td><span class="meta-label">Disciplinado</span><span class="meta-value">Carlos Eduardo Rojas Bermúdez</span></td>
+        <td><span class="meta-label">Origen</span><span class="meta-value">Queja ciudadana</span></td>
+        <td><span class="meta-label">Fecha hechos</span><span class="meta-value">2024 – 2025</span></td>
+        <td><span class="meta-label">Fecha auto apertura</span><span class="meta-value">05 de mayo de 2026</span></td>
+      </tr>
+    </table>
+
+    <!-- TABS -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" id="tbtn-oficios" onclick="setTab('oficios',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Oficios
+        <span class="tab-counter alerta">2</span>
+      </button>
+      <button class="tab-btn" id="tbtn-documentos" onclick="setTab('documentos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+        <span class="tab-counter">3</span>
+      </button>
+      <button class="tab-btn" id="tbtn-testigos" onclick="setTab('testigos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Testigos
+        <span class="tab-counter alerta">1</span>
+      </button>
+      <button class="tab-btn" id="tbtn-descargos" onclick="setTab('descargos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Descargos
+        <span class="tab-counter">0</span>
+      </button>
+      <button class="tab-btn" id="tbtn-sujetos" onclick="setTab('sujetos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Sujetos
+        <span class="tab-counter">2</span>
+      </button>
+      <button class="tab-btn" id="tbtn-ampliaciones" onclick="setTab('ampliaciones',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Ampliaciones
+      </button>
+      <button class="tab-btn" id="tbtn-notificaciones" onclick="setTab('notificaciones',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+        Notificaciones
+        <span class="tab-counter">2</span>
+      </button>
+      <button class="tab-btn" id="tbtn-audiencias" onclick="setTab('audiencias',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Audiencias
+        <span class="tab-counter">1</span>
+      </button>
+      <button class="tab-btn" id="tbtn-historial" onclick="setTab('historial',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Historial
+      </button>
+    </div>
+
+    <!-- ===== PESTAÑA: OFICIOS ===== -->
+    <div id="tab-oficios" class="tab-pane active">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Oficios decretados en el auto de apertura</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-secondary btn-sm" onclick="openModal('modal-oficio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo oficio de oficio
+            </button>
+          </div>
+        </div>
+
+        <!-- BLOQUE: PRACTICADOS -->
+        <div class="section-sep">
+          <span class="section-sep-icon normal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="section-sep-label">Oficios con respuesta</span>
+          <div class="section-sep-line"></div>
+        </div>
+
+        <!-- Oficio 1 -->
+        <div class="oficio-card cumplido">
+          <div class="oficio-head">
+            <div class="oficio-num-tipo">
+              <div class="oficio-num-badge">1</div>
+              <div>
+                <div class="oficio-titulo">Oficio #001 — Prueba documental</div>
+                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 215 CGD</div>
+              </div>
+            </div>
+            <span class="status-pill status-cumplido">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Respondido
+            </span>
+          </div>
+          <div class="oficio-grid">
+            <div class="oficio-field"><div class="oficio-field-label">Destinatario</div><div class="oficio-field-value">Secretaría de Hacienda Distrital</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Canal</div><div class="oficio-field-value">DOKUS</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Enviado</div><div class="oficio-field-value">15-May-2026</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Respuesta</div><div class="oficio-field-value">20-May-2026</div></div>
+          </div>
+          <div class="oficio-desc">Contrato laboral original, actas de calificación 2023–2026 y registros de asistencia del servidor investigado.</div>
+          <div class="oficio-obs">Respuesta recibida automáticamente por DOKUS. Documentos incorporados al expediente.</div>
+          <div class="oficio-acciones">
+            <button class="oficio-link-btn" onclick="showToast('Abriendo vista previa del oficio...')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Ver oficio
+            </button>
+            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar oficio
+            </button>
+            <button class="oficio-link-btn" onclick="showToast('Descargando PDF del oficio #001...')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar
+            </button>
+            <button class="oficio-link-btn" onclick="showToast('Ver documentos recibidos del Oficio #001')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Ver respuesta (3 docs)
+            </button>
+          </div>
+        </div>
+
+        <!-- Oficio 3 -->
+        <div class="oficio-card cumplido">
+          <div class="oficio-head">
+            <div class="oficio-num-tipo">
+              <div class="oficio-num-badge">3</div>
+              <div>
+                <div class="oficio-titulo">Oficio #003 — Prueba de inspección</div>
+                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 215 CGD</div>
+              </div>
+            </div>
+            <span class="status-pill status-cumplido">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Practicado
+            </span>
+          </div>
+          <div class="oficio-grid">
+            <div class="oficio-field"><div class="oficio-field-label">Lugar</div><div class="oficio-field-value">Secretaría de Hacienda Distrital — Piso 4</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Fecha</div><div class="oficio-field-value">22-May-2026</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Practicó</div><div class="oficio-field-value">Dr. Carlos Rivas (Instructor)</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Resultado</div><div class="oficio-field-value">Acta levantada</div></div>
+          </div>
+          <div class="oficio-desc">Inspección ocular y documental de archivos correspondientes al período 2024–2025 en la oficina del investigado.</div>
+          <div class="oficio-obs">Acta de inspección levantada y firmada el 22-May-2026. Incorporada al expediente.</div>
+          <div class="oficio-acciones">
+            <button class="oficio-link-btn" onclick="showToast('Ver acta de inspección...')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Ver acta
+            </button>
+            <button class="oficio-link-btn" onclick="showToast('Descargando acta PDF...')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar
+            </button>
+          </div>
+        </div>
+
+        <!-- BLOQUE: SIN RESPUESTA -->
+        <div class="section-sep">
+          <span class="section-sep-icon alerta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <span class="section-sep-label">Oficios sin respuesta</span>
+          <div class="section-sep-line"></div>
+        </div>
+
+        <!-- Oficio 2 — Renuente -->
+        <div class="oficio-card renuente">
+          <div class="oficio-head">
+            <div class="oficio-num-tipo">
+              <div class="oficio-num-badge" style="background:var(--rojo);">2</div>
+              <div>
+                <div class="oficio-titulo">Oficio #002 — Testimonio (Testigo renuente)</div>
+                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 165 CGD</div>
+              </div>
+            </div>
+            <span class="status-pill status-renuente">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              Renuente
+            </span>
+          </div>
+          <div class="oficio-grid">
+            <div class="oficio-field"><div class="oficio-field-label">Testigo</div><div class="oficio-field-value">Juan Pérez García (CC 1.234.567)</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Notificado</div><div class="oficio-field-value">16-May-2026 · Personal</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Término</div><div class="oficio-field-value alerta-rojo">Vencido sin presentarse</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Requiere</div><div class="oficio-field-value alerta-rojo">Auto de multa (Art. 165)</div></div>
+          </div>
+          <div class="oficio-desc">Testimonio sobre irregularidades en proceso contractual de Secretaría de Hacienda en 2024.</div>
+          <div class="oficio-obs critica">El testigo fue notificado personalmente y se negó a rendir testimonio sin invocar justa causa. El Art. 165 CGD ordena imponer multa e iniciar conducción coercitiva.</div>
+          <div class="oficio-acciones">
+            <button class="btn btn-danger btn-sm" onclick="openModal('modal-auto-multa')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Generar auto — Art. 165 CGD
+            </button>
+            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar oficio
+            </button>
+          </div>
+        </div>
+
+        <!-- Oficio 4 -->
+        <div class="oficio-card en-curso">
+          <div class="oficio-head">
+            <div class="oficio-num-tipo">
+              <div class="oficio-num-badge" style="background:var(--naranja);">4</div>
+              <div>
+                <div class="oficio-titulo">Oficio #004 — Registros administrativos</div>
+                <div class="oficio-subtitulo">Decretado en Auto de Apertura · Art. 215 CGD</div>
+              </div>
+            </div>
+            <span class="status-pill status-curso">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              En curso
+            </span>
+          </div>
+          <div class="oficio-grid">
+            <div class="oficio-field"><div class="oficio-field-label">Destinatario</div><div class="oficio-field-value">División de Gestión Humana</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Canal</div><div class="oficio-field-value">DOKUS — Enviado</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Enviado</div><div class="oficio-field-value">20-May-2026</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Vence</div><div class="oficio-field-value alerta-naranja">20-Jul-2026 (39 días)</div></div>
+          </div>
+          <div class="oficio-desc">Hojas de vida, sanciones previas y registros de asistencia del período 2023–2026.</div>
+          <div class="oficio-obs alerta">Pendiente de respuesta. Si no responde antes del vencimiento, se iniciará trámite de renuencia institucional.</div>
+          <div class="oficio-acciones">
+            <button class="oficio-link-btn" onclick="openModal('modal-cargar-respuesta')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Cargar respuesta
+            </button>
+            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar oficio
+            </button>
+            <button class="oficio-link-btn" onclick="showToast('Ver oficio enviado en DOKUS')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Ver en DOKUS
+            </button>
+          </div>
+        </div>
+
+        <!-- Oficio 5 — CRÍTICO -->
+        <div class="oficio-card sin-respuesta">
+          <div class="oficio-head">
+            <div class="oficio-num-tipo">
+              <div class="oficio-num-badge" style="background:var(--rojo);">5</div>
+              <div>
+                <div class="oficio-titulo">Oficio #005 — Peritación (Medicina Legal)</div>
+                <div class="oficio-subtitulo">Decretado de oficio por el instructor · Art. 150 CGD</div>
+              </div>
+            </div>
+            <span class="status-pill status-sinresp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Vence en 8 días
+            </span>
+          </div>
+          <div class="oficio-grid">
+            <div class="oficio-field"><div class="oficio-field-label">Destinatario</div><div class="oficio-field-value">IML — Seccional Bogotá</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Canal</div><div class="oficio-field-value">DOKUS</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Enviado</div><div class="oficio-field-value">15-May-2026</div></div>
+            <div class="oficio-field"><div class="oficio-field-label">Vence</div><div class="oficio-field-value alerta-rojo">10-Jul-2026 (8 días hábiles)</div></div>
+          </div>
+          <div class="oficio-desc">Peritación psicológica y evaluación de capacidad laboral del disciplinado para la época de los hechos.</div>
+          <div class="oficio-obs critica">IML solicitó prórroga de 15 días. Pendiente decisión del instructor. Sin respuesta aprobada, el término vence y la prueba queda sin practicar.</div>
+          <div class="oficio-acciones">
+            <button class="oficio-link-btn" onclick="openModal('modal-cargar-respuesta')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Cargar respuesta
+            </button>
+            <button class="oficio-link-btn" onclick="openModal('modal-editar-oficio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar oficio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: DOCUMENTOS ===== -->
+    <div id="tab-documentos" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Documentos del expediente</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-ghost btn-sm" onclick="openModal('modal-cargar-doc')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Cargue masivo
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-cargar-doc')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Cargar documento
+            </button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Tipo</th>
+              <th>Origen</th>
+              <th>Cargado</th>
+              <th>Tamaño</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Contrato_laboral_2022.pdf</strong></td>
+              <td><span class="status-pill status-cumplido">Documental</span></td>
+              <td>Oficio #001 · DOKUS</td>
+              <td>20-May-2026</td>
+              <td>1.2 MB</td>
+              <td>
+                <button class="oficio-link-btn" onclick="showToast('Abriendo documento...')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Ver
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Acta_calificacion_2024.pdf</strong></td>
+              <td><span class="status-pill status-cumplido">Documental</span></td>
+              <td>Oficio #001 · DOKUS</td>
+              <td>20-May-2026</td>
+              <td>890 KB</td>
+              <td>
+                <button class="oficio-link-btn" onclick="showToast('Abriendo documento...')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Ver
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Acta_inspeccion_22may2026.pdf</strong></td>
+              <td><span class="status-pill" style="background:#EEF4FF;color:var(--azul);">Inspección</span></td>
+              <td>Oficio #003 · Manual</td>
+              <td>22-May-2026</td>
+              <td>2.4 MB</td>
+              <td>
+                <button class="oficio-link-btn" onclick="showToast('Abriendo acta de inspección...')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Ver
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Zona upload -->
+        <div style="margin-top:20px;">
+          <div class="upload-zone" onclick="openModal('modal-cargar-doc')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:var(--gris-medio);margin-bottom:8px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            <span class="uz-title">Arrastra archivos aquí o haz clic para seleccionar</span>
+            <span class="uz-sub">PDF, DOCX, JPG, PNG · Máx. 20 MB por archivo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: TESTIGOS ===== -->
+    <div id="tab-testigos" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Testigos decretados</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-agregar-testigo')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Citar testigo
+            </button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Testigo</th>
+              <th>Cédula</th>
+              <th>Oficio</th>
+              <th>Citado</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Juan Pérez García</strong></td>
+              <td>1.234.567</td>
+              <td>Oficio #002</td>
+              <td>16-May-2026</td>
+              <td><span class="status-pill status-renuente">Renuente</span></td>
+              <td>
+                <button class="oficio-link-btn danger" onclick="openModal('modal-auto-multa')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Auto multa
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>María López Sánchez</strong></td>
+              <td>52.456.789</td>
+              <td>Nuevo oficio</td>
+              <td>Pendiente</td>
+              <td><span class="status-pill status-curso">Pendiente citación</span></td>
+              <td>
+                <button class="oficio-link-btn" onclick="openModal('modal-oficio')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  Librar citación
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: DESCARGOS ===== -->
+    <div id="tab-descargos" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Descargos del disciplinado</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-cargar-doc')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Registrar descargo
+            </button>
+          </div>
+        </div>
+        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Los descargos son presentados obligatoriamente después de la notificación del pliego de cargos. Durante la investigación, el disciplinado puede presentar versión libre (Art. 130 CGD).
+        </div>
+        <div style="background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:40px;text-align:center;color:var(--gris-medio);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:36px;height:36px;margin:0 auto 12px;opacity:.4;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-bottom:6px;">Sin descargos registrados</div>
+          <div style="font-size:12px;">El disciplinado aún no ha presentado descargos formales.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: SUJETOS PROCESALES ===== -->
+    <div id="tab-sujetos" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Sujetos procesales</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-agregar-sujeto')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar sujeto
+            </button>
+          </div>
+        </div>
+
+        <!-- Investigado -->
+        <div class="sujeto-card">
+          <div class="sujeto-header">
+            <span class="sujeto-tipo investigado">Investigado</span>
+            <div style="display:flex;gap:6px;">
+              <button class="oficio-link-btn" onclick="showToast('Ver historial del investigado')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Historial
+              </button>
+            </div>
+          </div>
+          <div class="sujeto-nombre">Carlos Eduardo Rojas Bermúdez</div>
+          <div class="sujeto-meta">
+            <div><div class="sujeto-field-label">Cédula</div><div class="sujeto-field-value">79.485.312</div></div>
+            <div><div class="sujeto-field-label">Cargo (época hechos)</div><div class="sujeto-field-value">Jefe Oficina Jurídica</div></div>
+            <div><div class="sujeto-field-label">Entidad</div><div class="sujeto-field-value">Secretaría de Hacienda Distrital</div></div>
+            <div><div class="sujeto-field-label">Notificado</div><div class="sujeto-field-value">15-May-2026 · Personal</div></div>
+            <div><div class="sujeto-field-label">Correo notificación</div><div class="sujeto-field-value">carlos.rojas@hacienda.gov.co</div></div>
+            <div><div class="sujeto-field-label">Versión libre</div><div class="sujeto-field-value" style="color:#065F46;font-weight:700;">Presentada · 18-May-2026</div></div>
+          </div>
+        </div>
+
+        <!-- Defensor -->
+        <div class="sujeto-card">
+          <div class="sujeto-header">
+            <span class="sujeto-tipo defensor">Defensor</span>
+            <div style="display:flex;gap:6px;">
+              <button class="poder-btn poder-revocar" onclick="openModal('modal-revocar-poder')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Revocar poder
+              </button>
+            </div>
+          </div>
+          <div class="sujeto-nombre">Dra. María González Rodríguez</div>
+          <div class="sujeto-meta">
+            <div><div class="sujeto-field-label">Cédula</div><div class="sujeto-field-value">1.055.897.432</div></div>
+            <div><div class="sujeto-field-label">Tipo</div><div class="sujeto-field-value">Defensora de confianza</div></div>
+            <div><div class="sujeto-field-label">Poder aceptado</div><div class="sujeto-field-value" style="color:#065F46;font-weight:700;">Sí · 16-May-2026</div></div>
+            <div><div class="sujeto-field-label">Correo</div><div class="sujeto-field-value">m.gonzalez@defensoria.com</div></div>
+          </div>
+          <div style="padding-top:10px;border-top:1px solid var(--gris-claro);display:flex;gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="showToast('Abrir poder de representación')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Ver poder
+            </button>
+          </div>
+        </div>
+
+        <!-- Añadir otro defensor -->
+        <button class="btn btn-ghost" style="width:100%;" onclick="openModal('modal-agregar-sujeto')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Agregar sujeto procesal
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: AMPLIACIONES ===== -->
+    <div id="tab-ampliaciones" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Ampliaciones de queja</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-ampliacion')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Registrar ampliación
+            </button>
+          </div>
+        </div>
+        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:flex-start;line-height:1.6;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          La ampliación de queja es opcional y la puede presentar el quejoso en audiencia programada (Art. 208 CGD). Se debe citar al investigado y a su defensor si lo tiene.
+        </div>
+        <div style="background:var(--blanco);border:1.5px solid var(--gris-claro);border-radius:10px;padding:40px;text-align:center;color:var(--gris-medio);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:36px;height:36px;margin:0 auto 12px;opacity:.4;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-bottom:6px;">Sin ampliaciones registradas</div>
+          <div style="font-size:12px;">Aún no se han presentado ampliaciones de queja.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: NOTIFICACIONES ===== -->
+    <div id="tab-notificaciones" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Notificaciones enviadas</div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Acto notificado</th>
+              <th>Destinatario</th>
+              <th>Vía</th>
+              <th>Enviada</th>
+              <th>Entendida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Auto de Apertura de Investigación</strong></td>
+              <td>Carlos Eduardo Rojas Bermúdez</td>
+              <td>Personal · Art. 121 CGD</td>
+              <td>15-May-2026</td>
+              <td>15-May-2026</td>
+              <td><span class="status-pill status-cumplido">Surtida</span></td>
+            </tr>
+            <tr>
+              <td><strong>Oficio #001 — Prueba documental</strong></td>
+              <td>Secretaría de Hacienda</td>
+              <td>DOKUS · Art. 122 CGD</td>
+              <td>15-May-2026</td>
+              <td>15-May-2026</td>
+              <td><span class="status-pill status-cumplido">Surtida</span></td>
+            </tr>
+            <tr>
+              <td><strong>Citación testimonial — Oficio #002</strong></td>
+              <td>Juan Pérez García</td>
+              <td>Personal · Art. 121 CGD</td>
+              <td>16-May-2026</td>
+              <td>16-May-2026</td>
+              <td><span class="status-pill status-renuente">Renuente</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: AUDIENCIAS ===== -->
+    <div id="tab-audiencias" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Audiencias programadas</div>
+          <div class="action-bar-btns">
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-audiencia')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Programar audiencia
+            </button>
+          </div>
+        </div>
+        <div style="background:#EEF4FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--azul);display:flex;gap:8px;align-items:center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Las audiencias se programan e integran con Microsoft Teams. Se generan invitaciones automáticas a los sujetos procesales.
+        </div>
+
+        <div class="audiencia-card">
+          <div class="audiencia-fecha-box">
+            <div class="audiencia-fecha-dia">28</div>
+            <div class="audiencia-fecha-mes">May</div>
+          </div>
+          <div class="audiencia-info">
+            <div class="audiencia-titulo">Testimonio — Juan Pérez García</div>
+            <div class="audiencia-meta">10:00 am · Sala de audiencias 204 · Instructor: Dr. Carlos Rivas</div>
+          </div>
+          <span class="audiencia-status audiencia-programada">Programada</span>
+          <a href="#" class="teams-link" onclick="showToast('Abriendo reunión en Teams...');return false;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.07A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.891L15 14"/><rect x="1" y="6" width="14" height="12" rx="2" ry="2"/></svg>
+            Teams
+          </a>
+        </div>
+
+        <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="openModal('modal-audiencia')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Programar nueva audiencia
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: HISTORIAL ===== -->
+    <div id="tab-historial" class="tab-pane">
+      <div class="tab-body">
+        <div class="action-bar">
+          <div class="action-bar-title">Historial de actuaciones — Audit log</div>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="tl-dot success"></div>
+            <div class="tl-content">
+              <div class="tl-titulo">Auto de Apertura de Investigación firmado electrónicamente</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15-May-2026 09:30 · Dr. Carlos Rivas (Instructor)</div>
+              <div class="tl-desc">Auto #VEED-0088-2026 firmado. Término de 6 meses activado (Art. 213 CGD). Notificación personal al disciplinado.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-dot normal"></div>
+            <div class="tl-content">
+              <div class="tl-titulo">Oficios #001 al #005 librados por DOKUS</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15-May-2026 10:15 · Sistema (post-firma automático)</div>
+              <div class="tl-desc">5 oficios generados y enviados automáticamente a través de DOKUS al momento de la firma del auto de apertura.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-dot success"></div>
+            <div class="tl-content">
+              <div class="tl-titulo">Respuesta recibida — Oficio #001 (DOKUS)</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>20-May-2026 14:22 · Recibido por DOKUS automáticamente</div>
+              <div class="tl-desc">Secretaría de Hacienda remitió 3 documentos: contrato laboral, actas de calificación y registros de asistencia. Incorporados al expediente.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-dot normal"></div>
+            <div class="tl-content">
+              <div class="tl-titulo">Versión libre presentada por el investigado</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>18-May-2026 16:50 · Recibido por portal sujetos procesales</div>
+              <div class="tl-desc">Carlos Eduardo Rojas Bermúdez presentó su versión libre a través del portal del disciplinado. Documento adjuntado al expediente.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-dot success"></div>
+            <div class="tl-content">
+              <div class="tl-titulo">Acta de inspección levantada — Oficio #003</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>22-May-2026 13:20 · Dr. Carlos Rivas (Instructor)</div>
+              <div class="tl-desc">Inspección documental practicada en instalaciones de la Secretaría de Hacienda. Acta firmada e incorporada.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-dot critico"></div>
+            <div class="tl-content">
+              <div class="tl-titulo">Testigo Juan Pérez García declarado renuente — Art. 165 CGD</div>
+              <div class="tl-fecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>25-May-2026 11:45 · Registrado por Secretaría</div>
+              <div class="tl-desc">El testigo no se presentó a rendir testimonio sin invocar justa causa. Se requiere proferir auto que imponga multa y ordene conducción (Art. 165 CGD).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ===== PANEL DERECHO ===== -->
+  <aside class="panel-tools">
+
+    <!-- REFERENCIA -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <h4>Referencia del expediente</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="exp-ref-row"><span class="exp-ref-label">Radicado IUS</span><span class="exp-ref-value" style="color:var(--azul);font-weight:700;">EXP-2026-00487</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Radicado IUC</span><span class="exp-ref-value">D-2026-0009874</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Etapa</span><span class="exp-ref-value">Investigación · Art. 211</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Término</span><span class="exp-ref-value" style="color:#065F46;font-weight:700;">156 días hábiles</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Prórroga 1</span><span class="exp-ref-value">Disponible (6 meses)</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Prórroga 2</span><span class="exp-ref-value">Disponible (6 meses)</span></div>
+      </div>
+    </div>
+
+    <!-- DISCIPLINADO -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <h4>Disciplinado</h4>
+      </div>
+      <div class="tools-section-body">
+        <div style="background:#EEF4FF;border:1.5px solid var(--azul-medio);border-radius:9px;padding:12px;">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);margin-bottom:6px;">Carlos E. Rojas Bermúdez</div>
+          <div style="font-size:11px;color:var(--gris-medio);line-height:1.7;">
+            <div style="display:flex;align-items:center;gap:5px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Jefe Oficina Jurídica</div>
+            <div style="display:flex;align-items:center;gap:5px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Sec. Hacienda Distrital</div>
+          </div>
+          <div style="background:var(--azul);color:#fff;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:8px;display:inline-block;">C.C. 79.485.312</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--gris-medio);display:flex;align-items:center;gap:5px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;color:var(--verde);"><polyline points="20 6 9 17 4 12"/></svg>
+          Antecedentes disciplinarios: 0
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACKER OFICIOS -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <h4>Estado de oficios</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="tracker-item rec">
+          <div class="tracker-head"><div class="tracker-dot"></div><span class="tracker-dest">Sec. Hacienda</span><span class="tracker-estado">Respondido</span></div>
+          <div class="tracker-tipo">Documental · Oficio #001</div>
+        </div>
+        <div class="tracker-item ren">
+          <div class="tracker-head"><div class="tracker-dot"></div><span class="tracker-dest">Juan Pérez García</span><span class="tracker-estado">Renuente</span></div>
+          <div class="tracker-tipo">Testimonio · Oficio #002</div>
+        </div>
+        <div class="tracker-item rec">
+          <div class="tracker-head"><div class="tracker-dot"></div><span class="tracker-dest">Inspección física</span><span class="tracker-estado">Practicada</span></div>
+          <div class="tracker-tipo">Inspección · Oficio #003</div>
+        </div>
+        <div class="tracker-item env">
+          <div class="tracker-head"><div class="tracker-dot"></div><span class="tracker-dest">Div. Gestión Humana</span><span class="tracker-estado">Esperando</span></div>
+          <div class="tracker-tipo">Documental · Oficio #004</div>
+        </div>
+        <div class="tracker-item dec" style="border-color:#FECACA;background:#FEF2F2;">
+          <div class="tracker-head"><div class="tracker-dot" style="background:var(--rojo);"></div><span class="tracker-dest" style="color:#991B1B;">IML Seccional Bogotá</span><span class="tracker-estado" style="color:#991B1B;">Vence 8 días</span></div>
+          <div class="tracker-tipo">Peritación · Oficio #005</div>
+          <button class="tracker-librar-btn" style="display:block;background:var(--rojo);color:var(--blanco);" onclick="openModal('modal-cargar-respuesta')">Cargar respuesta</button>
+        </div>
+        <button class="tracker-add-btn" onclick="openModal('modal-oficio')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo oficio de oficio
+        </button>
+        <div class="tracker-legend">
+          <div class="tracker-legend-row"><div class="tracker-legend-dot" style="background:var(--azul-medio);"></div>Decretado · librar oficio</div>
+          <div class="tracker-legend-row"><div class="tracker-legend-dot" style="background:var(--naranja);"></div>Oficio enviado · esperando</div>
+          <div class="tracker-legend-row"><div class="tracker-legend-dot" style="background:#10B981;"></div>Respuesta recibida</div>
+          <div class="tracker-legend-row"><div class="tracker-legend-dot" style="background:var(--rojo);"></div>Renuente / Vencido</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLUJO APROBACIÓN -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        <h4>Flujo de aprobación</h4>
+      </div>
+      <div class="tools-section-body">
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;position:relative;">
+            <div style="width:16px;height:16px;border-radius:50%;background:var(--amarillo);box-shadow:0 0 0 3px rgba(255,230,1,.3);flex-shrink:0;margin-top:2px;z-index:1;"></div>
+            <div><div style="font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);">Instructor activo</div><div style="font-size:11px;color:var(--gris-medio);">Dr. Carlos Rivas · Activo</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;">
+            <div style="width:16px;height:16px;border-radius:50%;background:var(--gris-claro);border:2px solid #CBD5E1;flex-shrink:0;margin-top:2px;z-index:1;"></div>
+            <div><div style="font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);">Cierre de investigación</div><div style="font-size:11px;color:var(--gris-medio);">Pendiente · Art. 220 CGD</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;">
+            <div style="width:16px;height:16px;border-radius:50%;background:var(--gris-claro);border:2px solid #CBD5E1;flex-shrink:0;margin-top:2px;z-index:1;"></div>
+            <div><div style="font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);">Pliego de cargos</div><div style="font-size:11px;color:var(--gris-medio);">Pendiente · Art. 222 CGD</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ===== MODALES ===== -->
+
+<!-- MODAL: CARGAR RESPUESTA -->
+<div class="modal-overlay" id="modal-cargar-respuesta">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>Cargar respuesta al oficio</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-cargar-respuesta')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>La respuesta se incorporará al expediente y actualizará el estado del oficio automáticamente. Queda registro en el audit log.</div>
+      <div class="form-group">
+        <label class="form-label">Oficio al que corresponde <span class="req">*</span></label>
+        <select class="form-select"><option>Oficio #005 — IML Seccional Bogotá (Peritación)</option><option>Oficio #004 — División Gestión Humana</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vía de recepción <span class="req">*</span></label>
+        <div style="display:flex;gap:8px;">
+          <div class="canal-opt active" onclick="selectCanal(this)" style="padding:8px 14px;border-radius:7px;border:1.5px solid var(--azul);background:#EBF4FA;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);">Desde DOKUS</div>
+          <div class="canal-opt" onclick="selectCanal(this)" style="padding:8px 14px;border-radius:7px;border:1.5px solid var(--gris-claro);background:#F8FAFC;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);">Correo electrónico</div>
+          <div class="canal-opt" onclick="selectCanal(this)" style="padding:8px 14px;border-radius:7px;border:1.5px solid var(--gris-claro);background:#F8FAFC;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);">Entrega física</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Archivo(s) de la respuesta</label>
+        <div class="upload-zone" onclick="document.getElementById('file-resp').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;color:var(--gris-medio);margin-bottom:6px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          <span class="uz-title">Arrastra archivos o haz clic</span>
+          <span class="uz-sub">PDF, DOCX · Máx. 20 MB</span>
+          <input type="file" id="file-resp" style="display:none;" multiple accept=".pdf,.docx" onchange="showToast('Archivo seleccionado: '+this.files[0].name)">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observaciones</label>
+        <textarea class="form-textarea" placeholder="Describa el contenido de la respuesta recibida..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-cargar-respuesta')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-cargar-respuesta');showToast('Respuesta incorporada al expediente correctamente')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Incorporar al expediente
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AUTO MULTA -->
+<div class="modal-overlay" id="modal-auto-multa">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Generar auto — Testigo renuente</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-auto-multa')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso" style="background:#FEF2F2;color:#991B1B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#DC2626;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>El Art. 165 CGD ordena imponer multa al testigo renuente. El instructor deberá proferir auto interlocutorio, notificarlo e iniciar la conducción coercitiva si persiste la renuencia.</div>
+      <div class="form-group">
+        <label class="form-label">Testigo renuente</label>
+        <input class="form-input" value="Juan Pérez García · CC 1.234.567" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fundamento legal</label>
+        <input class="form-input" value="Art. 165 CGD — Testigo renuente" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción de la renuencia <span class="req">*</span></label>
+        <textarea class="form-textarea" placeholder="Describa los hechos constitutivos de la renuencia...">El testigo fue citado mediante Oficio #002 librado el 16-May-2026, notificado personalmente en la misma fecha. No se presentó el día 28-May-2026 sin invocar justa causa alguna.</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de auto <span class="req">*</span></label>
+        <select class="form-select"><option>Auto que impone multa — notificación interlocutoria (Art. 165)</option><option>Auto que ordena conducción coercitiva (Art. 165 inc. 3)</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-auto-multa')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-auto-multa');showToast('Auto de testigo renuente proyectado. Enviado para revisión.')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Proyectar auto — Art. 165 CGD
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVO OFICIO -->
+<div class="modal-overlay" id="modal-oficio">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Nuevo oficio</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-oficio')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tipo de prueba <span class="req">*</span></label>
+          <select class="form-select"><option>Documental</option><option>Testimonial</option><option>Pericial</option><option>Inspección</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Canal de envío <span class="req">*</span></label>
+          <select class="form-select"><option>DOKUS</option><option>Correo electrónico</option><option>Físico</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Destinatario <span class="req">*</span></label>
+        <input class="form-input" placeholder="Nombre de la entidad o persona">
+        <div class="form-hint">Para testimonios, indicar nombre y cédula del testigo.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción de lo solicitado <span class="req">*</span></label>
+        <textarea class="form-textarea" placeholder="Detalle qué documentos, testimonios o peritaciones se solicitan..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Término de respuesta</label>
+          <input class="form-input" type="number" value="15" min="1"> <div class="form-hint">Días hábiles</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fundamento legal</label>
+          <input class="form-input" value="Art. 150 CGD">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-oficio')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-oficio');showToast('Oficio proyectado y en cola para librar por DOKUS')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Proyectar y librar oficio
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDITAR OFICIO -->
+<div class="modal-overlay" id="modal-editar-oficio">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar oficio</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-editar-oficio')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Solo se puede editar el contenido del oficio (destinatario, qué se pide, término). El número del auto de apertura que decretó la prueba no es modificable.</div>
+      <div class="form-group">
+        <label class="form-label">Destinatario</label>
+        <input class="form-input" value="División de Gestión Humana — Secretaría de Hacienda">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción de lo solicitado</label>
+        <textarea class="form-textarea">Hojas de vida, sanciones previas y registros de asistencia del período 2023–2026 del servidor investigado.</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Término de respuesta (días hábiles)</label>
+        <input class="form-input" type="number" value="15">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motivo de la edición</label>
+        <input class="form-input" placeholder="Ej: Corrección del destinatario">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-editar-oficio')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-editar-oficio');showToast('Oficio actualizado. Cambio registrado en el audit log.')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Guardar cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CIERRE DE INVESTIGACIÓN -->
+<div class="modal-overlay" id="modal-evaluar">
+  <div class="modal" style="width:580px;">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Evaluar investigación — Arts. 90, 222-223 CGD</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-evaluar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Seleccione la decisión que corresponda según el resultado del análisis probatorio. Cada decisión genera un acto procesal distinto con efectos jurídicos diferentes.</div>
+
+      <!-- ESTADO DE OFICIOS -->
+      <div style="background:#F8FAFC;border-radius:8px;padding:14px;margin-bottom:20px;">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);text-transform:uppercase;margin-bottom:10px;">Estado de oficios al momento de evaluar</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#065F46;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#10B981;"><polyline points="20 6 9 17 4 12"/></svg>Oficio #001 — Respondido</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#991B1B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--rojo);"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Oficio #002 — Testigo renuente sin auto de multa</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#065F46;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#10B981;"><polyline points="20 6 9 17 4 12"/></svg>Oficio #003 — Practicado</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:5px;color:#92400E;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--naranja);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>Oficio #004 — Pendiente de respuesta</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#991B1B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--rojo);"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Oficio #005 — Sin respuesta · Vence en 8 días</div>
+      </div>
+
+      <!-- DECISIONES -->
+      <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);text-transform:uppercase;margin-bottom:12px;">Seleccione la decisión</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <!-- Opción A: Cierre + Pliego -->
+        <label style="display:flex;gap:14px;padding:14px;border-radius:10px;border:2px solid var(--gris-claro);cursor:pointer;transition:all .15s;background:#FAFBFC;" onmouseover="this.style.borderColor='var(--azul-claro)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--gris-claro)'">
+          <input type="radio" name="decision-eval" value="pliego" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecision('pliego')">
+          <div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);margin-bottom:3px;">Cerrar y formular pliego de cargos</div>
+            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere el auto de cierre (Art. 220 CGD) y se formula el pliego de cargos (Arts. 222-223 CGD). El expediente pasa a juzgamiento. Requiere traslado de 10 días para alegatos precalificatorios.</div>
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#EEF4FF;color:var(--azul);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Arts. 220, 222-223 CGD</div>
+          </div>
+        </label>
+
+        <!-- Opción B: Solo Archivo -->
+        <label style="display:flex;gap:14px;padding:14px;border-radius:10px;border:2px solid var(--gris-claro);cursor:pointer;transition:all .15s;background:#FAFBFC;" onmouseover="this.style.borderColor='var(--azul-claro)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--gris-claro)'">
+          <input type="radio" name="decision-eval" value="archivo" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecision('archivo')">
+          <div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;">Archivar definitivamente</div>
+            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere auto de terminación y archivo definitivo sin necesidad de cerrar previamente. Procede cuando el hecho no existió, no es constitutivo de falta, el disciplinado no lo cometió o hay causal de exclusión de responsabilidad.</div>
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#F0FDF4;color:#065F46;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Art. 90 CGD</div>
+          </div>
+        </label>
+
+        <!-- Opción C: Solo Cierre (sin pliego aún) -->
+        <label style="display:flex;gap:14px;padding:14px;border-radius:10px;border:2px solid var(--gris-claro);cursor:pointer;transition:all .15s;background:#FAFBFC;" onmouseover="this.style.borderColor='var(--azul-claro)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--gris-claro)'">
+          <input type="radio" name="decision-eval" value="cierre" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;flex-shrink:0;" onchange="toggleDecision('cierre')">
+          <div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;">Solo cerrar investigación (alegatos precalificatorios)</div>
+            <div style="font-size:12px;color:var(--gris-medio);line-height:1.5;">Se profiere únicamente el auto de cierre para que los sujetos procesales presenten alegatos precalificatorios en 10 días. El pliego de cargos o el archivo se proyectarán después de los alegatos.</div>
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#FEF9E7;color:#7a5200;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;">Art. 220 CGD</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- CAMPO CAUSAL (solo para archivo) -->
+      <div id="campo-causal-archivo" style="display:none;margin-top:16px;">
+        <div class="form-group">
+          <label class="form-label">Causal de archivo <span style="color:var(--rojo);">*</span></label>
+          <select class="form-select">
+            <option value="">Seleccionar causal...</option>
+            <option>El hecho no existió</option>
+            <option>La conducta no está prevista como falta</option>
+            <option>El disciplinado no la cometió</option>
+            <option>Existe causal de exclusión de responsabilidad</option>
+            <option>La actuación no podía iniciarse o proseguirse</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fundamento fáctico y jurídico <span style="color:var(--rojo);">*</span></label>
+          <textarea class="form-textarea" placeholder="Explique los fundamentos que llevan al archivo definitivo (Art. 90 CGD)..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-evaluar')">Cancelar</button>
+      <button class="btn btn-accent" id="btn-confirmar-eval" disabled onclick="confirmarEvaluacion()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Proyectar acto
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AGREGAR SUJETO -->
+<div class="modal-overlay" id="modal-agregar-sujeto">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Agregar sujeto procesal</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-agregar-sujeto')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de sujeto <span class="req">*</span></label>
+        <select class="form-select"><option>Defensor de confianza</option><option>Defensor público</option><option>Quejoso</option><option>Ministerio Público</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre completo <span class="req">*</span></label>
+          <input class="form-input" placeholder="Nombre del sujeto procesal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cédula <span class="req">*</span></label>
+          <input class="form-input" placeholder="CC o documento">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico <span class="req">*</span></label>
+        <input class="form-input" type="email" placeholder="Para notificaciones electrónicas">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Poder / documento de representación</label>
+        <div class="upload-zone" onclick="document.getElementById('file-poder').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--gris-medio);margin-bottom:4px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          <span class="uz-title">Cargar poder</span>
+          <span class="uz-sub">PDF o DOCX</span>
+          <input type="file" id="file-poder" style="display:none;" accept=".pdf,.docx" onchange="showToast('Poder adjuntado: '+this.files[0].name)">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-agregar-sujeto')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-agregar-sujeto');showToast('Sujeto procesal agregado al expediente')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Agregar sujeto
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: REVOCAR PODER -->
+<div class="modal-overlay" id="modal-revocar-poder">
+  <div class="modal" style="width:440px;">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Revocar poder de representación</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-revocar-poder')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso" style="background:#FEF2F2;color:#991B1B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#DC2626;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Esta acción removerá a la defensora del expediente. El investigado deberá designar nuevo defensor o se asignará defensor público.</div>
+      <div class="form-group">
+        <label class="form-label">Defensora a revocar</label>
+        <input class="form-input" value="Dra. María González Rodríguez" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motivo de la revocación <span class="req">*</span></label>
+        <select class="form-select"><option>Solicitud expresa del disciplinado</option><option>Inhabilidad sobreviniente</option><option>Renuncia del defensor</option><option>Otro motivo</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-revocar-poder')">Cancelar</button>
+      <button class="btn btn-danger" onclick="closeModal('modal-revocar-poder');showToast('Poder revocado. Registro en audit log actualizado.')">Confirmar revocación</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AUDIENCIA -->
+<div class="modal-overlay" id="modal-audiencia">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Programar audiencia</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-audiencia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de audiencia <span class="req">*</span></label>
+        <select class="form-select"><option>Testimonio</option><option>Ampliación de queja</option><option>Diligencia especial</option><option>Inspección</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha <span class="req">*</span></label>
+          <input class="form-input" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hora <span class="req">*</span></label>
+          <input class="form-input" type="time">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lugar o sala</label>
+        <input class="form-input" placeholder="Ej: Sala de audiencias 204 o Teams" value="Sala de audiencias 204">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sujetos a citar</label>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;"><input type="checkbox" checked> Investigado — Carlos E. Rojas Bermúdez</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;"><input type="checkbox" checked> Defensora — Dra. María González</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;"><input type="checkbox"> Quejoso</label>
+        </div>
+      </div>
+      <div class="modal-aviso" style="margin-top:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Se generará automáticamente una invitación de Teams para todos los sujetos citados con los correos registrados.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-audiencia')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-audiencia');showToast('Audiencia programada. Invitaciones Teams enviadas a los sujetos.')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Programar y enviar invitaciones
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PRÓRROGA -->
+<div class="modal-overlay" id="modal-prorroga">
+  <div class="modal" style="width:440px;">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Solicitar prórroga — Art. 213 CGD</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-prorroga')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de prórroga <span class="req">*</span></label>
+        <select class="form-select"><option>Prórroga 1 — 6 meses adicionales (varias faltas o dos o más sujetos)</option><option>Prórroga 2 — 6 meses adicionales</option><option>Prórroga especial — 3 meses (pruebas pendientes Art. 213)</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Justificación <span class="req">*</span></label>
+        <textarea class="form-textarea" placeholder="Indique el fundamento fáctico y jurídico para la prórroga (Art. 213 CGD)..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-prorroga')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-prorroga');showToast('Solicitud de prórroga proyectada. Enviada al jefe para aprobación.')">Solicitar prórroga</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CARGAR DOCUMENTO -->
+<div class="modal-overlay" id="modal-cargar-doc">
+  <div class="modal" style="width:460px;">
+    <div class="modal-header">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--amarillo);"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>Cargar documento</h3>
+      <button class="modal-close-btn" onclick="closeModal('modal-cargar-doc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de documento <span class="req">*</span></label>
+        <select class="form-select"><option>Prueba documental</option><option>Prueba pericial</option><option>Acta de inspección</option><option>Versión libre</option><option>Escrito del disciplinado</option><option>Otro</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Oficio relacionado</label>
+        <select class="form-select"><option>Sin asociar</option><option>Oficio #001</option><option>Oficio #004</option><option>Oficio #005</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Archivo(s)</label>
+        <div class="upload-zone" onclick="document.getElementById('file-doc').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;color:var(--gris-medio);margin-bottom:6px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          <span class="uz-title">Cargue individual o masivo</span>
+          <span class="uz-sub">PDF, DOCX, JPG, PNG · Máx. 20 MB por archivo</span>
+          <input type="file" id="file-doc" style="display:none;" multiple accept=".pdf,.docx,.jpg,.png" onchange="showToast(this.files.length+' archivo(s) seleccionado(s)')">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <input class="form-input" placeholder="Descripción breve del documento">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-cargar-doc')">Cancelar</button>
+      <button class="btn btn-accent" onclick="closeModal('modal-cargar-doc');showToast('Documento incorporado al expediente')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Incorporar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast" role="alert" aria-live="polite">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- BOTÓN FLOTANTE procuradurIA -->
+<button id="btn-ia" onclick="toggleIA()" aria-label="Abrir asistente procuradurIA" style="position:fixed;bottom:28px;right:28px;z-index:500;width:80px;height:80px;border-radius:50%;border:2px solid rgba(255,230,1,0.4);cursor:pointer;background:var(--azul);box-shadow:0 6px 24px rgba(6,56,83,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:transform .2s,box-shadow .2s;padding:0;overflow:hidden;">
+  <span style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:10px;color:rgba(255,255,255,0.75);letter-spacing:.5px;line-height:1.4;">Procuradur</span>
+  <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:var(--amarillo);letter-spacing:2px;line-height:1;">IA</span>
+</button>
+
+<script>
+  // TABS
+  function setTab(tabId, trigger) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.indice-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    if (trigger) trigger.classList.add('active');
+    var tbtn = document.getElementById('tbtn-' + tabId);
+    if (tbtn) tbtn.classList.add('active');
+  }
+
+  // MODALES
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(function(m) {
+        closeModal(m.id);
+      });
+    }
+  });
+
+  // CANAL SELECTOR
+  function selectCanal(el) {
+    var parent = el.parentElement;
+    parent.querySelectorAll('div').forEach(function(c) {
+      c.style.borderColor = 'var(--gris-claro)';
+      c.style.background = '#F8FAFC';
+      c.style.color = 'var(--gris-medio)';
+    });
+    el.style.borderColor = 'var(--azul)';
+    el.style.background = '#EBF4FA';
+    el.style.color = 'var(--azul)';
+  }
+
+  // TOAST
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { t.classList.remove('show'); }, 4000);
+  }
+
+  // SEMÁFORO DE TÉRMINOS — lógica dinámica
+  function actualizarSemaforo(dias) {
+    var w = document.getElementById('term-widget');
+    var d = document.getElementById('term-days');
+    var b = document.getElementById('term-bar');
+    var estado = dias > 30 ? 'verde' : dias > 14 ? 'amarillo' : dias > 4 ? 'naranja' : 'rojo';
+    ['verde','amarillo','naranja','rojo'].forEach(function(c) {
+      w.classList.remove(c); d.classList.remove(c); b.classList.remove(c);
+    });
+    w.classList.add(estado); d.classList.add(estado); b.classList.add(estado);
+    d.textContent = dias;
+    var pct = Math.min(100, Math.max(0, ((183 - dias) / 183) * 100));
+    b.style.width = pct + '%';
+  }
+  actualizarSemaforo(156);
+
+  // UPLOAD DRAG & DROP
+  document.querySelectorAll('.upload-zone').forEach(function(zone) {
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault(); zone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) showToast(e.dataTransfer.files.length + ' archivo(s) cargado(s)');
+    });
+  });
+
+  // SUJETOS PROCESALES — lógica modal
+  var ROLES_LABEL = {
+    'defensor-confianza': 'Defensor de confianza',
+    'defensor-publico': 'Defensor público',
+    'quejoso': 'Quejoso',
+    'ministerio-publico': 'Delegado del Ministerio Público'
+  };
+
+  function onTipoSujetoChange(val) {
+    var campTarjeta = document.getElementById('campo-tarjeta');
+    var grupoPoder = document.getElementById('grupo-poder');
+    var grupoConsultorio = document.getElementById('grupo-consultorio');
+    var labelConsultorio = document.getElementById('label-consultorio');
+    var tarjetaInput = document.getElementById('sujeto-tarjeta');
+    var tarjetaHint = document.getElementById('tarjeta-hint');
+
+    // Tarjeta profesional: solo para defensores
+    if (val === 'defensor-confianza' || val === 'defensor-publico') {
+      campTarjeta.style.display = 'block';
+      if (val === 'defensor-publico') {
+        tarjetaInput.placeholder = 'Ej: DP-2024-0045 o No. de resolución de nombramiento';
+        tarjetaHint.textContent = 'Para defensor público, ingrese el número de resolución de nombramiento.';
+        if (grupoConsultorio) {
+          grupoConsultorio.style.display = 'block';
+          labelConsultorio.textContent = 'Entidad / Dependencia pública';
+          document.getElementById('sujeto-consultorio').placeholder = 'Ej: Defensoría del Pueblo — Regional Bogotá';
+        }
+      } else {
+        tarjetaInput.placeholder = 'Ej: 123.456 del CSJ';
+        tarjetaHint.textContent = 'Expedida por el Consejo Superior de la Judicatura.';
+        if (grupoConsultorio) {
+          grupoConsultorio.style.display = 'none';
+        }
+      }
+    } else {
+      campTarjeta.style.display = 'none';
+    }
+
+    // Poder: ocultar para Ministerio Público y Quejoso (no requieren poder)
+    if (grupoPoder) {
+      grupoPoder.style.display = (val === 'ministerio-publico' || val === 'quejoso') ? 'none' : 'block';
+    }
+
+    actualizarPrevistaInvitacion();
+  }
+
+  function validarTarjeta(input) {
+    var hint = document.getElementById('tarjeta-hint');
+    var val = input.value.trim();
+    if (val.length > 4) {
+      hint.textContent = 'Número registrado. Se verificará contra el SINEJ al guardar.';
+      hint.style.color = '#065F46';
+    } else {
+      hint.textContent = 'Ingrese el número completo de la tarjeta profesional.';
+      hint.style.color = 'var(--gris-medio)';
+    }
+  }
+
+  function generarClaveTemp() {
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var clave = '';
+    for (var i = 0; i < 8; i++) clave += chars[Math.floor(Math.random() * chars.length)];
+    return clave.slice(0,4) + '-' + clave.slice(4);
+  }
+
+  function actualizarPrevistaInvitacion() {
+    var correo = document.getElementById('sujeto-correo').value.trim();
+    var tipo = document.getElementById('sel-tipo-sujeto').value;
+    var preview = document.getElementById('preview-invitacion');
+
+    if (correo && correo.includes('@') && tipo) {
+      preview.style.display = 'block';
+      document.getElementById('inv-correo').textContent = correo;
+      document.getElementById('inv-rol').textContent = ROLES_LABEL[tipo] || tipo;
+      // usuario = prefijo del correo
+      document.getElementById('inv-usuario').textContent = correo.split('@')[0].toLowerCase();
+      // clave temporal aleatoria
+      if (!document.getElementById('inv-clave').dataset.clave) {
+        var cl = generarClaveTemp();
+        document.getElementById('inv-clave').textContent = cl;
+        document.getElementById('inv-clave').dataset.clave = cl;
+      }
+    } else {
+      preview.style.display = 'none';
+      // resetear clave al limpiar
+      document.getElementById('inv-clave').dataset.clave = '';
+    }
+  }
+
+  function guardarSujeto() {
+    var tipo = document.getElementById('sel-tipo-sujeto').value;
+    var nombre = document.getElementById('sujeto-nombre').value.trim();
+    var cedula = document.getElementById('sujeto-cedula').value.trim();
+    var correo = document.getElementById('sujeto-correo').value.trim();
+    var tarjeta = document.getElementById('sujeto-tarjeta').value.trim();
+
+    if (!tipo || !nombre || !cedula || !correo) {
+      showToast('Complete los campos obligatorios antes de continuar.');
+      return;
+    }
+    if ((tipo === 'defensor-confianza' || tipo === 'defensor-publico') && !tarjeta) {
+      showToast('La tarjeta profesional o resolución de nombramiento es obligatoria para el defensor.');
+      document.getElementById('sujeto-tarjeta').focus();
+      document.getElementById('sujeto-tarjeta').style.borderColor = 'var(--rojo)';
+      return;
+    }
+
+    closeModal('modal-agregar-sujeto');
+    showToast(nombre + ' vinculado al expediente. Acceso enviado a ' + correo);
+
+    // resetear modal
+    setTimeout(function() {
+      document.getElementById('sel-tipo-sujeto').value = '';
+      document.getElementById('sujeto-nombre').value = '';
+      document.getElementById('sujeto-cedula').value = '';
+      document.getElementById('sujeto-correo').value = '';
+      document.getElementById('sujeto-tarjeta').value = '';
+      document.getElementById('sujeto-tarjeta').style.borderColor = '#CBD5E1';
+      document.getElementById('campo-tarjeta').style.display = 'none';
+      document.getElementById('preview-invitacion').style.display = 'none';
+      document.getElementById('inv-clave').dataset.clave = '';
+    }, 300);
+  }
+
+  // EVALUACIÓN — lógica de decisiones
+  function toggleDecision(tipo) {
+    var causal = document.getElementById('campo-causal-archivo');
+    causal.style.display = tipo === 'archivo' ? 'block' : 'none';
+    document.getElementById('btn-confirmar-eval').disabled = false;
+    var msgs = {
+      pliego: 'Proyectar auto de cierre y pliego de cargos',
+      archivo: 'Proyectar auto de archivo definitivo',
+      cierre: 'Proyectar auto de cierre de investigación'
+    };
+    document.getElementById('btn-confirmar-eval').querySelector('span') && null;
+    var btn = document.getElementById('btn-confirmar-eval');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> ' + msgs[tipo];
+    // resaltar opción seleccionada
+    document.querySelectorAll('[name="decision-eval"]').forEach(function(r) {
+      var lbl = r.closest('label');
+      lbl.style.borderColor = r.checked ? 'var(--azul)' : 'var(--gris-claro)';
+      lbl.style.background = r.checked ? '#EBF4FA' : '#FAFBFC';
+    });
+  }
+  function confirmarEvaluacion() {
+    var sel = document.querySelector('[name="decision-eval"]:checked');
+    if (!sel) return;
+    var toasts = {
+      pliego: 'Auto de cierre y pliego de cargos proyectados. Traslado de 10 días iniciado.',
+      archivo: 'Auto de archivo definitivo proyectado. Enviado a revisión.',
+      cierre: 'Auto de cierre proyectado. Traslado de 10 días para alegatos precalificatorios iniciado.'
+    };
+    closeModal('modal-evaluar');
+    showToast(toasts[sel.value]);
+    // resetear
+    document.querySelectorAll('[name="decision-eval"]').forEach(function(r) { r.checked = false; });
+    document.getElementById('campo-causal-archivo').style.display = 'none';
+    document.getElementById('btn-confirmar-eval').disabled = true;
+    document.getElementById('btn-confirmar-eval').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Proyectar acto';
+  }
+
+  // procuradurIA
+  function toggleIA() {
+    showToast('procuradurIA en construcción · Disponible en próxima versión');
+  }
+</script>
+</body>
+</html>
