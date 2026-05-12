@@ -314,6 +314,68 @@ Reemplazar el expediente físico por un **expediente electrónico jurídicamente
 
 ---
 
+## 📋 ESTÁNDAR DE HISTORIAS DE USUARIO PGN - LECCIONES APRENDIDAS (HU-08)
+
+### ✅ Estructura Obligatoria Detectada en HU-08 (Referencia)
+
+Cada historia de usuario hija debe contener **mínimo 15-20 párrafos/tablas** con la siguiente estructura:
+
+| Sección | Contenido Mínimo | Ejemplo HU-08 |
+|---|---|---|
+| **Encabezado** | Fecha, ID HU, Creado por, Validado por, Macroproceso, Proceso, Actividad, Clasificación, Valor de negocio | HU-08-01 a HU-08-05 |
+| **DESCRIPCIÓN** | ¿Quién?, ¿Qué?, ¿Para qué? con referencias normativas explícitas | Funcionario Instrucción + Art. 215 CGD |
+| **DEPENDENCIAS** | Mínimo 3 condiciones previas + artículos CGD aplicables | Expediente creado, rol asignado, shell activo |
+| **RESTRICCIONES** | Mínimo 5 reglas de negocio/normativas/técnicas | Separación instructor/juzgador, reserva, términos |
+| **SUPUESTOS** | Mínimo 3 escenarios operativos asumidos | Calendario oficial, firma digital, sesión timeout |
+| **CRITERIOS ACEPTACIÓN** | Mínimo 3 escenarios Gherkin (Feliz/Alterno/Error) con validación normativa | Escenarios detallados con Dado/Cuando/Entonces |
+| **PROTOTIPO** | Referencia al HTML específico + componentes UX identificados | 08_auto_apertura_investigacion.html |
+| **STAKEHOLDERS** | Lista de roles con firma pendiente | Funcionario, Oficina Control Interno, Área Jurídica |
+
+### 🔢 Regla de Desglose de Historias Hijas
+
+**Para módulos complejos con múltiples pestañas/funciones:**
+- **1 historia hija por funcionalidad crítica** identificada en el prototipo HTML
+- **No agrupar** funcionalidades distintas en una sola HU
+- **Identificar** cada HU hija con formato `HU-XX-YY` donde XX=padre, YY=hija
+
+### 📊 Ejemplo Aplicado: HU-15 Gestión Indagación Previa
+
+Basado en pantalla `15_gestion_indagacion_v1.html` con 5 pestañas + funciones críticas:
+
+| ID HU Hija | Nombre | Funcionalidad | Base Legal | Prioridad |
+|---|---|---|---|---|
+| **HU-15-01** | Consultar término de indagación previa | Widget semáforo con cálculo días hábiles, alertas vencimiento, prórrogas DDHH/DIH | Art. 208 CGD | 🔴 Alta |
+| **HU-15-02** | Gestionar pruebas de identificación | Tabla de pruebas (documental, pericial, testimonial), estados, libramiento de oficios | Art. 208 + Art. 214 CGD | 🔴 Alta |
+| **HU-15-03** | Visualizar persona en averiguación | Card informativa sin vinculación formal, datos de identificación | Art. 208 CGD | 🟡 Media |
+| **HU-15-04** | Gestionar documentos del expediente | Carga, consulta y descarga con reserva de actuación | Art. 115 + Art. 121-123 CGD | 🟡 Media |
+| **HU-15-05** | Registrar actuaciones procesales | Formulario de nuevas actuaciones con trazabilidad auditada | Art. 208 CGD | 🔴 Alta |
+| **HU-15-06** | Consultar historial (audit log) | Timeline inmutable de todas las actuaciones | Art. 76 CGD + Ley 2094/2021 | 🟢 Baja |
+| **HU-15-07** | Proyectar decisión final | Auto de archivo o apertura investigación disciplinaria | Art. 208 parágrafo + Art. 214/215 CGD | 🔴 Crítica |
+
+### ⚠️ Errores Comunes a Evitar
+
+1. ❌ **HU demasiado cortas** (<10 párrafos) - No cumplen estándar PGN
+2. ❌ **Falta de citación normativa** - Cada criterio debe referenciar artículo CGD
+3. ❌ **Criterios Gherkin genéricos** - Deben ser testeables y específicos
+4. ❌ **Agrupar funcionalidades** - 1 HU = 1 funcionalidad atómica
+5. ❌ **Olvidar supuestos operativos** - Contexto técnico y de negocio explícito
+6. ❌ **Sin referencia a prototipo** - Siempre vincular al HTML correspondiente
+
+### ✅ Checklist de Validación Antes de Entregar HU
+
+- [ ] ¿Tiene mínimo 15-20 párrafos/tablas de contenido detallado?
+- [ ] ¿Incluye mínimo 3 dependencias con artículos CGD?
+- [ ] ¿Incluye mínimo 5 restricciones (negocio + técnicas + legales)?
+- [ ] ¿Incluye mínimo 3 supuestos operativos?
+- [ ] ¿Tiene mínimo 3 escenarios Gherkin (feliz, alterno, error)?
+- [ ] ¿Cita normas CGD en cada sección aplicable?
+- [ ] ¿Referencia prototipo HTML específico?
+- [ ] ¿Lista stakeholders con validación pendiente?
+- [ ] ¿Incluye tabla de validación normativa explícita?
+- [ ] ¿Considera seguridad, auditoría y accesibilidad WCAG 2.1 AA?
+
+---
+
 ## 📞 CONTACTO Y REFERENCIAS
 
 - **Elaborado por**: Nathalia Carvajal
