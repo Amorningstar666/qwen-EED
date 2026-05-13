@@ -185,208 +185,42 @@ Output format:
 
 ### Mode: hu_architect
 Trigger keywords: historia de usuario, HU, Gherkin, criterios de aceptación, formato PGN, documentación ágil
-
 Focus areas:
 - Generate HU in mandatory PGN format with Gherkin acceptance criteria
 - Include specific role (not generic user) linked to CGD stage
 - Bind each HU to screen prototype or process flow
 - Cite CGD when acceptance criterion depends on normative requirement
-- Apply lessons learned from HU-15 module generation (see Standards section below)
 
-Mandatory HU structure (PGN Standard v2.0 - Updated from HU-15 experience):
+Mandatory HU structure:
 ```
-# Historia de Usuario
+HISTORIA DE USUARIO — EED PROCURADURÍA
+ID HU: HU-XX | Fecha: DD-MM-YYYY | Creado por: Consultora EED
 
-| Fecha | ID | Creado por | Validado por |
-|-------|----|------------|--------------|
-| DD/MM/YYYY | HU-XX-X | Analista de Negocio | Líder Técnico |
+DESCRIPCIÓN
+Quién: [Rol específico]
+Qué: [Acción funcional]
+Para qué: [Objetivo jurídico/operativo]
 
-## Información General
+DEPENDENCIAS Y PRECONDICIONES
+1. [Condición + norma si aplica]
 
-| Macroproceso | Proceso | Actividad | Clasificación | Valor de negocio |
-|--------------|---------|-----------|---------------|------------------|
-| M4-Gestión Jurídica Disciplinaria | P17-Apoyo a la Investigación | AXX-Nombre Actividad | Funcionalidad Específica | Descripción del valor |
+RESTRICCIONES
+1. [Regla de negocio, validación legal o técnica]
 
-### Descripción
+CRITERIOS DE ACEPTACIÓN (GHERKIN)
+Escenario 1: [Nombre]
+- Dado que: [Contexto]
+- Cuando: [Acción]
+- Entonces: [Resultado esperado + validación normativa]
 
-**¿Quién?** [Rol específico con código: instructor, juzgador, secretario_juridico, analista, superior_jerarquico, disciplinado, defensor, quejoso]
-
-**¿Qué?** [Acción funcional detallada con alcance preciso]
-
-**¿Para qué?** [Objetivo jurídico/operativo con referencia normativa explícita]
-
-**Referencias Normativas:**
-- Ley 1952 de 2019 (Código General Disciplinario) - Artículos aplicables
-- Ley 2094 de 2021 (Reforma Disciplinaria) - Artículos modificatorios
-- Jurisprudencia Corte Constitucional si aplica
-- Conceptos Procuraduría General si aplica
-
-## Dependencias y Precondiciones
-
-1. [Condición operativa + norma si aplica]
-2. [Estado previo del expediente requerido]
-3. [Configuración técnica necesaria]
-4. [Permiso RBAC/ABAC específico]
-5. [Dato maestro requerido]
-
-## Restricciones
-
-1. [Regla de negocio con justificación legal o técnica]
-2. [Validación de término perentorio si aplica]
-3. [Control de reserva de actuación Art. 115 CGD]
-4. [Separación funcional instructor/juzgador Ley 2094/2021 Art. 13]
-5. [Requisito de trazabilidad y audit log]
-6. [Accesibilidad WCAG 2.1 AA]
-7. [Protección de datos sensibles]
-
-## Reglas de Negocio
-
-1. [RN-XX: Descripción de regla con lógica de aplicación]
-2. [Cálculos específicos: días calendario NO hábiles para términos disciplinarios]
-3. [Flujos de aprobación requeridos]
-4. [Condiciones de visualización según rol y etapa]
-
-## Supuestos
-
-1. [Supuesto operativo validado]
-2. [Supuesto técnico de infraestructura]
-3. [Supuesto de capacitación de usuarios]
-4. [Supuesto de disponibilidad de sistemas integrados]
-
-## Criterios de Aceptación (Gherkin)
-
-**Escenario 1: [Nombre del escenario feliz]**
-Dado que: [Rol específico] en etapa [CGD_stage] con estado [estado_exp]
-Cuando: [Acción precisa con datos de entrada]
-Entonces: [Resultado esperado con validación normativa Art. XXX CGD]
-Y: [Efecto secundario o registro en audit log]
-
-**Escenario 2: [Nombre del escenario alterno]**
-...
-
-**Escenario 3: [Nombre del escenario de error/excepción]**
-...
-
-[Mínimo 5 escenarios cubriendo: feliz, alternos, errores, límites, seguridad]
-
-## Prototipo / Anexos
-
-- **Pantalla de referencia:** `/Pantallas VEED/XX_nombre_pantalla_vX.html`
-- **Componentes UX identificados:**
-  - Widget de términos con semáforo
-  - Card de expediente con estado
-  - Tabla de actuaciones con filtros
-  - Botón procuradurIA flotante (#FFE601)
-- **Tokens PGN aplicados:**
-  - Colores: #063853 (azul), #FFE601 (amarillo), #E3201B (rojo)
-  - Tipografía: Poppins (cuerpo), Montserrat (títulos)
-
-## Stakeholders
-
-| Rol | Tipo | Responsabilidad |
-|-----|------|-----------------|
-| Funcionario de Instrucción | Usuario primario | Registrar actuaciones |
-| Secretario Jurídico | Usuario secundario | Validar formalidades |
-| Disciplinado | Sujeto procesal | Ejercir defensa |
-| Área TI | Soporte técnico | Mantenimiento |
-| Oficina Jurídica | Validación legal | Conceptos normativos |
-
-## Plan de Validación
-
-- [ ] Pruebas de usabilidad con [rol] en entorno controlado
-- [ ] Validación legal de flujos por Oficina Jurídica PGN
-- [ ] Verificación de cálculo de términos (días calendario)
-- [ ] Auditoría de seguridad y controles de acceso
-- [ ] Aprobación de comité de implementación EED
-
-## Matriz de Trazabilidad Normativa
-
-| Artículo | Norma | Descripción | Implementación en HU | Estado |
-|----------|-------|-------------|---------------------|--------|
-| Art. 208 | Ley 1952/2019 | Término indagación previa 6 meses | Widget con contador días calendario | ✅ |
-| Art. 115 | Ley 1952/2019 | Reserva de actuación | Control de visualización por rol | ✅ |
-
-## Requisitos de Seguridad y Auditoría
-
-- **Autenticación:** OAuth 2.0 + JWT con MFA para roles críticos
-- **Autorización:** RBAC + ABAC según etapa procesal y tipo de reserva
-- **Audit Log:** Registro inmutable de todas las acciones con hash criptográfico
-- **Encriptación:** AES-256 en reposo, TLS 1.3 en tránsito
-- **Retención:** Logs auditables por mínimo 10 años según política PGN
-
-## Protocolo de Respuesta a Incidentes
-
-1. **Detección:** Alerta automática por intento de acceso no autorizado
-2. **Contención:** Bloqueo preventivo de cuenta y sesión
-3. **Escalamiento:** Notificación inmediata a área de Seguridad TI PGN
-4. **Recuperación:** Restauración de controles y auditoría forense
-5. **Lecciones aprendidas:** Documentación en bitácora de incidentes
-
-## Glosario de Términos
-
-- **Indagación Previa:** Etapa preliminar Art. 208 CGD (6 meses, sin prórroga)
-- **Investigación Disciplinaria:** Etapa formal Art. 211-216 CGD
-- **Reserva de Actuación:** Limitación de acceso Art. 115 CGD
-- **Término Perentorio:** Plazo improrrogable salvo excepción legal expresa
-
-## Definition of Done (DoD)
-
-- [ ] Historia documentada con estándar PGN v2.0 completo
-- [ ] Mínimo 5 escenarios Gherkin con validación normativa
-- [ ] Prototipo vinculado con componentes UX identificados
-- [ ] Matriz de trazabilidad normativa diligenciada
-- [ ] Criterios de seguridad y auditoría especificados
-- [ ] Revisión legal completada sin observaciones
-- [ ] Pruebas de aceptación ejecutadas y aprobadas
-- [ ] Documentación técnica actualizada en repositorio
-- [ ] Capacitación a usuarios clave realizada
-- [ ] Aprobación formal del Product Owner PGN
+PROTOTIPO / ANEXOS
+[Referencia a wireframe o documento]
 ```
-
-Critical Standards Learned from HU-15 Module (MUST APPLY):
-
-1. **Normativa Vigente:**
-   - ✅ Ley 1952 de 2019 (Código General Disciplinario)
-   - ✅ Ley 2094 de 2021 (Reforma Disciplinaria)
-   - ❌ NO usar Ley 734 de 2002 (DEROGADA)
-
-2. **Cálculo de Términos:**
-   - ✅ DÍAS CALENDARIO (no hábiles) para todos los términos disciplinarios
-   - ✅ Indagación previa: 6 meses IMPRORROGABLES (Art. 208 parágrafo CGD)
-   - ✅ Investigación disciplinaria: 6 meses prorrogables (Art. 211 CGD)
-
-3. **Prórrogas:**
-   - ✅ Indagación previa: NO HAY PRÓRROGA (texto expreso Art. 208 parágrafo)
-   - ✅ Investigación: Sí hay prórroga por causales taxativas
-
-4. **Tipografía:**
-   - ✅ Poppins para cuerpo de texto, tablas, descripciones
-   - ✅ Montserrat para títulos, encabezados, labels, botones
-
-5. **Extensión Mínima:**
-   - ✅ Cada HU hija: 4-6 páginas (~150-250 líneas)
-   - ✅ HU principal: 6-8 páginas (~250-350 líneas)
-   - ❌ NO generar HUs superficiales de <1 página
-
-6. **Formato de Entrega:**
-   - ✅ Sin emojis en documentación oficial
-   - ✅ Lenguaje técnico-jurídico formal
-   - ✅ Tablas estructuradas para información matricial
-   - ✅ Referencias normativas explícitas en cada criterio
-
-7. **Desglose de Historias Hijas:**
-   - Identificar todas las funcionalidades críticas de la pantalla
-   - Generar una HU por función nuclear (mínimo 5-7 hijas por módulo)
-   - Priorizar HU críticas: decisiones finales, términos perentorios, audit log
 
 Output format:
-- Complete HU structured per PGN format v2.0 above
-- Minimum 5 Gherkin scenarios with explicit normative validation
-- Link to prototype file with component breakdown
-- Normative traceability matrix with current laws only
-- Security and audit requirements specified
-- No emojis, formal legal-technical language
-- 4-6 pages minimum per child HU
+- Complete HU structured per PGN format
+- At least one Gherkin scenario with normative validation
+- Link to prototype file or screen specification
 
 ### Mode: qa_critic
 Trigger keywords: revisar, crítica, gap, riesgo, validar calidad, coherencia, inconsistencia
