@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nulidades — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+    .back-btn:hover{background:rgba(255,255,255,0.2);}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn i{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal i{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT PRINCIPAL */
+    .main-layout{display:grid;grid-template-columns:260px 1fr 320px;flex:1;min-height:0;height:calc(100vh - 96px);}
+
+    /* PANEL IZQUIERDO - EXPEDIENTE INFO */
+    .panel-expediente{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:20px;}
+    .exp-info-card{background:#F8FAFC;border:1px solid var(--gris-claro);border-radius:8px;padding:14px;margin-bottom:16px;}
+    .exp-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+    .exp-value{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:var(--azul);margin-bottom:8px;}
+    .exp-value.small{font-size:12px;color:var(--negro);font-weight:500;}
+    .estado-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;}
+    .estado-badge.investigacion{background:#DBEAFE;color:#1D4ED8;}
+    .estado-badge.juzgamiento{background:#FEF3C7;color:#B45309;}
+    .indice-sep{height:1px;background:var(--gris-claro);margin:16px 0;}
+    .nulidad-resumen{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:14px;}
+    .nulidad-resumen-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#B45309;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .nulidad-resumen-title i{width:14px;height:14px;}
+    .nulidad-stat{display:flex;justify-content:space-between;margin-bottom:6px;}
+    .nulidad-stat-label{font-size:11px;color:var(--gris-medio);}
+    .nulidad-stat-value{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);}
+
+    /* PANEL CENTRAL */
+    .center-panel{overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:20px;}
+    
+    /* HEADER DE NULIDAD */
+    .nulidad-header{background:var(--blanco);border-radius:12px;padding:20px 24px;box-shadow:0 2px 12px rgba(6,56,83,0.06);display:flex;align-items:center;gap:16px;}
+    .nulidad-icon{width:48px;height:48px;background:var(--azul);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .nulidad-icon i{width:22px;height:22px;color:var(--amarillo);}
+    .nulidad-title-area{flex:1;}
+    .nulidad-title{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;color:var(--azul);margin-bottom:4px;}
+    .nulidad-subtitle{font-size:12px;color:var(--gris-medio);}
+    .nulidad-actions{display:flex;gap:8px;}
+
+    /* TARJETA DE SOLICITUD DE NULIDAD */
+    .solicitud-card{background:var(--blanco);border-radius:12px;box-shadow:0 2px 12px rgba(6,56,83,0.06);overflow:hidden;}
+    .solicitud-header{background:var(--azul);padding:14px 20px;display:flex;align-items:center;gap:10px;}
+    .solicitud-header i{width:16px;height:16px;color:var(--amarillo);}
+    .solicitud-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--blanco);}
+    .solicitud-body{padding:20px;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .form-group{display:flex;flex-direction:column;gap:6px;}
+    .form-group.full{grid-column:1/-1;}
+    .form-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.04em;}
+    .form-input,.form-select,.form-textarea{border:1.5px solid var(--gris-claro);border-radius:8px;padding:10px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);outline:none;transition:all .15s;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--azul);outline:2px solid rgba(77,191,226,0.2);}
+    .form-textarea{min-height:100px;resize:vertical;line-height:1.6;}
+    .form-help{font-size:11px;color:var(--gris-medio);display:flex;align-items:center;gap:4px;}
+    .form-help i{width:12px;height:12px;}
+
+    /* LISTA DE ACTOS PROCESALES */
+    .actos-lista{background:var(--blanco);border-radius:12px;box-shadow:0 2px 12px rgba(6,56,83,0.06);overflow:hidden;margin-top:20px;}
+    .actos-header{background:#F8FAFC;padding:14px 20px;border-bottom:1px solid var(--gris-claro);display:flex;align-items:center;gap:10px;}
+    .actos-header i{width:16px;height:16px;color:var(--azul);}
+    .actos-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--azul);}
+    .acto-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--gris-claro);cursor:pointer;transition:background .15s;}
+    .acto-item:last-child{border-bottom:none;}
+    .acto-item:hover{background:#F8FAFC;}
+    .acto-item.selected{background:#EBF4FA;border-left:3px solid var(--azul);}
+    .acto-checkbox{width:18px;height:18px;border:2px solid var(--gris-medio);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+    .acto-item.selected .acto-checkbox{background:var(--azul);border-color:var(--azul);}
+    .acto-item.selected .acto-checkbox i{color:var(--blanco);font-size:11px;}
+    .acto-info{flex:1;}
+    .acto-tipo{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);margin-bottom:2px;}
+    .acto-descripcion{font-size:12px;color:var(--gris-medio);margin-bottom:3px;}
+    .acto-meta{display:flex;gap:12px;}
+    .acto-meta-item{font-size:11px;color:var(--gris-medio);display:flex;align-items:center;gap:4px;}
+    .acto-meta-item i{width:11px;height:11px;}
+
+    /* PANEL DERECHO - TERMINOS Y ACCIONES */
+    .right-panel{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:20px;}
+    
+    /* WIDGET DE TÉRMINOS */
+    .terminos-widget{background:#F0F9FF;border:1.5px solid #BAE6FD;border-radius:12px;padding:16px;}
+    .terminos-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .terminos-header i{width:18px;height:18px;color:var(--azul);}
+    .terminos-title{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);}
+    .termino-item{background:var(--blanco);border-radius:8px;padding:12px;margin-bottom:10px;}
+    .termino-row{display:flex;justify-content:space-between;margin-bottom:6px;}
+    .termino-label{font-size:11px;color:var(--gris-medio);}
+    .termino-value{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);}
+    .termino-dias{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;color:var(--azul);}
+    .termino-progress{height:6px;background:#E2E8F0;border-radius:999px;overflow:hidden;margin-top:8px;}
+    .termino-progress-bar{height:100%;background:var(--azul);border-radius:999px;transition:width .3s;}
+    .termino-progress-bar.vencido{background:var(--rojo);}
+    .termino-progress-bar.cerca{background:var(--naranja);}
+
+    /* BOTONES DE ACCIÓN */
+    .acciones-widget{background:var(--blanco);border:1px solid var(--gris-claro);border-radius:12px;padding:16px;}
+    .acciones-title{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .acciones-title i{width:16px;height:16px;}
+    .accion-btn{width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+    .accion-btn i{width:14px;height:14px;}
+    .accion-btn.primary{background:var(--azul);color:var(--blanco);}
+    .accion-btn.primary:hover{background:var(--azul-medio);}
+    .accion-btn.secondary{background:#F8FAFC;color:var(--azul);border:1.5px solid var(--gris-claro);}
+    .accion-btn.secondary:hover{border-color:var(--azul);background:#EBF4FA;}
+    .accion-btn.danger{background:#FEF2F2;color:var(--rojo);border:1.5px solid #FECACA;}
+    .accion-btn.danger:hover{background:#FEE2E2;}
+
+    /* MODAL DE RESOLUCIÓN DE NULIDAD */
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(6,56,83,0.5);display:none;align-items:center;justify-content:center;z-index:1000;}
+    .modal-overlay.active{display:flex;}
+    .modal-decision{background:var(--blanco);border-radius:16px;width:700px;max-width:96vw;box-shadow:0 24px 60px rgba(6,56,83,0.25);animation:slideIn .2s ease;max-height:92vh;overflow-y:auto;}
+    @keyframes slideIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+    .modal-decision-header{background:var(--azul);padding:18px 24px;border-radius:16px 16px 0 0;display:flex;align-items:center;gap:12px;}
+    .modal-decision-icon{width:38px;height:38px;background:rgba(255,255,255,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .modal-decision-icon i{width:18px;height:18px;color:var(--amarillo);}
+    .modal-decision-header h3{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--blanco);}
+    .modal-decision-header p{font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px;}
+    .modal-decision-body{padding:24px;}
+    .decision-opciones{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+    .decision-card{border:2px solid var(--gris-claro);border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;}
+    .decision-card:hover{border-color:var(--azul);background:#F8FAFC;}
+    .decision-card.selected{border-color:var(--azul);background:#EBF4FA;}
+    .decision-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .decision-card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .decision-card-icon.declarar{background:#DCFCE7;color:#059669;}
+    .decision-card-icon.negar{background:#FEE2E2;color:#DC2626;}
+    .decision-card-icon i{width:18px;height:18px;}
+    .decision-card-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--azul);}
+    .decision-card-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;}
+    .fundamentos-section{margin-top:20px;}
+    .fundamentos-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .fundamentos-label i{width:14px;height:14px;}
+    .fundamentos-textarea{width:100%;border:1.5px solid var(--gris-claro);border-radius:8px;padding:12px;font-family:'Crimson Pro',serif;font-size:14px;line-height:1.7;color:var(--negro);min-height:150px;outline:none;resize:vertical;}
+    .fundamentos-textarea:focus{border-color:var(--azul);}
+    .normativa-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .normativa-tag{background:#F0F9FF;border:1px solid #BAE6FD;border-radius:6px;padding:6px 10px;font-size:11px;color:var(--azul);font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;transition:all .15s;}
+    .normativa-tag:hover{background:#DBEAFE;}
+    .modal-decision-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:10px;justify-content:flex-end;background:var(--blanco);}
+    .btn-modal{padding:10px 20px;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+    .btn-modal.cancel{background:var(--blanco);border:1.5px solid var(--gris-claro);color:var(--gris-medio);}
+    .btn-modal.cancel:hover{border-color:var(--gris-medio);}
+    .btn-modal.confirm{background:var(--azul);color:var(--blanco);}
+    .btn-modal.confirm:hover{background:var(--azul-medio);}
+
+    /* PROCURADURIA FLOATING BUTTON */
+    .procuraduria-float{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:var(--amarillo);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(6,56,83,0.25);cursor:pointer;transition:all .2s;z-index:500;}
+    .procuraduria-float:hover{transform:scale(1.05);box-shadow:0 6px 24px rgba(6,56,83,0.3);}
+    .procuraduria-float i{width:24px;height:24px;color:var(--azul);}
+    .procuraduria-tooltip{position:absolute;right:66px;top:50%;transform:translateY(-50%);background:var(--blanco);border:1px solid var(--gris-claro);border-radius:8px;padding:10px 14px;box-shadow:0 4px 16px rgba(6,56,83,0.15);white-space:nowrap;font-size:11px;color:var(--negro);display:none;}
+    .procuraduria-float:hover .procuraduria-tooltip{display:block;}
+
+    /* TOAST NOTIFICATION */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--azul);color:var(--blanco);padding:12px 24px;border-radius:8px;box-shadow:0 4px 20px rgba(6,56,83,0.25);font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:1001;}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    .toast.success{background:#059669;}
+    .toast.error{background:var(--rojo);}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <button class="back-btn" title="Volver"><i class="fas fa-arrow-left"></i></button>
+      <div class="navbar-title">
+        Gestión de Nulidades
+        <span>Expediente: 2024-00123456 - Etapa: Investigación Disciplinaria</span>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <div class="autosave-indicator">
+        <span class="autosave-dot"></span>
+        Guardado automático
+      </div>
+      <select class="rol-select">
+        <option>Funcionario de Instrucción</option>
+        <option>Secretario Jurídico</option>
+        <option>Revisor</option>
+        <option>Jefe de Dependencia</option>
+      </select>
+      <button class="nav-btn ghost"><i class="fas fa-bell"></i></button>
+      <button class="btn-accion-principal">
+        <i class="fas fa-file-export"></i>
+        Generar Auto
+      </button>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-bar">
+    <a href="#">Inicio</a>
+    <span class="sep">/</span>
+    <a href="#">Expedientes</a>
+    <span class="sep">/</span>
+    <a href="#">2024-00123456</a>
+    <span class="sep">/</span>
+    <span class="current">Nulidades</span>
+  </div>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="main-layout">
+    <!-- PANEL IZQUIERDO - INFO EXPEDIENTE -->
+    <aside class="panel-expediente">
+      <div class="exp-info-card">
+        <div class="exp-label">Número de Radicado</div>
+        <div class="exp-value">2024-00123456</div>
+        <div class="exp-label">Estado</div>
+        <span class="estado-badge investigacion"><i class="fas fa-folder-open"></i> Investigación</span>
+      </div>
+
+      <div class="exp-info-card">
+        <div class="exp-label">Disciplinado</div>
+        <div class="exp-value small">Juan Carlos Rodríguez Pérez</div>
+        <div class="exp-label">Cargo</div>
+        <div class="exp-value small">Director Administrativo</div>
+        <div class="exp-label">Entidad</div>
+        <div class="exp-value small">Ministerio de Salud</div>
+      </div>
+
+      <div class="indice-sep"></div>
+
+      <div class="nulidad-resumen">
+        <div class="nulidad-resumen-title">
+          <i class="fas fa-scale-balanced"></i>
+          Estado de Nulidades
+        </div>
+        <div class="nulidad-stat">
+          <span class="nulidad-stat-label">Solicitudes</span>
+          <span class="nulidad-stat-value">2</span>
+        </div>
+        <div class="nulidad-stat">
+          <span class="nulidad-stat-label">Por resolver</span>
+          <span class="nulidad-stat-value">1</span>
+        </div>
+        <div class="nulidad-stat">
+          <span class="nulidad-stat-label">Término vence</span>
+          <span class="nulidad-stat-value" style="color:var(--rojo);">2 días</span>
+        </div>
+      </div>
+
+      <div class="indice-sep"></div>
+
+      <div class="exp-info-card" style="background:#F0FDF4;border-color:#BBF7D0;">
+        <div class="exp-label" style="color:#059669;">Término Investigación</div>
+        <div class="exp-value" style="color:#065F46;">145 días restantes</div>
+        <div class="termino-progress" style="height:4px;">
+          <div class="termino-progress-bar" style="width:65%;background:#059669;"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- PANEL CENTRAL -->
+    <main class="center-panel">
+      <!-- HEADER -->
+      <div class="nulidad-header">
+        <div class="nulidad-icon">
+          <i class="fas fa-gavel"></i>
+        </div>
+        <div class="nulidad-title-area">
+          <h1 class="nulidad-title">Gestión de Nulidades - Art. 202-207 CGD</h1>
+          <p class="nulidad-subtitle">Solicitud de parte o de oficio • Término: 5 días para decidir • Recurso de reposición procede</p>
+        </div>
+        <div class="nulidad-actions">
+          <button class="nav-btn secondary" onclick="openModal()">
+            <i class="fas fa-plus"></i>
+            Nueva Solicitud
+          </button>
+        </div>
+      </div>
+
+      <!-- SOLICITUD ACTIVA -->
+      <div class="solicitud-card">
+        <div class="solicitud-header">
+          <i class="fas fa-circle-exclamation"></i>
+          <span class="solicitud-title">Solicitud de Nulidad Pendiente de Decisión</span>
+        </div>
+        <div class="solicitud-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Solicitante</label>
+              <input type="text" class="form-input" value="Defensor - Dr. Miguel Ángel Torres" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha Radicación</label>
+              <input type="text" class="form-input" value="10 de mayo de 2024, 03:45 PM" readonly>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Actos Procesales Objeto de Nulidad</label>
+              <div class="actos-lista" style="margin-top:0;box-shadow:none;border:1px solid var(--gris-claro);">
+                <div class="acto-item selected">
+                  <div class="acto-checkbox"><i class="fas fa-check"></i></div>
+                  <div class="acto-info">
+                    <div class="acto-tipo">Auto de Apertura de Investigación</div>
+                    <div class="acto-descripcion">Notificado el 3 de mayo de 2024</div>
+                    <div class="acto-meta">
+                      <span class="acto-meta-item"><i class="fas fa-calendar"></i> 03/05/2024</span>
+                      <span class="acto-meta-item"><i class="fas fa-user"></i> Func. Instrucción</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Causal Invocada (Art. 204 CGD)</label>
+              <select class="form-select">
+                <option>Vicio sustancial por violación del debido proceso</option>
+                <option>Incompetencia absoluta del funcionario</option>
+                <option>Omisión de formalidades esenciales</option>
+                <option>Preclusión por cosa juzgada</option>
+                <option>Prescripción de la acción disciplinaria</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Fundamentos de la Solicitud</label>
+              <textarea class="form-textarea" readonly>El auto de apertura de investigación adolece de un vicio sustancial por cuanto no se individualiza correctamente la conducta atribuida al disciplinado. En el acto procesal se hace referencia genérica a "hechos ocurridos durante el ejercicio de sus funciones", sin especificar tiempo, modo y lugar de las conductas, vulnerando así el derecho a la defensa consagrado en el Art. 29 de la Constitución Política y el Art. 10 del CGD. Esta indeterminación impide al disciplinado ejercer su derecho de contradicción de manera efectiva.</textarea>
+            </div>
+          </div>
+
+          <div class="form-help" style="margin-top:12px;">
+            <i class="fas fa-info-circle"></i>
+            <strong>Nota:</strong> El término para decidir esta solicitud es de 5 días hábiles contados desde su radicación. Vence el 17 de mayo de 2024. Contra la decisión que resuelva la nulidad procede recurso de reposición dentro de los 5 días siguientes (Art. 204 CGD).
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORIAL DE NULIDADES -->
+      <div class="actos-lista">
+        <div class="actos-header">
+          <i class="fas fa-clock-rotate-left"></i>
+          <span class="actos-title">Historial de Nulidades Resueltas</span>
+        </div>
+        <div class="acto-item">
+          <div class="acto-info">
+            <div class="acto-tipo">Nulidad Declarada - Auto No. 045</div>
+            <div class="acto-descripcion">Por incompetencia absoluta - Traslado a entidad competente</div>
+            <div class="acto-meta">
+              <span class="acto-meta-item"><i class="fas fa-calendar"></i> 15/04/2024</span>
+              <span class="acto-meta-item"><i class="fas fa-user"></i> Juez Disciplinario</span>
+              <span class="acto-meta-item" style="color:#059669;"><i class="fas fa-check-circle"></i> Ejecutoriado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- PANEL DERECHO -->
+    <aside class="right-panel">
+      <!-- TÉRMINOS -->
+      <div class="terminos-widget">
+        <div class="terminos-header">
+          <i class="fas fa-hourglass-half"></i>
+          <span class="terminos-title">Términos Procesales</span>
+        </div>
+        <div class="termino-item">
+          <div class="termino-row">
+            <span class="termino-label">Para decidir nulidad</span>
+            <span class="termino-dias">2 días</span>
+          </div>
+          <div class="termino-row">
+            <span class="termino-label">Vencimiento</span>
+            <span class="termino-value">17 may 2024</span>
+          </div>
+          <div class="termino-progress">
+            <div class="termino-progress-bar cerca" style="width:60%;"></div>
+          </div>
+        </div>
+        <div class="termino-item">
+          <div class="termino-row">
+            <span class="termino-label">Investigación</span>
+            <span class="termino-dias">145 días</span>
+          </div>
+          <div class="termino-row">
+            <span class="termino-label">Vencimiento</span>
+            <span class="termino-value">15 oct 2024</span>
+          </div>
+          <div class="termino-progress">
+            <div class="termino-progress-bar" style="width:35%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIONES RÁPIDAS -->
+      <div class="acciones-widget">
+        <div class="acciones-title">
+          <i class="fas fa-bolt"></i>
+          Acciones Disponibles
+        </div>
+        <button class="accion-btn primary" onclick="openModal()">
+          <i class="fas fa-gavel"></i>
+          Resolver Nulidad
+        </button>
+        <button class="accion-btn secondary">
+          <i class="fas fa-file-contract"></i>
+          Ver Expediente
+        </button>
+        <button class="accion-btn secondary">
+          <i class="fas fa-users"></i>
+          Sujetos Procesales
+        </button>
+        <button class="accion-btn danger">
+          <i class="fas fa-triangle-exclamation"></i>
+          Reportar Incidencia
+        </button>
+      </div>
+
+      <!-- INFORMACIÓN LEGAL -->
+      <div class="acciones-widget" style="background:#F8FAFC;">
+        <div class="acciones-title">
+          <i class="fas fa-book-open"></i>
+          Marco Normativo
+        </div>
+        <div style="font-size:11px;color:var(--gris-medio);line-height:1.6;">
+          <strong style="color:var(--azul);">Art. 202 CGD:</strong> Causales de nulidad<br><br>
+          <strong style="color:var(--azul);">Art. 203 CGD:</strong> Nulidad de pleno derecho<br><br>
+          <strong style="color:var(--azul);">Art. 204 CGD:</strong> Procedimiento - De oficio o a solicitud de parte dentro de los 5 días siguientes a la notificación<br><br>
+          <strong style="color:var(--azul);">Art. 205 CGD:</strong> Efectos - La nulidad declarada implica la reposición de la actuación hasta el momento anterior al vicio<br><br>
+          <strong style="color:var(--azul);">Art. 206 CGD:</strong> Convalidación - Si no se alega en oportunidad procesal<br><br>
+          <strong style="color:var(--azul);">Art. 207 CGD:</strong> Recursos - Contra el auto que decide la nulidad procede reposición dentro de 5 días
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- MODAL DE DECISIÓN -->
+  <div class="modal-overlay" id="modalDecision">
+    <div class="modal-decision">
+      <div class="modal-decision-header">
+        <div class="modal-decision-icon">
+          <i class="fas fa-scale-balanced"></i>
+        </div>
+        <div>
+          <h3>Resolver Solicitud de Nulidad</h3>
+          <p>Expediente 2024-00123456 - Solicitud del 10 de mayo de 2024</p>
+        </div>
+      </div>
+      <div class="modal-decision-body">
+        <div class="decision-opciones">
+          <div class="decision-card" onclick="selectDecision(this, 'declarar')">
+            <div class="decision-card-header">
+              <div class="decision-card-icon declarar">
+                <i class="fas fa-check"></i>
+              </div>
+              <div>
+                <div class="decision-card-title">Declarar la Nulidad</div>
+                <div class="decision-card-desc">Se ordena reponer la actuación desde el acto viciado. Procede recurso de reposición dentro de 5 días.</div>
+              </div>
+            </div>
+          </div>
+          <div class="decision-card" onclick="selectDecision(this, 'negar')">
+            <div class="decision-card-header">
+              <div class="decision-card-icon negar">
+                <i class="fas fa-xmark"></i>
+              </div>
+              <div>
+                <div class="decision-card-title">Negar la Nulidad</div>
+                <div class="decision-card-desc">Se considera que el acto procesal no presenta vicios. Procede recurso de reposición dentro de 5 días.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fundamentos-section">
+          <div class="fundamentos-label">
+            <i class="fas fa-pen-to-square"></i>
+            Fundamentos de la Decisión
+          </div>
+          <textarea class="fundamentos-textarea" placeholder="Redacte los fundamentos fácticos y jurídicos de la decisión..."></textarea>
+          <div class="normativa-tags">
+            <span class="normativa-tag" onclick="insertNorma('Art. 202 CGD')"><i class="fas fa-tag"></i> Art. 202 CGD</span>
+            <span class="normativa-tag" onclick="insertNorma('Art. 204 CGD')"><i class="fas fa-tag"></i> Art. 204 CGD</span>
+            <span class="normativa-tag" onclick="insertNorma('Art. 29 C.P.')"><i class="fas fa-tag"></i> Art. 29 C.P.</span>
+            <span class="normativa-tag" onclick="insertNorma('Art. 10 CGD')"><i class="fas fa-tag"></i> Art. 10 CGD</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-decision-footer">
+        <button class="btn-modal cancel" onclick="closeModal()">Cancelar</button>
+        <button class="btn-modal confirm" onclick="confirmDecision()">
+          <i class="fas fa-check"></i>
+          Generar Auto
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCURADURÍA FLOATING BUTTON -->
+  <div class="procuraduria-float">
+    <i class="fas fa-robot"></i>
+    <div class="procuraduria-tooltip">Asistente procuradurIA - Click para consultar</div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Modal functions
+    function openModal() {
+      document.getElementById('modalDecision').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalDecision').classList.remove('active');
+    }
+
+    // Decision selection
+    let selectedDecision = null;
+    function selectDecision(card, type) {
+      document.querySelectorAll('.decision-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedDecision = type;
+    }
+
+    // Insert normativa tag
+    function insertNorma(norma) {
+      const textarea = document.querySelector('.fundamentos-textarea');
+      textarea.value += (textarea.value ? '\n\n' : '') + norma + ': ';
+      textarea.focus();
+    }
+
+    // Confirm decision
+    function confirmDecision() {
+      if (!selectedDecision) {
+        showToast('Debe seleccionar una decisión (Declarar o Negar)', 'error');
+        return;
+      }
+      
+      const fundamentos = document.querySelector('.fundamentos-textarea').value.trim();
+      if (!fundamentos) {
+        showToast('Debe incluir los fundamentos de la decisión', 'error');
+        return;
+      }
+
+      closeModal();
+      showToast('Auto generado exitosamente. Listo para notificación.', 'success');
+      
+      // Simular guardado
+      setTimeout(() => {
+        console.log('Decisión:', selectedDecision);
+        console.log('Fundamentos:', fundamentos);
+      }, 500);
+    }
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modalDecision').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Back button
+    document.querySelector('.back-btn').addEventListener('click', function() {
+      showToast('Volviendo al expediente...', 'success');
+    });
+
+    // Procuraduría button
+    document.querySelector('.procuraduria-float').addEventListener('click', function() {
+      showToast('Abriendo asistente procuradurIA...', 'success');
+    });
+  </script>
+</body>
+</html>
