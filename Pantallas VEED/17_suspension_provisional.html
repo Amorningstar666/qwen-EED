@@ -479,6 +479,8 @@
               Agregar otro motivo
             </button>
             <textarea class="motivo-otra-input" id="otra-motivo" rows="2" placeholder="Especifique el motivo adicional que justifica la suspensión..."></textarea>
+            <textarea class="considerando-input" rows="5" placeholder="Sustenta los motivos generan la necesidad de la medida cautelar...">Los hechos investigados se relacionan con presuntas irregularidades en [DESCRIPCIÓN BREVE], las cuales podrían configurar la conducta disciplinaria prevista en el artículo [ARTÍCULO] del Código General Disciplinario.</textarea>
+          </div>
           </div>
         </section>
 
@@ -731,6 +733,11 @@
           <div class="chk-t">Duración dentro de límites legales</div>
           <div class="chk-n">Obligatorio</div>
         </div>
+         <div class="chk-r" onclick="toggleCheck(this)">
+          <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="chk-t">Remision a Consulta Superior Jerárquico</div>
+          <div class="chk-n">Obligatorio</div>
+        </div>
         <div class="chk-r" onclick="toggleCheck(this)">
           <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
           <div class="chk-t">Efectos claramente especificados</div>
@@ -755,7 +762,7 @@
           <div class="notif-title">Canales de Notificación</div>
           <div class="notif-channel">
             <div class="canal-opt active">Email</div>
-            <div class="canal-opt">SEDNotifica</div>
+            <div class="canal-opt">DOKUS</div>
             <div class="canal-opt">Correo Certificado</div>
           </div>
         </div>
