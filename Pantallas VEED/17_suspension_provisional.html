@@ -64,7 +64,7 @@
     .rol-banner.visible{display:flex;}
     .rol-banner.revisor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
     .rol-banner.aprobador{background:#FFFBEB;border-bottom:2px solid #FDE68A;}
-    .rol-banner.jefe{background:#F0FDF4;border-bottom:2px solid #BBF7D0;}
+    .rol-banner.jefe{background:#33FFCC;border-bottom:2px solid #BBF7D0;}
     .rol-banner svg{width:16px;height:16px;flex-shrink:0;}
     .rol-banner.revisor svg{color:#2563EB;}
     .rol-banner.aprobador svg{color:#D97706;}
@@ -350,7 +350,7 @@
 
     <!-- DOCUMENTO -->
     <article class="doc-sheet" id="encabezado">
-      
+
       <!-- HEADER OFICIAL -->
       <header class="doc-header-oficial">
         <div class="doc-logo-area">
@@ -403,7 +403,7 @@
             <span class="section-num">1</span>
             Antecedentes
           </div>
-          
+
           <div class="considerando-block">
             <div class="considerando-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -479,8 +479,6 @@
               Agregar otro motivo
             </button>
             <textarea class="motivo-otra-input" id="otra-motivo" rows="2" placeholder="Especifique el motivo adicional que justifica la suspensión..."></textarea>
-            <textarea class="considerando-input" rows="5" placeholder="Sustenta los motivos generan la necesidad de la medida cautelar...">Los hechos investigados se relacionan con presuntas irregularidades en [DESCRIPCIÓN BREVE], las cuales podrían configurar la conducta disciplinaria prevista en el artículo [ARTÍCULO] del Código General Disciplinario.</textarea>
-          </div>
           </div>
         </section>
 
@@ -575,7 +573,7 @@
 
           <div class="articulo-resuelve">
             <div class="art-num">SEGUNDO:</div>
-            <textarea class="art-input" rows="3" placeholder="Redacte el segundo artículo resolutivo...">ORDENAR que durante el término de la suspensión el investigado deberá permanecer separado de sus funciones, sin poder ingresar a las dependencias de [ENTIDAD] sin autorización expresa de esta Procuraduría Regional.</textarea>
+            <textarea class="art-input" rows="6" placeholder="Redacte el segundo artículo resolutivo...">ENVIAR a CONSULTA OBLIGATORIA la presente medida de Suspensión Provisional ante el Superior Jerárquico, de conformidad con el artículo 47 de la Ley 1952 de 2019. Para los efectos propios de la consulta, el funcionario remitirá de inmediato el proceso al superior, previa comunicación de la decisión al afectado. Recibido el expediente, el superior dispondrá que permanezca en Secretaría por el término de tres días, durante los cuales el disciplinado podrá presentar alegaciones en su favor, acompañadas de las pruebas en que las sustente. Vencido dicho término, se decidirá dentro de los diez días siguientes.</textarea>
           </div>
 
           <div class="articulo-resuelve">
@@ -619,7 +617,7 @@
 
   <!-- PANEL DERECHO -->
   <aside class="panel-tools">
-    
+
     <!-- INFORMACIÓN DEL EXPEDIENTE -->
     <div class="tools-section">
       <div class="tools-section-header">
@@ -708,7 +706,7 @@
           <div class="flujo-step">
             <div class="fstep-dot firma"></div>
             <div>
-              <div class="fstep-name">Firma Digital</div>
+              <div class="fstep-name">Firma Electrónica </div>
               <div class="fstep-actor">Sistema EED</div>
             </div>
           </div>
@@ -731,11 +729,6 @@
         <div class="chk-r" onclick="toggleCheck(this)">
           <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
           <div class="chk-t">Duración dentro de límites legales</div>
-          <div class="chk-n">Obligatorio</div>
-        </div>
-         <div class="chk-r" onclick="toggleCheck(this)">
-          <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div class="chk-t">Remision a Consulta Superior Jerárquico</div>
           <div class="chk-n">Obligatorio</div>
         </div>
         <div class="chk-r" onclick="toggleCheck(this)">
@@ -762,7 +755,7 @@
           <div class="notif-title">Canales de Notificación</div>
           <div class="notif-channel">
             <div class="canal-opt active">Email</div>
-            <div class="canal-opt">DOKUS</div>
+            <div class="canal-opt">SEDNotifica</div>
             <div class="canal-opt">Correo Certificado</div>
           </div>
         </div>
@@ -880,7 +873,7 @@
         break;
       case 'jefe':
         banner.classList.add('jefe');
-        labelAccion.textContent = 'Firmar digitalmente';
+        labelAccion.textContent = 'Firmar electrónicamente ';
         iconAccion.innerHTML = '<path d="M12 19l7-7 3 3-7 7-3-3z"/>';
         break;
       default:
