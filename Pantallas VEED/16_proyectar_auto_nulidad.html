@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyectar Auto de Nulidad — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT 3 COLUMNAS */
+    .editor-layout{display:grid;grid-template-columns:280px 1fr 320px;flex:1;height:calc(100vh - 96px);}
+
+    /* PANEL IZQUIERDO — FLUJO Y TÉRMINOS */
+    .panel-flujo{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:0;}
+    
+    /* ALERTA VENCIMIENTO TITILANTE */
+    .alerta-vencimiento{padding:16px;border-bottom:1px solid var(--gris-claro);animation:pulse-border 1.5s infinite;}
+    @keyframes pulse-border{
+      0%{box-shadow:inset 0 0 0 0 transparent;}
+      50%{box-shadow:inset 0 0 20px 5px rgba(227,32,27,0.3);}
+      100%{box-shadow:inset 0 0 0 0 transparent;}
+    }
+    .alerta-vencimiento.critico{background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);border-left:4px solid var(--rojo);}
+    .alerta-vencimiento.advertencia{background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);border-left:4px solid var(--naranja);}
+    .alerta-icono{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:8px;animation:rotate-alert 2s linear infinite;}
+    @keyframes rotate-alert{
+      0%{transform:rotate(0deg);}
+      25%{transform:rotate(-10deg);}
+      75%{transform:rotate(10deg);}
+      100%{transform:rotate(0deg);}
+    }
+    .alerta-vencimiento.critico .alerta-icono{background:var(--rojo);color:white;}
+    .alerta-vencimiento.advertencia .alerta-icono{background:var(--naranja);color:white;}
+    .alerta-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-bottom:4px;}
+    .alerta-vencimiento.critico .alerta-titulo{color:var(--rojo);}
+    .alerta-vencimiento.advertencia .alerta-titulo{color:#B45309;}
+    .alerta-mensaje{font-size:11px;line-height:1.4;}
+    .alerta-vencimiento.critico .alerta-mensaje{color:#991B1B;}
+    .alerta-vencimiento.advertencia .alerta-mensaje{color:#92400E;}
+    .alerta-dias{margin-top:8px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;}
+    .alerta-vencimiento.critico .alerta-dias{color:var(--rojo);}
+    .alerta-vencimiento.advertencia .alerta-dias{color:#B45309;}
+
+    /* FLUJO DE APROBACIÓN */
+    .flujo-section{padding:16px;border-bottom:1px solid var(--gris-claro);}
+    .flujo-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+    .flujo-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+    .flujo-step{display:flex;align-items:flex-start;gap:12px;padding:12px 0;position:relative;}
+    .flujo-step:not(:last-child)::after{content:'';position:absolute;left:15px;top:36px;width:2px;height:calc(100% - 12px);background:var(--gris-claro);}
+    .flujo-step.completed:not(:last-child)::after{background:var(--azul);}
+    .flujo-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;}
+    .flujo-step.pendiente .flujo-icon{background:var(--gris-claro);color:var(--gris-medio);}
+    .flujo-step.activo .flujo-icon{background:var(--azul);color:white;box-shadow:0 0 0 3px rgba(6,56,83,0.2);}
+    .flujo-step.completado .flujo-icon{background:var(--verde);color:var(--azul);}
+    .flujo-info{flex:1;}
+    .flujo-rol{font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;margin-bottom:2px;}
+    .flujo-step.activo .flujo-rol{color:var(--azul);}
+    .flujo-step.completado .flujo-rol{color:var(--azul);}
+    .flujo-nombre{font-size:11px;color:var(--gris-medio);}
+    .flujo-step.activo .flujo-nombre{color:var(--azul-medio);font-weight:500;}
+    .flujo-fecha{font-size:10px;color:var(--gris-medio);margin-top:3px;}
+    .flujo-badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;margin-left:6px;}
+    .flujo-step.activo .flujo-badge{background:var(--amarillo);color:var(--azul);}
+    .flujo-step.completado .flujo-badge{background:var(--verde);color:var(--azul);}
+
+    /* MARCO NORMATIVO */
+    .marco-section{padding:16px;}
+    .marco-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+    .marco-item{background:#F8FAFC;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--azul);}
+    .marco-art{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);margin-bottom:3px;}
+    .marco-desc{font-size:10px;line-height:1.4;color:var(--gris-medio);}
+
+    /* ROL BANNER EN EDITOR */
+    .rol-banner{display:none;align-items:center;gap:10px;padding:10px 16px;flex-shrink:0;}
+    .rol-banner.visible{display:flex;}
+    .rol-banner.revisor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
+    .rol-banner.aprobador{background:#FFFBEB;border-bottom:2px solid #FDE68A;}
+    .rol-banner.jefe{background:#F0FDF4;border-bottom:2px solid #BBF7D0;}
+    .rol-banner svg{width:16px;height:16px;flex-shrink:0;}
+    .rol-banner.revisor svg{color:#2563EB;}
+    .rol-banner.aprobador svg{color:#D97706;}
+    .rol-banner.jefe svg{color:#059669;}
+    .rol-banner-text{flex:1;}
+    .rol-banner-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;}
+    .rol-banner.revisor .rol-banner-title{color:#1D4ED8;}
+    .rol-banner.aprobador .rol-banner-title{color:#B45309;}
+    .rol-banner.jefe .rol-banner-title{color:#065F46;}
+    .rol-banner-sub{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+
+    /* EDITOR CENTRAL */
+    .editor-center{overflow-y:auto;padding:32px 40px;display:flex;flex-direction:column;gap:24px;}
+
+    /* SECCIONES DEL AUTO */
+    .auto-seccion{background:var(--blanco);border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+    .seccion-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--gris-claro);}
+    .seccion-num{width:32px;height:32px;border-radius:8px;background:var(--azul);color:white;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;}
+    .seccion-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px;color:var(--azul);}
+    .seccion-contenido{font-family:'Crimson Pro',serif;font-size:14px;line-height:1.8;color:var(--negro);}
+    .campo-label{display:block;font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:var(--gris-medio);margin-bottom:6px;}
+    .campo-input{width:100%;border:1px solid var(--gris-claro);border-radius:8px;padding:10px 12px;font-family:'Poppins',sans-serif;font-size:13px;transition:border .15s;}
+    .campo-input:focus{outline:none;border-color:var(--azul);}
+    .campo-textarea{width:100%;border:1px solid var(--gris-claro);border-radius:8px;padding:12px;font-family:'Crimson Pro',serif;font-size:14px;line-height:1.7;min-height:120px;resize:vertical;}
+    .campo-textarea:focus{outline:none;border-color:var(--azul);}
+    .rich-editor{border:1px solid var(--gris-claro);border-radius:8px;overflow:hidden;}
+    .editor-toolbar{background:#F8FAFC;padding:8px 12px;border-bottom:1px solid var(--gris-claro);display:flex;gap:6px;flex-wrap:wrap;}
+    .toolbar-btn{width:28px;height:28px;border:1px solid var(--gris-claro);background:var(--blanco);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+    .toolbar-btn:hover{background:var(--azul);color:white;border-color:var(--azul);}
+    .editor-content{min-height:150px;padding:12px;font-family:'Crimson Pro',serif;font-size:14px;line-height:1.7;}
+    .editor-content[contenteditable]:empty::before{content:'Escriba el contenido aquí...';color:var(--gris-medio);font-style:italic;}
+
+    /* CHECKLIST */
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:8px;margin-bottom:6px;transition:background .15s;}
+    .checklist-item:hover{background:#F8FAFC;}
+    .checklist-checkbox{width:18px;height:18px;border:2px solid var(--gris-medio);border-radius:4px;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .checklist-checkbox.checked{background:var(--azul);border-color:var(--azul);}
+    .checklist-checkbox.checked::after{content:'✓';color:white;font-size:12px;font-weight:700;}
+    .checklist-label{flex:1;font-size:13px;line-height:1.5;cursor:pointer;}
+    .checklist-required{color:var(--rojo);font-size:11px;margin-left:4px;}
+
+    /* BOTONES DE ACCIÓN */
+    .acciones-footer{display:flex;gap:12px;padding:16px 24px;background:var(--blanco);border-top:1px solid var(--gris-claro);position:sticky;bottom:0;}
+    .btn{height:40px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;padding:0 16px;transition:all .15s;}
+    .btn svg{width:16px;height:16px;}
+    .btn-secondary{background:var(--blanco);border:1px solid var(--gris-claro);color:var(--gris-medio);}
+    .btn-secondary:hover{background:#F8FAFC;border-color:var(--gris-medio);color:var(--negro);}
+    .btn-primary{background:var(--azul);color:white;}
+    .btn-primary:hover{background:var(--azul-medio);}
+    .btn-warning{background:var(--naranja);color:var(--azul);}
+    .btn-warning:hover{background:#FFB300;}
+    .btn-success{background:var(--verde);color:var(--azul);}
+    .btn-success:hover{background:#22DDBB;}
+
+    /* PANEL DERECHO — ACCIONES DE ROL */
+    .panel-derecho{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;}
+    .rol-action-panel{display:none;flex-direction:column;}
+    .rol-action-panel.visible{display:flex;}
+    .rap-header{padding:16px;border-bottom:1px solid var(--gris-claro);}
+    .rap-rol-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+    .rap-rol-badge.revisor{background:#DBEAFE;color:#1D4ED8;}
+    .rap-rol-badge.aprobador{background:#FEF3C7;color:#B45309;}
+    .rap-rol-badge.jefe{background:#D1FAE5;color:#065F46;}
+    .rap-rol-badge svg{width:12px;height:12px;}
+    .rap-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);margin-bottom:4px;}
+    .rap-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;}
+    .rap-opciones{padding:16px;display:flex;flex-direction:column;gap:10px;}
+    .rap-opcion{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:8px;border:2px solid;cursor:pointer;transition:all .15s;text-align:left;width:100%;background:var(--blanco);}
+    .rap-opcion svg{width:18px;height:18px;flex-shrink:0;margin-top:1px;}
+    .rap-opcion-body{flex:1;}
+    .rap-opcion-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;display:block;line-height:1.2;margin-bottom:3px;}
+    .rap-opcion-sub{font-size:11px;line-height:1.4;}
+    .rap-opcion.via-aprobar{border-color:#BBF7D0;background:#F0FDF4;}
+    .rap-opcion.via-aprobar svg,.rap-opcion.via-aprobar .rap-opcion-sub{color:#059669;}
+    .rap-opcion.via-aprobar .rap-opcion-label{color:#065F46;}
+    .rap-opcion.via-aprobar:hover{background:#DCFCE7;border-color:#86EFAC;}
+    .rap-opcion.via-devolver{border-color:#FECACA;background:#FEF2F2;}
+    .rap-opcion.via-devolver svg,.rap-opcion.via-devolver .rap-opcion-sub{color:#DC2626;}
+    .rap-opcion.via-devolver .rap-opcion-label{color:#991B1B;}
+    .rap-opcion.via-devolver:hover{background:#FEE2E2;border-color:#FCA5A5;}
+
+    /* IA FLOTANTE */
+    .ia-float{position:fixed;bottom:24px;right:24px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--azul) 0%,var(--azul-medio) 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(6,56,83,0.3);z-index:1000;transition:all .3s;animation:float-ia 3s ease-in-out infinite;}
+    @keyframes float-ia{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    .ia-float:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(6,56,83,0.4);}
+    .ia-float svg{width:32px;height:32px;color:var(--amarillo);}
+    .ia-tooltip{position:absolute;bottom:70px;right:0;background:var(--azul);color:white;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .ia-float:hover .ia-tooltip{opacity:1;}
+
+    /* TOAST NOTIFICATION */
+    .toast-container{position:fixed;top:80px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--blanco);border-radius:8px;padding:12px 16px;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;min-width:300px;animation:slide-in .3s ease-out;}
+    @keyframes slide-in{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    .toast-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+    .toast.success .toast-icon{background:var(--verde);color:var(--azul);}
+    .toast.warning .toast-icon{background:var(--naranja);color:var(--azul);}
+    .toast.error .toast-icon{background:var(--rojo);color:white;}
+    .toast-message{flex:1;font-size:12px;font-weight:500;}
+
+    /* MODAL CONFIRMACIÓN */
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:3000;}
+    .modal-overlay.active{display:flex;}
+    .modal-content{background:var(--blanco);border-radius:12px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+    .modal-header{padding:20px 24px;border-bottom:1px solid var(--gris-claro);display:flex;align-items:center;justify-content:space-between;}
+    .modal-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px;color:var(--azul);}
+    .modal-close{width:32px;height:32px;border:none;background:transparent;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .modal-close:hover{background:#F8FAFC;}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:12px;justify-content:flex-end;}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <button class="back-btn" onclick="window.history.back()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      </button>
+      <div class="navbar-title">
+        PROYECTAR AUTO DE NULIDAD
+        <span>Expediente: 2024-00012345</span>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <div class="autosave-indicator">
+        <span class="autosave-dot"></span>
+        Guardado automático
+      </div>
+      <select class="rol-select" id="rolSelector" onchange="cambiarRol()">
+        <option value="instructor">Instructor</option>
+        <option value="revisor">Revisor</option>
+        <option value="aprobador">Aprobador</option>
+        <option value="jefe">Jefe de Dependencia</option>
+      </select>
+      <button class="nav-btn ghost">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+        Exportar
+      </button>
+      <button class="btn-accion-principal" onclick="guardarProyecto()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        Enviar a Revisión
+      </button>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-bar">
+    <a href="#">Inicio</a>
+    <span class="sep">/</span>
+    <a href="#">Gestión Disciplinaria</a>
+    <span class="sep">/</span>
+    <a href="#">Investigación</a>
+    <span class="sep">/</span>
+    <span class="current">Proyectar Auto de Nulidad</span>
+  </div>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="editor-layout">
+    <!-- PANEL IZQUIERDO: FLUJO + ALERTAS + MARCO NORMATIVO -->
+    <aside class="panel-flujo">
+      <!-- ALERTA DE VENCIMIENTO -->
+      <div class="alerta-vencimiento critico" id="alertaVencimiento">
+        <div class="alerta-icono">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <div class="alerta-titulo">¡TÉRMINO POR VENCER!</div>
+        <div class="alerta-mensaje">El término para decidir la nulidad está próximo a vencer. ¡Actúa ahora!</div>
+        <div class="alerta-dias">2 días hábiles restantes</div>
+      </div>
+
+      <!-- FLUJO DE APROBACIÓN -->
+      <div class="flujo-section">
+        <div class="flujo-title">Flujo de Aprobación</div>
+        <div class="flujo-steps">
+          <div class="flujo-step completado" id="step-instructor">
+            <div class="flujo-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <div class="flujo-info">
+              <div class="flujo-rol">Instructor <span class="flujo-badge">Completado</span></div>
+              <div class="flujo-nombre">Dr. Juan Pérez</div>
+              <div class="flujo-fecha">15 Ene 2025, 10:30 AM</div>
+            </div>
+          </div>
+          <div class="flujo-step activo" id="step-revisor">
+            <div class="flujo-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            </div>
+            <div class="flujo-info">
+              <div class="flujo-rol">Revisor <span class="flujo-badge">En curso</span></div>
+              <div class="flujo-nombre">Dra. María Rodríguez</div>
+              <div class="flujo-fecha">Término: 17 Ene 2025</div>
+            </div>
+          </div>
+          <div class="flujo-step pendiente" id="step-aprobador">
+            <div class="flujo-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="flujo-info">
+              <div class="flujo-rol">Aprobador</div>
+              <div class="flujo-nombre">Dr. Carlos Sánchez</div>
+            </div>
+          </div>
+          <div class="flujo-step pendiente" id="step-jefe">
+            <div class="flujo-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <div class="flujo-info">
+              <div class="flujo-rol">Jefe de Dependencia</div>
+              <div class="flujo-nombre">Dr. Alfonso Gómez</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARCO NORMATIVO -->
+      <div class="marco-section">
+        <div class="marco-title">Marco Normativo</div>
+        <div class="marco-item">
+          <div class="marco-art">Art. 202 CGD</div>
+          <div class="marco-desc">Causales de nulidad en proceso disciplinario</div>
+        </div>
+        <div class="marco-item">
+          <div class="marco-art">Art. 203 CGD</div>
+          <div class="marco-desc">Solicitud y trámite de la nulidad</div>
+        </div>
+        <div class="marco-item">
+          <div class="marco-art">Art. 204 CGD</div>
+          <div class="marco-desc">Decisión sobre la nulidad</div>
+        </div>
+        <div class="marco-item">
+          <div class="marco-art">Art. 205 CGD</div>
+          <div class="marco-desc">Nulidad de oficio</div>
+        </div>
+        <div class="marco-item">
+          <div class="marco-art">Art. 206 CGD</div>
+          <div class="marco-desc">Término para decidir</div>
+        </div>
+        <div class="marco-item">
+          <div class="marco-art">Art. 207 CGD</div>
+          <div class="marco-desc">Convalidación de la nulidad</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- EDITOR CENTRAL -->
+    <main class="editor-center">
+      <!-- BANNER DE ROL -->
+      <div class="rol-banner revisor visible" id="rolBanner">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+        <div class="rol-banner-text">
+          <div class="rol-banner-title">Estás actuando como REVISOR</div>
+          <div class="rol-banner-sub">Verifica que el proyecto de auto cumpla con todos los requisitos legales antes de enviarlo al aprobador.</div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 1: ENCABEZADO -->
+      <div class="auto-seccion">
+        <div class="seccion-header">
+          <div class="seccion-num">1</div>
+          <div class="seccion-titulo">Encabezado del Auto</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <label class="campo-label">Ciudad</label>
+            <input type="text" class="campo-input" value="Bogotá D.C." placeholder="Ej: Bogotá D.C.">
+          </div>
+          <div>
+            <label class="campo-label">Fecha</label>
+            <input type="date" class="campo-input" value="2025-01-15">
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <label class="campo-label">Número de Radicado</label>
+          <input type="text" class="campo-input" value="2024-00012345" readonly style="background:#F8FAFC;">
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: ANTECEDENTES -->
+      <div class="auto-seccion">
+        <div class="seccion-header">
+          <div class="seccion-num">2</div>
+          <div class="seccion-titulo">Antecedentes de la Nulidad</div>
+        </div>
+        <label class="campo-label">Resumen de lo Actuado</label>
+        <textarea class="campo-textarea" placeholder="Describa brevemente los antecedentes del proceso y la solicitud de nulidad presentada...">Mediante escrito radicado el día 10 de enero de 2025, el profesional universitario Dr. Juan Pérez, actuando en calidad de investigado, presentó solicitud de nulidad del presente proceso disciplinario, alegando vicios en la notificación del auto de apertura de investigación.</textarea>
+        
+        <div style="margin-top:16px;">
+          <label class="campo-label">Causal de Nulidad Alegada</label>
+          <select class="campo-input">
+            <option>Seleccione...</option>
+            <option selected>Notificación defectuosa (Art. 202.1 CGD)</option>
+            <option>Violación del derecho de defensa (Art. 202.2 CGD)</option>
+            <option>Incompetencia del funcionario (Art. 202.3 CGD)</option>
+            <option>Otra causal legal</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: CONSIDERACIONES -->
+      <div class="auto-seccion">
+        <div class="seccion-header">
+          <div class="seccion-num">3</div>
+          <div class="seccion-titulo">Consideraciones Jurídicas</div>
+        </div>
+        <label class="campo-label">Fundamentos de Derecho</label>
+        <div class="rich-editor">
+          <div class="editor-toolbar">
+            <button class="toolbar-btn" title="Negrita"><b>B</b></button>
+            <button class="toolbar-btn" title="Cursiva"><i>I</i></button>
+            <button class="toolbar-btn" title="Subrayado"><u>U</u></button>
+            <button class="toolbar-btn" title="Lista">•</button>
+            <button class="toolbar-btn" title="Numeración">1.</button>
+          </div>
+          <div class="editor-content" contenteditable="true">
+            <p><strong>PRIMERO.</strong> De conformidad con lo establecido en el artículo 202 del Código General Disciplinario (Ley 1952 de 2019), modificado por la Ley 2094 de 2021, la nulidad procede cuando se vulnere un derecho fundamental o se incurra en alguna de las causales taxativamente señaladas en la norma.</p>
+            <br>
+            <p><strong>SEGUNDO.</strong> En el presente caso, el investigado alega que la notificación del auto de apertura de investigación se realizó de manera defectuosa, sin cumplir con los requisitos establecidos en el artículo 112 del CGP, lo cual podría configurar una violación al derecho de defensa.</p>
+            <br>
+            <p><strong>TERCERO.</strong> Esta autoridad disciplinaria debe verificar si efectivamente se configuró el vicio alegado y si éste tiene la entidad suficiente para acarrear la nulidad de lo actuado.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 4: DECISIÓN -->
+      <div class="auto-seccion">
+        <div class="seccion-header">
+          <div class="seccion-num">4</div>
+          <div class="seccion-titulo">Decisión</div>
+        </div>
+        <label class="campo-label" style="margin-bottom:12px;">Tipo de Decisión</label>
+        <div style="display:flex;gap:16px;margin-bottom:16px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="radio" name="decision" value="declarar" checked onchange="toggleDecision('declarar')">
+            <span style="font-weight:600;font-size:13px;">Declarar la Nulidad</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="radio" name="decision" value="negar" onchange="toggleDecision('negar')">
+            <span style="font-weight:600;font-size:13px;">Negar la Nulidad</span>
+          </label>
+        </div>
+        
+        <div id="contenido-decision">
+          <label class="campo-label">Alcance de la Nulidad</label>
+          <select class="campo-input" style="margin-bottom:12px;">
+            <option>Nulidad desde el auto de apertura</option>
+            <option>Nulidad desde la notificación del pliego de cargos</option>
+            <option>Nulidad parcial (especificar)</option>
+          </select>
+          <label class="campo-label">Ordenes a Impartir</label>
+          <textarea class="campo-textarea" placeholder="Especifique las órdenes que se derivan de la decisión...">Se ordena retrotraer el proceso a la etapa de notificación del auto de apertura de investigación, debiendo notificarse personalmente al investigado dentro de los cinco (5) días hábiles siguientes.</textarea>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 5: CHECKLIST DE VALIDACIÓN -->
+      <div class="auto-seccion">
+        <div class="seccion-header">
+          <div class="seccion-num">5</div>
+          <div class="seccion-titulo">Checklist de Validación</div>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="checklist-checkbox" data-checked="false"></div>
+          <div class="checklist-label">El auto cumple con la estructura formal establecida <span class="checklist-required">*</span></div>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="checklist-checkbox" data-checked="false"></div>
+          <div class="checklist-label">Los fundamentos jurídicos son correctos y están actualizados <span class="checklist-required">*</span></div>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="checklist-checkbox" data-checked="false"></div>
+          <div class="checklist-label">La decisión es congruente con los antecedentes planteados <span class="checklist-required">*</span></div>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="checklist-checkbox" data-checked="false"></div>
+          <div class="checklist-label">Se citó correctamente la normativa aplicable (CGD, CP, CPC) <span class="checklist-required">*</span></div>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="checklist-checkbox" data-checked="false"></div>
+          <div class="checklist-label">Las órdenes impartidas son claras y ejecutables <span class="checklist-required">*</span></div>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="checklist-checkbox" data-checked="false"></div>
+          <div class="checklist-label">No hay errores ortográficos o de digitación</div>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:#FEF3C7;border-radius:8px;border-left:3px solid var(--naranja);">
+          <div style="font-size:11px;color:#92400E;"><strong>Nota:</strong> Los ítems marcados con <span style="color:var(--rojo);">*</span> son obligatorios para poder enviar el auto a revisión.</div>
+        </div>
+      </div>
+
+      <!-- ESPACIO PARA ACCIONES DE ROL -->
+      <div style="height:100px;"></div>
+    </main>
+
+    <!-- PANEL DERECHO: ACCIONES SEGÚN ROL -->
+    <aside class="panel-derecho">
+      <!-- PANEL REVISOR -->
+      <div class="rol-action-panel visible" id="panel-revisor">
+        <div class="rap-header">
+          <span class="rap-rol-badge revisor">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            REVISOR
+          </span>
+          <div class="rap-titulo">Revisión del Proyecto</div>
+          <div class="rap-desc">Como revisor, debes verificar que el proyecto de auto cumpla con todos los requisitos formales y jurídicos antes de continuar el flujo.</div>
+        </div>
+        <div class="rap-opciones">
+          <div class="rap-opcion via-aprobar" onclick="avanzarFlujo('revisor')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="rap-opcion-body">
+              <div class="rap-opcion-label">Aprobar y Enviar al Aprobador</div>
+              <div class="rap-opcion-sub">El proyecto cumple con todos los requisitos. Continúa el flujo hacia el aprobador.</div>
+            </div>
+          </div>
+          <div class="rap-opcion via-devolver" onclick="devolverFlujo('revisor')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="rap-opcion-body">
+              <div class="rap-opcion-label">Devolver al Instructor</div>
+              <div class="rap-opcion-sub">El proyecto requiere correcciones. Se devuelve al instructor con observaciones.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL APROBADOR -->
+      <div class="rol-action-panel" id="panel-aprobador">
+        <div class="rap-header">
+          <span class="rap-rol-badge aprobador">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            APROBADOR
+          </span>
+          <div class="rap-titulo">Aprobación Final</div>
+          <div class="rap-desc">Como aprobador, realizas la validación final del auto antes de su envío a firma del Jefe de Dependencia.</div>
+        </div>
+        <div class="rap-opciones">
+          <div class="rap-opcion via-aprobar" onclick="avanzarFlujo('aprobador')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="rap-opcion-body">
+              <div class="rap-opcion-label">Aprobar y Enviar a Firma</div>
+              <div class="rap-opcion-sub">El auto está listo para firma. Se envía al Jefe de Dependencia.</div>
+            </div>
+          </div>
+          <div class="rap-opcion via-devolver" onclick="devolverFlujo('aprobador')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="rap-opcion-body">
+              <div class="rap-opcion-label">Devolver al Revisor</div>
+              <div class="rap-opcion-sub">Se requieren ajustes. Se devuelve al revisor con observaciones.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL JEFE DE DEPENDENCIA -->
+      <div class="rol-action-panel" id="panel-jefe">
+        <div class="rap-header">
+          <span class="rap-rol-badge jefe">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            JEFE DE DEPENDENCIA
+          </span>
+          <div class="rap-titulo">Firma y Expedición</div>
+          <div class="rap-desc">Como Jefe de Dependencia, firmas el auto y dispones su notificación y cumplimiento.</div>
+        </div>
+        <div class="rap-opciones">
+          <div class="rap-opcion via-aprobar" onclick="firmarAuto()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <div class="rap-opcion-body">
+              <div class="rap-opcion-label">Firmar y Expedir Auto</div>
+              <div class="rap-opcion-sub">Firmas digitalmente el auto y se procede a su notificación.</div>
+            </div>
+          </div>
+          <div class="rap-opcion via-devolver" onclick="devolverFlujo('jefe')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="rap-opcion-body">
+              <div class="rap-opcion-label">Devolver con Observaciones</div>
+              <div class="rap-opcion-sub">Se requieren modificaciones sustanciales. Se devuelve al aprobador.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- IA FLOTANTE procuradurIA -->
+  <div class="ia-float">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+    <div class="ia-tooltip">procuradurIA - Asistente Inteligente</div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- MODAL CONFIRMACIÓN -->
+  <div class="modal-overlay" id="modalConfirmacion">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Confirmar Acción</div>
+        <button class="modal-close" onclick="cerrarModal()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <p id="modalMensaje"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn btn-primary" id="modalBtnAccion">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // CAMBIAR ROL
+    function cambiarRol() {
+      const rol = document.getElementById('rolSelector').value;
+      const banner = document.getElementById('rolBanner');
+      const panelRevisor = document.getElementById('panel-revisor');
+      const panelAprobador = document.getElementById('panel-aprobador');
+      const panelJefe = document.getElementById('panel-jefe');
+      const btnPrincipal = document.querySelector('.btn-accion-principal');
+
+      // Ocultar todos los paneles
+      panelRevisor.classList.remove('visible');
+      panelAprobador.classList.remove('visible');
+      panelJefe.classList.remove('visible');
+
+      // Mostrar banner y panel según rol
+      banner.className = 'rol-banner visible ' + rol;
+      
+      if (rol === 'instructor') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como INSTRUCTOR';
+        banner.querySelector('.rol-banner-sub').textContent = 'Prepara el proyecto de auto de nulidad para revisión.';
+        panelRevisor.classList.add('visible');
+        btnPrincipal.textContent = 'Guardar Borrador';
+        actualizarFlujoVisual('instructor');
+      } else if (rol === 'revisor') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como REVISOR';
+        banner.querySelector('.rol-banner-sub').textContent = 'Verifica que el proyecto de auto cumpla con todos los requisitos legales antes de enviarlo al aprobador.';
+        panelRevisor.classList.add('visible');
+        btnPrincipal.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Enviar a Aprobador';
+        actualizarFlujoVisual('revisor');
+      } else if (rol === 'aprobador') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como APROBADOR';
+        banner.querySelector('.rol-banner-sub').textContent = 'Realiza la validación final del auto antes de su envío a firma del Jefe de Dependencia.';
+        panelAprobador.classList.add('visible');
+        btnPrincipal.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Aprobar y Enviar a Firma';
+        actualizarFlujoVisual('aprobador');
+      } else if (rol === 'jefe') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como JEFE DE DEPENDENCIA';
+        banner.querySelector('.rol-banner-sub').textContent = 'Firmas el auto y dispones su notificación y cumplimiento.';
+        panelJefe.classList.add('visible');
+        btnPrincipal.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Firmar Auto';
+        actualizarFlujoVisual('jefe');
+      }
+    }
+
+    // ACTUALIZAR FLUJO VISUAL
+    function actualizarFlujoVisual(rolActual) {
+      const steps = {
+        'instructor': ['step-instructor'],
+        'revisor': ['step-instructor', 'step-revisor'],
+        'aprobador': ['step-instructor', 'step-revisor', 'step-aprobador'],
+        'jefe': ['step-instructor', 'step-revisor', 'step-aprobador', 'step-jefe']
+      };
+
+      // Resetear todos
+      document.querySelectorAll('.flujo-step').forEach(step => {
+        step.classList.remove('activo', 'completado', 'pendiente');
+        step.classList.add('pendiente');
+      });
+
+      // Marcar completados y activo
+      if (steps[rolActual]) {
+        steps[rolActual].forEach((stepId, index) => {
+          const step = document.getElementById(stepId);
+          if (index < steps[rolActual].length - 1) {
+            step.classList.remove('pendiente');
+            step.classList.add('completado');
+          } else {
+            step.classList.remove('pendiente');
+            step.classList.add('activo');
+          }
+        });
+      }
+    }
+
+    // TOGGLE CHECKBOX
+    function toggleCheck(item) {
+      const checkbox = item.querySelector('.checklist-checkbox');
+      const isChecked = checkbox.getAttribute('data-checked') === 'true';
+      checkbox.setAttribute('data-checked', !isChecked);
+      checkbox.classList.toggle('checked');
+    }
+
+    // TOGGLE DECISIÓN
+    function toggleDecision(tipo) {
+      const contenido = document.getElementById('contenido-decision');
+      if (tipo === 'declarar') {
+        contenido.innerHTML = `
+          <label class="campo-label">Alcance de la Nulidad</label>
+          <select class="campo-input" style="margin-bottom:12px;">
+            <option>Nulidad desde el auto de apertura</option>
+            <option>Nulidad desde la notificación del pliego de cargos</option>
+            <option>Nulidad parcial (especificar)</option>
+          </select>
+          <label class="campo-label">Órdenes a Impartir</label>
+          <textarea class="campo-textarea" placeholder="Especifique las órdenes que se derivan de la decisión...">Se ordena retrotraer el proceso a la etapa de notificación del auto de apertura de investigación, debiendo notificarse personalmente al investigado dentro de los cinco (5) días hábiles siguientes.</textarea>
+        `;
+      } else {
+        contenido.innerHTML = `
+          <label class="campo-label">Fundamentos para Negar</label>
+          <textarea class="campo-textarea" placeholder="Explique por qué no prospera la nulidad...">No se configura ninguna de las causales de nulidad previstas en el artículo 202 del CGD, toda vez que la notificación se realizó conforme a lo establecido en el artículo 112 del CGP, garantizando el derecho de defensa del investigado.</textarea>
+        `;
+      }
+    }
+
+    // AVANZAR FLUJO
+    function avanzarFlujo(rolOrigen) {
+      // Validar checklist
+      const checkboxesRequired = document.querySelectorAll('.checklist-checkbox[data-checked="false"]');
+      let hayPendientes = false;
+      checkboxesRequired.forEach(cb => {
+        if (cb.parentElement.querySelector('.checklist-required')) {
+          hayPendientes = true;
+        }
+      });
+
+      if (hayPendientes) {
+        mostrarToast('warning', 'Debe completar todos los ítems obligatorios del checklist antes de continuar.');
+        return;
+      }
+
+      let siguienteRol = '';
+      let mensaje = '';
+      
+      if (rolOrigen === 'revisor') {
+        siguienteRol = 'aprobador';
+        mensaje = '¿Está seguro de aprobar este proyecto y enviarlo al APROBADOR?';
+      } else if (rolOrigen === 'aprobador') {
+        siguienteRol = 'jefe';
+        mensaje = '¿Está seguro de aprobar este auto y enviarlo a firma del JEFE DE DEPENDENCIA?';
+      }
+
+      mostrarConfirmacion(mensaje, () => {
+        document.getElementById('rolSelector').value = siguienteRol;
+        cambiarRol();
+        mostrarToast('success', `El proyecto ha sido enviado exitosamente al ${siguienteRol.toUpperCase()}.`);
+      });
+    }
+
+    // DEVOLVER FLUJO
+    function devolverFlujo(rolOrigen) {
+      let anteriorRol = '';
+      let mensaje = '';
+      
+      if (rolOrigen === 'revisor') {
+        anteriorRol = 'instructor';
+        mensaje = '¿Está seguro de devolver este proyecto al INSTRUCTOR? Deberá indicar las observaciones.';
+      } else if (rolOrigen === 'aprobador') {
+        anteriorRol = 'revisor';
+        mensaje = '¿Está seguro de devolver este proyecto al REVISOR? Deberá indicar las observaciones.';
+      } else if (rolOrigen === 'jefe') {
+        anteriorRol = 'aprobador';
+        mensaje = '¿Está seguro de devolver este auto al APROBADOR? Deberá indicar las observaciones.';
+      }
+
+      mostrarConfirmacion(mensaje, () => {
+        document.getElementById('rolSelector').value = anteriorRol;
+        cambiarRol();
+        mostrarToast('warning', `El proyecto ha sido devuelto al ${anteriorRol.toUpperCase()} con observaciones.`);
+      });
+    }
+
+    // FIRMAR AUTO
+    function firmarAuto() {
+      mostrarConfirmacion('¿Está seguro de FIRMAR Y EXPEDIR este auto de nulidad? Esta acción no se puede deshacer.', () => {
+        mostrarToast('success', '¡Auto firmado y expedido exitosamente! Se procederá a la notificación.');
+        setTimeout(() => {
+          alert('Redirigiendo a la bandeja de entrada...');
+          // window.location.href = 'bandeja_entrada.html';
+        }, 1500);
+      });
+    }
+
+    // GUARDAR PROYECTO
+    function guardarProyecto() {
+      mostrarToast('success', 'Proyecto guardado exitosamente.');
+    }
+
+    // MOSTRAR TOAST
+    function mostrarToast(tipo, mensaje) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${tipo}`;
+      
+      let icono = '';
+      if (tipo === 'success') {
+        icono = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+      } else if (tipo === 'warning') {
+        icono = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+      } else {
+        icono = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+      }
+      
+      toast.innerHTML = `
+        <div class="toast-icon">${icono}</div>
+        <div class="toast-message">${mensaje}</div>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slide-in 0.3s reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // MOSTRAR CONFIRMACIÓN
+    function mostrarConfirmacion(mensaje, callback) {
+      document.getElementById('modalMensaje').textContent = mensaje;
+      document.getElementById('modalConfirmacion').classList.add('active');
+      document.getElementById('modalBtnAccion').onclick = () => {
+        cerrarModal();
+        callback();
+      };
+    }
+
+    // CERRAR MODAL
+    function cerrarModal() {
+      document.getElementById('modalConfirmacion').classList.remove('active');
+    }
+
+    // Inicializar
+    actualizarFlujoVisual('revisor');
+  </script>
+</body>
+</html>
