@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto que Resuelve Nulidad — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT 3 COLUMNAS */
+    .editor-layout{display:grid;grid-template-columns:280px 1fr 320px;flex:1;height:calc(100vh - 96px);}
+
+    /* PANEL IZQUIERDO — ÍNDICE / EXPEDIENTE */
+    .panel-indice{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:0;}
+    .indice-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;padding:16px 16px 12px;}
+    
+    /* TARJETA DE INFORMACIÓN DEL PROCESO */
+    .proc-info-card{background:#F8FAFC;border-bottom:1px solid var(--gris-claro);padding:16px;}
+    .proc-rad{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);margin-bottom:4px;}
+    .proc-disc{font-size:12px;color:var(--negro);margin-bottom:8px;line-height:1.4;}
+    .proc-estado{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;background:#FEF3C7;color:#B45309;}
+    
+    /* ESCRITO DE NULIDAD — ABRIR */
+    .nulidad-solicitud-card{margin:12px 16px;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:10px;overflow:hidden;}
+    .nulidad-solicitud-header{background:#FEF3C7;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+    .nulidad-solicitud-header svg{width:14px;height:14px;color:#B45309;}
+    .nulidad-solicitud-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#92400E;flex:1;}
+    .nulidad-solicitud-body{display:none;padding:12px;border-top:1px solid #FDE68A;}
+    .nulidad-solicitud-body.open{display:block;}
+    .sol-row{margin-bottom:8px;}
+    .sol-label{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+    .sol-value{font-size:12px;color:var(--negro);line-height:1.5;}
+    .sol-causal{background:#FEF9E7;border:1px solid #FDE68A;border-radius:6px;padding:8px;font-size:12px;color:#7a5200;line-height:1.5;}
+    
+    /* LISTA DE ACTOS PROCESALES */
+    .actos-lista{padding:12px 16px;border-bottom:1px solid var(--gris-claro);}
+    .actos-title{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+    .acto-item{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:8px;border:1.5px solid var(--gris-claro);margin-bottom:8px;cursor:pointer;transition:all .15s;background:var(--blanco);}
+    .acto-item:hover{border-color:var(--azul-claro);background:#EEF4FF;}
+    .acto-item.selected{border-color:var(--azul);background:#EBF4FA;}
+    .acto-item.viciado{border-color:var(--rojo);background:#FEF2F2;}
+    .acto-icon{width:28px;height:28px;background:#F1F5F9;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .acto-icon svg{width:14px;height:14px;color:var(--gris-medio);}
+    .acto-item.viciado .acto-icon{background:#FEE2E2;}
+    .acto-item.viciado .acto-icon svg{color:var(--rojo);}
+    .acto-info{flex:1;}
+    .acto-nombre{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--negro);margin-bottom:3px;}
+    .acto-fecha{font-size:10px;color:var(--gris-medio);}
+    .acto-badge{display:none;padding:2px 6px;border-radius:4px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;background:#FEE2E2;color:#991B1B;}
+    .acto-item.viciado .acto-badge{display:inline-block;}
+    
+    /* ÍNDICE DE SECCIONES */
+    .indice-sep{height:1px;background:var(--gris-claro);margin:8px 16px;}
+    .indice-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--negro);border-left:3px solid transparent;transition:all .15s;}
+    .indice-item:hover{background:#F8FAFC;color:var(--azul);}
+    .indice-item.active{border-left-color:var(--azul);background:#EBF4FA;color:var(--azul);font-weight:600;}
+    .indice-item svg{width:14px;height:14px;flex-shrink:0;color:var(--gris-medio);}
+    .indice-item.active svg{color:var(--azul);}
+
+    /* EDITOR CENTRAL */
+    .editor-center{overflow-y:auto;padding:32px 40px;display:flex;flex-direction:column;gap:0;}
+
+    /* ROL BANNER */
+    .rol-banner{display:none;align-items:center;gap:10px;padding:10px 16px;flex-shrink:0;}
+    .rol-banner.visible{display:flex;}
+    .rol-banner.revisor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
+    .rol-banner.aprobador{background:#FFFBEB;border-bottom:2px solid #FDE68A;}
+    .rol-banner.jefe{background:#F0FDF4;border-bottom:2px solid #BBF7D0;}
+    .rol-banner svg{width:16px;height:16px;flex-shrink:0;}
+    .rol-banner.revisor svg{color:#2563EB;}
+    .rol-banner.aprobador svg{color:#D97706;}
+    .rol-banner.jefe svg{color:#059669;}
+    .rol-banner-text{flex:1;}
+    .rol-banner-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;}
+    .rol-banner.revisor .rol-banner-title{color:#1D4ED8;}
+    .rol-banner.aprobador .rol-banner-title{color:#B45309;}
+    .rol-banner.jefe .rol-banner-title{color:#065F46;}
+    .rol-banner-sub{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+
+    /* DOCUMENTO */
+    .doc-sheet{background:var(--blanco);border-radius:4px;box-shadow:0 2px 20px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.04);min-height:900px;overflow:hidden;}
+    .doc-header-oficial{background:var(--azul);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+    .doc-logo-area{display:flex;align-items:center;gap:12px;}
+    .doc-logo-box{width:40px;height:40px;background:var(--amarillo);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .doc-logo-box svg{width:22px;height:22px;color:var(--azul);}
+    .doc-entidad .ent-name{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--blanco);}
+    .doc-entidad .ent-dep{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px;}
+    .doc-tipo-chip{background:var(--amarillo);color:var(--azul);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:5px 16px;border-radius:6px;letter-spacing:.5px;}
+    .doc-meta-table{width:100%;border-collapse:collapse;border-bottom:2px solid var(--gris-claro);}
+    .doc-meta-table td{padding:8px 16px;font-size:12px;border-right:1px solid var(--gris-claro);border-bottom:1px solid var(--gris-claro);vertical-align:top;}
+    .doc-meta-table td:last-child{border-right:none;}
+    .meta-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
+    .meta-value{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);}
+    .meta-value.editable{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);width:100%;cursor:text;border-bottom:1.5px dashed #CBD5E1;}
+    .meta-value.editable:focus{border-bottom-color:var(--azul-claro);}
+    .decision-badge-meta{display:inline-flex;align-items:center;gap:6px;background:#FEF9E7;color:#7a5200;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--naranja);}
+    .doc-body{padding:36px 48px 48px;}
+    .doc-ciudad-fecha{font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);margin-bottom:28px;text-align:right;}
+    .auto-section{margin-bottom:28px;scroll-margin-top:80px;}
+    .auto-section-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .auto-section-title .section-num{width:22px;height:22px;background:var(--azul);color:var(--blanco);border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .auto-textarea{width:100%;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:16px;color:var(--negro);line-height:1.8;resize:none;background:transparent;transition:background .15s;border-radius:4px;padding:8px;min-height:80px;}
+    .auto-textarea:focus{background:#F8FBFF;outline:2px solid rgba(77,191,226,0.3);}
+    .auto-textarea::placeholder{color:#CBD5E1;font-style:italic;}
+    .resuelve-header{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:var(--azul);text-align:center;letter-spacing:2px;margin:28px 0 16px;padding:10px;border-top:2px solid var(--azul);border-bottom:2px solid var(--azul);}
+    .articulo-resuelve{margin-bottom:12px;display:flex;gap:10px;}
+    .art-num{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex-shrink:0;padding-top:9px;}
+    .art-input{flex:1;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:16px;color:var(--negro);line-height:1.8;resize:none;background:transparent;border-radius:4px;padding:6px 8px;min-height:60px;transition:background .15s;}
+    .art-input:focus{background:#F8FBFF;outline:2px solid rgba(77,191,226,0.3);}
+    .cumplase{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;text-align:center;margin:28px 0 40px;color:var(--negro);}
+    
+    /* FIRMA */
+    .firma-block{margin-top:20px;}
+    .firma-linea{width:240px;height:1px;background:var(--negro);margin-bottom:6px;}
+    .firma-nombre-input{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--negro);width:100%;text-transform:uppercase;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;}
+    .firma-cargo-input{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);width:100%;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;margin-top:4px;}
+    .firma-pie{margin-top:24px;font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);line-height:1.8;}
+    .firma-pie-input{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);width:100%;border-bottom:1px dashed #E2E8F0;margin-bottom:4px;}
+
+    /* BOTONES INTELIGENTES RESUELVE */
+    .resuelve-actions{background:#F7F9FB;border:1.5px solid var(--gris-claro);border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+    .resuelve-actions-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+    .resuelve-actions-title svg{width:13px;height:13px;}
+    .resuelve-btns{display:flex;gap:10px;flex-wrap:wrap;}
+    .resuelve-btn{flex:1;min-width:200px;padding:12px 14px;border:2px solid var(--gris-claro);border-radius:8px;background:var(--blanco);cursor:pointer;transition:all .15s;text-align:left;}
+    .resuelve-btn:hover{border-color:var(--azul-claro);background:#EEF4FF;}
+    .resuelve-btn.concede{border-color:#BBF7D0;background:#F0FDF4;}
+    .resuelve-btn.concede:hover{border-color:#86EFAC;background:#DCFCE7;}
+    .resuelve-btn.niega{border-color:#FECACA;background:#FEF2F2;}
+    .resuelve-btn.niega:hover{border-color:#FCA5A5;background:#FEE2E2;}
+    .resuelve-btn svg{width:16px;height:16px;margin-bottom:6px;}
+    .resuelve-btn.concede svg{color:#059669;}
+    .resuelve-btn.niega svg{color:#DC2626;}
+    .resuelve-btn-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);display:block;margin-bottom:3px;}
+    .resuelve-btn-desc{font-size:11px;color:var(--gris-medio);line-height:1.4;}
+
+    /* DROP ZONE DOCX */
+    .upload-zone{border:2px dashed #CBD5E1;border-radius:10px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s;background:#FAFBFC;margin-top:16px;}
+    .upload-zone:hover,.upload-zone.dragover{border-color:var(--azul-claro);background:#EBF4FA;}
+    .uz-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--azul);display:block;margin-bottom:4px;}
+    .uz-sub{font-size:11px;color:var(--gris-medio);}
+    .uploaded-file{display:none;align-items:center;gap:10px;border:1px solid #BBF7D0;border-radius:8px;background:#F0FDF4;padding:10px 12px;margin-top:10px;}
+    .uploaded-file.visible{display:flex;}
+    .uf-name{font-size:12px;font-weight:600;color:#065F46;flex:1;}
+
+    /* PANEL DERECHO */
+    .panel-tools{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;display:flex;flex-direction:column;}
+    .tools-section{border-bottom:1px solid var(--gris-claro);}
+    .tools-section-header{padding:12px 16px;display:flex;align-items:center;gap:8px;}
+    .tools-section-header h4{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex:1;}
+    .tools-section-header svg{width:14px;height:14px;color:var(--azul-medio);}
+    .tools-section-body{padding:12px 16px;}
+
+    /* FLUJO APROBACIÓN */
+    .flujo-steps{display:flex;flex-direction:column;gap:0;}
+    .flujo-step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;position:relative;}
+    .flujo-step:not(:last-child)::after{content:'';position:absolute;left:7px;top:22px;width:2px;height:calc(100% - 4px);background:var(--gris-claro);z-index:0;}
+    .fstep-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;z-index:1;}
+    .fstep-dot.active{background:var(--amarillo);box-shadow:0 0 0 3px rgba(255,230,1,0.3);}
+    .fstep-dot.pending{background:var(--gris-claro);border:2px solid #CBD5E1;}
+    .fstep-name{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);}
+    .fstep-actor{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+    .fstep-dot.firma{background:#F0FDF4;border:2px solid #BBF7D0;}
+
+    /* SEMÁFORO TÉRMINOS */
+    .semaforo-card{background:#F8FAFC;border:1.5px solid var(--gris-claro);border-radius:10px;padding:14px;margin-bottom:12px;}
+    .semaforo-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+    .semaforo-dot{width:12px;height:12px;border-radius:50%;}
+    .semaforo-dot.verde{background:#10B981;}
+    .semaforo-dot.amarillo{background:var(--naranja);}
+    .semaforo-dot.rojo{background:var(--rojo);}
+    .semaforo-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--negro);flex:1;}
+    .semaforo-dias{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:var(--azul);}
+    .semaforo-sub{font-size:10px;color:var(--gris-medio);margin-top:2px;}
+    .semaforo-bar{height:6px;background:var(--gris-claro);border-radius:999px;overflow:hidden;margin-top:10px;}
+    .semaforo-fill{height:100%;border-radius:999px;transition:width .3s;}
+    .semaforo-fill.verde{background:#10B981;}
+    .semaforo-fill.amarillo{background:var(--naranja);}
+    .semaforo-fill.rojo{background:var(--rojo);}
+
+    /* ACCIONES DE ROL */
+    .rol-action-panel{display:none;flex-direction:column;border-bottom:1px solid var(--gris-claro);}
+    .rol-action-panel.visible{display:flex;}
+    .rap-header{padding:12px 16px 8px;}
+    .rap-rol-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+    .rap-rol-badge.revisor{background:#DBEAFE;color:#1D4ED8;}
+    .rap-rol-badge.aprobador{background:#FEF3C7;color:#B45309;}
+    .rap-rol-badge.jefe{background:#D1FAE5;color:#065F46;}
+    .rap-rol-badge svg{width:11px;height:11px;}
+    .rap-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--azul);margin-bottom:3px;}
+    .rap-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;margin-bottom:10px;}
+    .rap-opciones{display:flex;flex-direction:column;gap:7px;padding:0 16px 14px;}
+    .rap-opcion{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:8px;border:1.5px solid;cursor:pointer;transition:all .15s;text-align:left;width:100%;background:var(--blanco);}
+    .rap-opcion svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+    .rap-opcion-body{flex:1;}
+    .rap-opcion-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;display:block;line-height:1.2;margin-bottom:2px;}
+    .rap-opcion-sub{font-size:11px;line-height:1.4;}
+    .rap-opcion.via-aprobar{border-color:#BBF7D0;background:#F0FDF4;}
+    .rap-opcion.via-aprobar svg,.rap-opcion.via-aprobar .rap-opcion-sub{color:#059669;}
+    .rap-opcion.via-aprobar .rap-opcion-label{color:#065F46;}
+    .rap-opcion.via-aprobar:hover{background:#DCFCE7;border-color:#86EFAC;}
+    .rap-opcion.via-devolver{border-color:#FECACA;background:#FEF2F2;}
+    .rap-opcion.via-devolver svg,.rap-opcion.via-devolver .rap-opcion-sub{color:#DC2626;}
+    .rap-opcion.via-devolver .rap-opcion-label{color:#991B1B;}
+    .rap-opcion.via-devolver:hover{background:#FEE2E2;border-color:#FCA5A5;}
+    .devolver-inline{display:none;padding:0 16px 14px;}
+    .devolver-inline.visible{display:block;}
+    .devolver-inline textarea{width:100%;border:1.5px solid #FECACA;border-radius:8px;padding:10px;font-family:'Poppins',sans-serif;font-size:12px;min-height:80px;outline:none;resize:vertical;color:var(--negro);}
+    .devolver-inline-btns{display:flex;gap:8px;margin-top:8px;}
+    .btn-dev-cancel{flex:1;padding:8px;border:1.5px solid var(--gris-claro);background:var(--blanco);border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);cursor:pointer;}
+    .btn-dev-confirm{flex:2;padding:8px;border:none;background:var(--rojo);border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--blanco);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;}
+    .btn-dev-confirm svg{width:13px;height:13px;}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,56,83,0.5);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--blanco);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 60px rgba(6,56,83,0.25);animation:slideIn .2s ease;overflow:hidden;}
+    @keyframes slideIn{from{transform:translateY(-16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    .modal-header{background:var(--azul);padding:18px 24px;}
+    .modal-header h3{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--blanco);display:flex;align-items:center;gap:8px;}
+    .modal-header h3 svg{width:18px;height:18px;color:var(--amarillo);}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:10px;justify-content:flex-end;}
+    .btn{border:none;cursor:pointer;border-radius:8px;padding:10px 18px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;transition:all .15s;}
+    .btn svg{width:15px;height:15px;}
+    .btn-secondary{background:transparent;color:var(--azul);border:2px solid var(--azul);}
+    .btn-accent{background:var(--amarillo);color:var(--azul);}
+    .btn-accent:hover{background:#e6cf00;}
+    .btn-firma{background:var(--azul);color:var(--blanco);}
+    .btn-firma:hover{background:var(--azul-medio);}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:var(--blanco);padding:12px 18px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.18);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:2000;max-width:340px;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast svg{width:16px;height:16px;color:var(--verde);}
+
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:10px;}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="back-btn" aria-label="Volver">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="navbar-title">
+      Auto que Resuelve Nulidad
+      <span>Nulidad · Art. 204-207 CGD</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="autosave-indicator">
+      <span class="autosave-dot"></span>
+      Guardado automáticamente
+    </div>
+    <button class="nav-btn ghost" onclick="showToast('Borrador guardado correctamente')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Guardar borrador
+    </button>
+    <select class="rol-select" id="rol-select" onchange="cambiarRol(this.value)">
+      <option value="instructor">Rol: Instructor</option>
+      <option value="revisor">Rol: Revisor</option>
+      <option value="aprobador">Rol: Aprobador</option>
+      <option value="jefe">Rol: Jefe / Firmante</option>
+    </select>
+    <button class="btn-accion-principal" id="btn-accion" onclick="accionPrincipal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="icon-accion"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <span id="label-accion">Enviar a revisión</span>
+    </button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="#">Inicio</a><span class="sep">›</span>
+  <a href="#">Mi bandeja</a><span class="sep">›</span>
+  <a href="#">EXP-2025-00312</a><span class="sep">›</span>
+  <a href="#">Nulidades</a><span class="sep">›</span>
+  <span class="current">Proyectar auto que resuelve nulidad</span>
+</div>
+
+<div class="editor-layout">
+
+  <!-- PANEL IZQUIERDO -->
+  <nav class="panel-indice" aria-label="Expediente y nulidad">
+    <div class="indice-title">Expediente disciplinario</div>
+    
+    <!-- INFO PROCESO -->
+    <div class="proc-info-card">
+      <div class="proc-rad">EXP-2025-00312</div>
+      <div class="proc-disc">Dr. Carlos Eduardo Rojas Bermúdez<br><span style="color:var(--gris-medio);font-size:11px;">Cédula: 79.485.312</span></div>
+      <div class="proc-estado">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Investigación
+      </div>
+    </div>
+
+    <!-- SOLICITUD DE NULIDAD -->
+    <div class="nulidad-solicitud-card">
+      <div class="nulidad-solicitud-header" onclick="toggleSolicitud()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div class="nulidad-solicitud-title">Escrito de solicitud de nulidad</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;transition:transform .2s;" id="chev-sol"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nulidad-solicitud-body" id="nulidad-solicitud-body">
+        <div class="sol-row">
+          <div class="sol-label">Solicitante</div>
+          <div class="sol-value">Dr. Carlos Eduardo Rojas Bermúdez (Disciplinado)</div>
+        </div>
+        <div class="sol-row">
+          <div class="sol-label">Fecha radicación</div>
+          <div class="sol-value">15 de octubre de 2025</div>
+        </div>
+        <div class="sol-row">
+          <div class="sol-label">Causal alegada</div>
+          <div class="sol-causal">
+            <strong>Prueba ilícita (Art. 204.3 CGD)</strong><br>
+            "Se vulneró el debido proceso al incorporar como prueba el acta de allanamiento practicada sin orden judicial, violando el artículo 28 de la Constitución Política."
+          </div>
+        </div>
+        <div class="sol-row" style="margin-top:12px;">
+          <div class="sol-label">Acto viciado</div>
+          <div class="sol-value">Acta de allanamiento e incautación del 08 de septiembre de 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTA DE ACTOS -->
+    <div class="actos-lista">
+      <div class="actos-title">Actos procesales</div>
+      
+      <div class="acto-item" onclick="selectActo(this)">
+        <div class="acto-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="acto-info">
+          <div class="acto-nombre">Auto de apertura de investigación</div>
+          <div class="acto-fecha">12 de agosto de 2025</div>
+        </div>
+      </div>
+
+      <div class="acto-item viciado selected" onclick="selectActo(this)">
+        <div class="acto-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        </div>
+        <div class="acto-info">
+          <div class="acto-nombre">Acta de allanamiento e incautación <span class="acto-badge">Viciado</span></div>
+          <div class="acto-fecha">08 de septiembre de 2025</div>
+        </div>
+      </div>
+
+      <div class="acto-item" onclick="selectActo(this)">
+        <div class="acto-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="acto-info">
+          <div class="acto-nombre">Declaración del disciplinado</div>
+          <div class="acto-fecha">20 de septiembre de 2025</div>
+        </div>
+      </div>
+
+      <div class="acto-item" onclick="selectActo(this)">
+        <div class="acto-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="acto-info">
+          <div class="acto-nombre">Informe de peritaje documental</div>
+          <div class="acto-fecha">05 de octubre de 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="indice-sep"></div>
+
+    <!-- ÍNDICE -->
+    <div class="indice-title">Estructura del auto</div>
+    <div class="indice-item" onclick="scrollTo_('encabezado',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+      Encabezado
+    </div>
+    <div class="indice-item active" onclick="scrollTo_('antecedentes',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      1. Antecedentes
+    </div>
+    <div class="indice-item" onclick="scrollTo_('consideraciones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      2. Consideraciones
+    </div>
+    <div class="indice-item" onclick="scrollTo_('resuelve',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+      Resuelve
+    </div>
+    <div class="indice-item" onclick="scrollTo_('firma',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+      Firma
+    </div>
+  </nav>
+
+  <!-- EDITOR CENTRAL -->
+  <main class="editor-center" id="editor-scroll">
+
+    <!-- Banner rol -->
+    <div class="rol-banner" id="rol-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="rol-banner-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <div class="rol-banner-text">
+        <div class="rol-banner-title" id="rol-banner-title"></div>
+        <div class="rol-banner-sub" id="rol-banner-sub"></div>
+      </div>
+    </div>
+
+    <div class="doc-sheet">
+
+      <!-- ENCABEZADO OFICIAL -->
+      <div class="doc-header-oficial" id="encabezado">
+        <div class="doc-logo-area">
+          <div class="doc-logo-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+          </div>
+          <div class="doc-entidad">
+            <div class="ent-name">Procuraduría General de la Nación</div>
+            <div class="ent-dep">Veeduría — Oficina de Control Interno Disciplinario</div>
+          </div>
+        </div>
+        <div class="doc-tipo-chip">AUTO QUE RESUELVE NULIDAD</div>
+      </div>
+
+      <!-- METADATOS -->
+      <table class="doc-meta-table">
+        <tr>
+          <td style="width:25%"><span class="meta-label">Radicado IUS</span><span class="meta-value">EXP-2025-00312</span></td>
+          <td style="width:25%"><span class="meta-label">Radicado IUC</span><input class="meta-value editable" value="D-2025-0007841" aria-label="Radicado IUC"></td>
+          <td style="width:25%"><span class="meta-label">Dependencia</span><span class="meta-value">Veeduría PGN</span></td>
+          <td style="width:25%"><span class="meta-label">Decisión</span><div class="decision-badge-meta">Resolución de Nulidad</div></td>
+        </tr>
+        <tr>
+          <td><span class="meta-label">Disciplinado</span><input class="meta-value editable" value="Carlos Eduardo Rojas Bermúdez" aria-label="Disciplinado"></td>
+          <td><span class="meta-label">Solicitante nulidad</span><span class="meta-value">Disciplinado</span></td>
+          <td><span class="meta-label">Causal</span><input class="meta-value editable" value="Prueba ilícita (Art. 204.3)" aria-label="Causal"></td>
+          <td><span class="meta-label">Fecha auto</span><span class="meta-value">28 de octubre de 2025</span></td>
+        </tr>
+      </table>
+
+      <div class="doc-body">
+        <div class="doc-ciudad-fecha">Bogotá, D.C., veintiocho (28) de octubre de dos mil veinticinco (2025)</div>
+
+        <!-- ANTECEDENTES -->
+        <div class="auto-section" id="antecedentes">
+          <div class="auto-section-title">
+            <div class="section-num">I</div>
+            ANTECEDENTES
+          </div>
+          <textarea class="auto-textarea" rows="8" aria-label="Antecedentes">Mediante escrito radicado el 15 de octubre de 2025, el doctor Carlos Eduardo Rojas Bermúdez, actuando en calidad de disciplinado dentro de la presente actuación, solicitó la declaratoria de nulidad de lo actuado desde el acta de allanamiento e incautación practicada el 08 de septiembre de 2025, por considerar que se configuró una causal de nulidad consistente en prueba ilícita, toda vez que dicho procedimiento se realizó sin orden judicial previa, vulnerando así lo dispuesto en el artículo 28 de la Constitución Política y el artículo 204 numeral 3 del Código General Disciplinario.</textarea>
+        </div>
+
+        <!-- CONSIDERACIONES -->
+        <div class="auto-section" id="consideraciones">
+          <div class="auto-section-title">
+            <div class="section-num">II</div>
+            CONSIDERACIONES
+          </div>
+          
+          <div class="auto-subsection">
+            <div class="auto-subsection-title">Competencia</div>
+            <textarea class="auto-textarea" rows="3" aria-label="Competencia">Esta Veeduría es competente para conocer de la presente solicitud de nulidad, de conformidad con lo establecido en el artículo 205 del Código General Disciplinario, toda vez que la actuación se encuentra en etapa de investigación y no ha sido proferido auto de formulación de cargos.</textarea>
+          </div>
+
+          <div class="auto-subsection">
+            <div class="auto-subsection-title">Causal alegada</div>
+            <textarea class="auto-textarea" rows="5" aria-label="Causal alegada">El solicitante alega la configuración de la causal de nulidad prevista en el artículo 204 numeral 3 del Código General Disciplinario, consistente en haberse incorporado al proceso una prueba obtenida mediante violación del debido proceso, específicamente el acta de allanamiento e incautación del 08 de septiembre de 2025, la cual habría sido practicada sin cumplir con el requisito constitucional de contar con orden judicial previa.</textarea>
+          </div>
+
+          <div class="auto-subsection">
+            <div class="auto-subsection-title">Análisis de la causal</div>
+            <textarea class="auto-textarea" rows="8" aria-label="Análisis de la causal" placeholder="Redacte aquí el análisis jurídico de la causal...">[Espacio para redactar el análisis de fondo sobre si efectivamente se configuró o no la vulneración al debido proceso. Se debe examinar si el allanamiento cumplía con los requisitos legales, si existía causa probable, si se trataba de una situación de flagrancia, etc.]</textarea>
+          </div>
+        </div>
+
+        <!-- RESUELVE -->
+        <div class="auto-section" id="resuelve">
+          <div class="resuelve-actions">
+            <div class="resuelve-actions-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+              Insertar texto jurídico según decisión
+            </div>
+            <div class="resuelve-btns">
+              <button class="resuelve-btn concede" onclick="insertarTexto('concede')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span class="resuelve-btn-label">Conceder la nulidad</span>
+                <span class="resuelve-btn-desc">Inserta texto que declara la nulidad y ordena reponer la actuación</span>
+              </button>
+              <button class="resuelve-btn niega" onclick="insertarTexto('niega')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span class="resuelve-btn-label">Negar la nulidad</span>
+                <span class="resuelve-btn-desc">Inserta texto que niega la nulidad por no configurarse la causal</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="resuelve-header">RESUELVE</div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">PRIMERO.</div>
+            <textarea class="art-input" rows="4" id="art1" aria-label="Artículo primero">[Seleccione una opción arriba para insertar el texto correspondiente]</textarea>
+          </div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">SEGUNDO.</div>
+            <textarea class="art-input" rows="3" id="art2" aria-label="Artículo segundo">[Seleccione una opción arriba para insertar el texto correspondiente]</textarea>
+          </div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">TERCERO.</div>
+            <textarea class="art-input" rows="3" id="art3" aria-label="Artículo tercero">[Seleccione una opción arriba para insertar el texto correspondiente]</textarea>
+          </div>
+        </div>
+
+        <div class="cumplase">NOTIFÍQUESE Y CÚMPLASE</div>
+
+        <!-- FIRMA -->
+        <div class="firma-block" id="firma">
+          <div class="firma-linea"></div>
+          <input class="firma-nombre-input" value="ALEX FERNANDO HERNANDEZ OYOLA" aria-label="Nombre del firmante">
+          <input class="firma-cargo-input" value="Veedor — Oficina de Control Interno Disciplinario" aria-label="Cargo del firmante">
+          <div class="firma-pie">
+            <input class="firma-pie-input" value="Proyectó: CR / Veeduría" aria-label="Proyectó">
+            <input class="firma-pie-input" value="Revisó: MTC / Veeduría" aria-label="Revisó">
+            <input class="firma-pie-input" value="Aprobó: JDC / Veeduría" aria-label="Aprobó">
+            <input class="firma-pie-input" value="IUS EXP-2025-00312 / IUC D-2025-0007841" aria-label="Radicado">
+          </div>
+          <div id="firma-badge" style="display:inline-flex;align-items:center;gap:6px;background:var(--gris-claro);border-radius:6px;padding:5px 12px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;color:var(--gris-medio);margin-top:12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Pendiente de firma electrónica
+          </div>
+        </div>
+
+      </div><!-- /doc-body -->
+    </div><!-- /doc-sheet -->
+
+    <!-- UPLOAD ZONE -->
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+      <span class="uz-title">Arrastra el auto ya redactado (.docx)</span>
+      <span class="uz-sub">o haz clic para explorar</span>
+      <input type="file" id="file-input" accept=".docx,.doc" style="display:none;" onchange="procesarArchivo(this.files[0])">
+    </div>
+    <div class="uploaded-file" id="uploaded-file">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:#065F46;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="uf-name" id="uf-name">auto_nulidad.docx</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#059669;cursor:pointer;" onclick="showToast('Archivo cargado correctamente')"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+
+  </main>
+
+  <!-- PANEL DERECHO -->
+  <aside class="panel-tools">
+
+    <!-- ACCIONES DE ROL -->
+    <div class="rol-action-panel" id="rol-action-panel">
+      <div class="rap-header">
+        <div class="rap-rol-badge" id="rap-badge"></div>
+        <div class="rap-titulo" id="rap-titulo"></div>
+        <div class="rap-desc" id="rap-desc"></div>
+      </div>
+      <div class="rap-opciones" id="rap-opciones"></div>
+      <div class="devolver-inline" id="devolver-inline">
+        <textarea placeholder="Describa las observaciones o correcciones requeridas..."></textarea>
+        <div class="devolver-inline-btns">
+          <button class="btn-dev-cancel" onclick="document.getElementById('devolver-inline').classList.remove('visible')">Cancelar</button>
+          <button class="btn-dev-confirm" onclick="showToast('Auto devuelto con observaciones')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+            Devolver
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMÁFORO TÉRMINOS -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <h4>Término para resolver</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="semaforo-card">
+          <div class="semaforo-header">
+            <div class="semaforo-dot verde" id="semaforo-dot"></div>
+            <div class="semaforo-title">Término Art. 206 CGD</div>
+          </div>
+          <div class="semaforo-dias" id="semaforo-dias">3 días</div>
+          <div class="semaforo-sub">Para resolver la nulidad</div>
+          <div class="semaforo-bar">
+            <div class="semaforo-fill verde" id="semaforo-fill" style="width:33%;"></div>
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:var(--gris-medio);line-height:1.5;">
+            <strong>Vence:</strong> 30 de octubre de 2025<br>
+            <strong>Faltan:</strong> 2 días hábiles
+          </div>
+        </div>
+        <p style="font-size:10px;color:var(--gris-medio);line-height:1.5;">
+          El término para resolver la nulidad es de tres (3) días hábiles conforme al Art. 206 CGD. El semáforo se pondrá en amarillo a 1 día del vencimiento y en rojo al vencerse.
+        </p>
+      </div>
+    </div>
+
+    <!-- FLUJO APROBACIÓN -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        <h4>Flujo de aprobación</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="flujo-steps">
+          <div class="flujo-step">
+            <div class="fstep-dot active"></div>
+            <div>
+              <div class="fstep-name">Instructor proyecta</div>
+              <div class="fstep-actor">Dr. Carlos Rivas · Activo ahora</div>
+            </div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending" id="step-revisor"></div>
+            <div>
+              <div class="fstep-name">Revisor</div>
+              <div class="fstep-actor" id="text-revisor">Pendiente de envío</div>
+            </div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending" id="step-aprobador"></div>
+            <div>
+              <div class="fstep-name">Aprobador</div>
+              <div class="fstep-actor" id="text-aprobador">Pendiente</div>
+            </div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot firma"></div>
+            <div>
+              <div class="fstep-name">Jefe firma</div>
+              <div class="fstep-actor">Firma electrónica · Pendiente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AYUDAS -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <h4>Ayudas jurídicas</h4>
+      </div>
+      <div class="tools-section-body">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="plantilla-btn" onclick="showToast('Jurisprudencia CCCargada: T-345/19, T-567/20')" style="width:100%;text-align:left;background:#F8FAFC;border:1px solid var(--gris-claro);border-radius:8px;padding:10px 12px;cursor:pointer;font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);transition:all .15s;">
+            <span class="pl-name" style="font-weight:600;display:block;">Jurisprudencia relevante</span>
+            <span class="pl-norm" style="font-size:11px;color:var(--gris-medio);">Sentencias CCC sobre prueba ilícita</span>
+          </button>
+          <button class="plantilla-btn" onclick="showToast('Art. 202-207 CGD cargados')" style="width:100%;text-align:left;background:#F8FAFC;border:1px solid var(--gris-claro);border-radius:8px;padding:10px 12px;cursor:pointer;font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);transition:all .15s;">
+            <span class="pl-name" style="font-weight:600;display:block;">Normatividad</span>
+            <span class="pl-norm" style="font-size:11px;color:var(--gris-medio);">Art. 202-207 CGD (Nulidades)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Confirmar acción
+      </h3>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;line-height:1.6;color:var(--negro);margin-bottom:12px;" id="modal-text">¿Está seguro de enviar este auto a revisión?</p>
+      <div style="background:#EEF4FF;border-radius:8px;padding:12px;font-size:12px;color:var(--azul-medio);line-height:1.5;">
+        <strong>Nota:</strong> Una vez enviado, el documento quedará bloqueado para edición hasta que sea devuelto o aprobado.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-accent" onclick="confirmarAccion()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Operación exitosa</span>
+</div>
+
+<script>
+  // ESTADO DEL FLUJO
+  let estadoFlujo = 'instructor'; // instructor, revisor, aprobador, jefe
+  let pasoActual = 0;
+
+  // CAMBIAR ROL
+  function cambiarRol(rol) {
+    estadoFlujo = rol;
+    const banner = document.getElementById('rol-banner');
+    const panel = document.getElementById('rol-action-panel');
+    const btnAccion = document.getElementById('btn-accion');
+    const labelAccion = document.getElementById('label-accion');
+    const iconAccion = document.getElementById('icon-accion');
+
+    banner.classList.remove('visible', 'revisor', 'aprobador', 'jefe');
+    panel.classList.remove('visible');
+
+    if (rol === 'instructor') {
+      banner.style.display = 'none';
+      panel.style.display = 'none';
+      btnAccion.style.background = 'var(--amarillo)';
+      btnAccion.style.color = 'var(--azul)';
+      labelAccion.textContent = 'Enviar a revisión';
+      iconAccion.innerHTML = '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>';
+      pasoActual = 0;
+      actualizarFlujoVisual();
+    } else if (rol === 'revisor') {
+      banner.classList.add('visible', 'revisor');
+      document.getElementById('rol-banner-title').textContent = 'Revisión en curso';
+      document.getElementById('rol-banner-sub').textContent = 'Revise el contenido y decida si aprueba o devuelve';
+      panel.classList.add('visible');
+      mostrarOpcionesRevisor();
+      btnAccion.style.background = 'var(--azul)';
+      btnAccion.style.color = 'var(--blanco)';
+      labelAccion.textContent = 'Aprobar';
+      iconAccion.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      pasoActual = 1;
+      actualizarFlujoVisual();
+    } else if (rol === 'aprobador') {
+      banner.classList.add('visible', 'aprobador');
+      document.getElementById('rol-banner-title').textContent = 'Aprobación pendiente';
+      document.getElementById('rol-banner-sub').textContent = 'Verifique que cumple con todos los requisitos';
+      panel.classList.add('visible');
+      mostrarOpcionesAprobador();
+      btnAccion.style.background = 'var(--azul)';
+      btnAccion.style.color = 'var(--blanco)';
+      labelAccion.textContent = 'Aprobar y enviar a firma';
+      iconAccion.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      pasoActual = 2;
+      actualizarFlujoVisual();
+    } else if (rol === 'jefe') {
+      banner.classList.add('visible', 'jefe');
+      document.getElementById('rol-banner-title').textContent = 'Listo para firmar';
+      document.getElementById('rol-banner-sub').textContent = 'Revise y firme electrónicamente el auto';
+      panel.style.display = 'none';
+      btnAccion.style.background = 'var(--verde)';
+      btnAccion.style.color = 'var(--azul)';
+      labelAccion.textContent = 'Firmar electrónicamente';
+      iconAccion.innerHTML = '<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>';
+      pasoActual = 3;
+      actualizarFlujoVisual();
+    }
+  }
+
+  // MOSTRAR OPCIONES REVISOR
+  function mostrarOpcionesRevisor() {
+    const opciones = document.getElementById('rap-opciones');
+    opciones.innerHTML = `
+      <div class="rap-opcion via-aprobar" onclick="openModal('modal-confirm')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="rap-opcion-body">
+          <div class="rap-opcion-label">Aprobar y enviar a aprobador</div>
+          <div class="rap-opcion-sub">El documento pasa a siguiente nivel de aprobación</div>
+        </div>
+      </div>
+      <div class="rap-opcion via-devolver" onclick="mostrarDevolver()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+        <div class="rap-opcion-body">
+          <div class="rap-opcion-label">Devolver con observaciones</div>
+          <div class="rap-opcion-sub">Regresa al instructor para correcciones</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // MOSTRAR OPCIONES APROBADOR
+  function mostrarOpcionesAprobador() {
+    const opciones = document.getElementById('rap-opciones');
+    opciones.innerHTML = `
+      <div class="rap-opcion via-aprobar" onclick="openModal('modal-confirm')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="rap-opcion-body">
+          <div class="rap-opcion-label">Aprobar y enviar a jefe</div>
+          <div class="rap-opcion-sub">Listo para firma electrónica</div>
+        </div>
+      </div>
+      <div class="rap-opcion via-devolver" onclick="mostrarDevolver()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+        <div class="rap-opcion-body">
+          <div class="rap-opcion-label">Devolver con observaciones</div>
+          <div class="rap-opcion-sub">Regresa al instructor para correcciones</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // MOSTRAR DEVOLVER
+  function mostrarDevolver() {
+    document.getElementById('devolver-inline').classList.add('visible');
+  }
+
+  // ACCIÓN PRINCIPAL
+  function accionPrincipal() {
+    if (estadoFlujo === 'instructor') {
+      openModal('modal-confirm');
+    } else if (estadoFlujo === 'revisor' || estadoFlujo === 'aprobador') {
+      openModal('modal-confirm');
+    } else if (estadoFlujo === 'jefe') {
+      firmarDocumento();
+    }
+  }
+
+  // CONFIRMAR ACCIÓN
+  function confirmarAccion() {
+    closeModal('modal-confirm');
+    if (estadoFlujo === 'instructor') {
+      showToast('Auto enviado a revisión correctamente');
+      setTimeout(() => {
+        document.getElementById('rol-select').value = 'revisor';
+        cambiarRol('revisor');
+      }, 1000);
+    } else if (estadoFlujo === 'revisor') {
+      showToast('Auto aprobado y enviado a aprobador');
+      setTimeout(() => {
+        document.getElementById('rol-select').value = 'aprobador';
+        cambiarRol('aprobador');
+      }, 1000);
+    } else if (estadoFlujo === 'aprobador') {
+      showToast('Auto aprobado y enviado a firma');
+      setTimeout(() => {
+        document.getElementById('rol-select').value = 'jefe';
+        cambiarRol('jefe');
+      }, 1000);
+    }
+  }
+
+  // FIRMAR DOCUMENTO
+  function firmarDocumento() {
+    document.getElementById('firma-badge').innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color:var(--verde);"><polyline points="20 6 9 17 4 12"/></svg>
+      Firmado electrónicamente
+    `;
+    document.getElementById('firma-badge').style.background = '#F0FDF4';
+    document.getElementById('firma-badge').style.color = '#065F46';
+    showToast('Documento firmado electrónicamente con éxito');
+  }
+
+  // ACTUALIZAR FLUJO VISUAL
+  function actualizarFlujoVisual() {
+    const dots = document.querySelectorAll('.fstep-dot');
+    const texts = {
+      0: ['Activo ahora', 'Pendiente de envío', 'Pendiente', 'Firma electrónica · Pendiente'],
+      1: ['Completado', 'Activo ahora', 'Pendiente', 'Firma electrónica · Pendiente'],
+      2: ['Completado', 'Completado', 'Activo ahora', 'Firma electrónica · Pendiente'],
+      3: ['Completado', 'Completado', 'Completado', 'Firma electrónica · Listo']
+    };
+
+    dots.forEach((dot, i) => {
+      dot.classList.remove('active', 'pending', 'firma');
+      if (i < pasoActual) {
+        dot.classList.add('firma');
+      } else if (i === pasoActual) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.add('pending');
+      }
+    });
+
+    const actores = document.querySelectorAll('.fstep-actor');
+    if (texts[pasoActual]) {
+      textos[pasoActual].forEach((text, i) => {
+        if (actores[i]) actores[i].textContent = text;
+      });
+    }
+  }
+
+  // INSERTAR TEXTO JURÍDICO
+  function insertarTexto(decision) {
+    if (decision === 'concede') {
+      document.getElementById('art1').value = 'CONCEDER la nulidad solicitada por el doctor Carlos Eduardo Rojas Bermúdez, por haberse configurado la causal prevista en el artículo 204 numeral 3 del Código General Disciplinario, consistente en prueba ilícita.';
+      document.getElementById('art2').value = 'ORDENAR reponer la actuación desde el acta de allanamiento e incautación practicada el 08 de septiembre de 2025, hasta donde sea necesario, debiendo excluirse del acervo probatorio todo lo actuado con posterioridad que derive de dicho acto viciado.';
+      document.getElementById('art3').value = 'ADVERTIR que contra la presente decisión procede el recurso de reposición ante este mismo despacho, en el término de cinco (5) días hábiles siguientes a su notificación, de conformidad con el artículo 207 del Código General Disciplinario.';
+      showToast('Texto de concesión insertado correctamente');
+    } else if (decision === 'niega') {
+      document.getElementById('art1').value = 'NEGAR la nulidad solicitada por el doctor Carlos Eduardo Rojas Bermúdez, por no configurarse la causal alegada, toda vez que el acta de allanamiento e incautación del 08 de septiembre de 2025 se practicó dentro de los parámetros constitucionales y legales vigentes.';
+      document.getElementById('art2').value = 'DECLARAR que la prueba cuestionada fue obtenida con pleno respeto al debido proceso y por tanto mantiene su validez y eficacia probatoria dentro de la presente actuación disciplinaria.';
+      document.getElementById('art3').value = 'ADVERTIR que contra la presente decisión procede el recurso de reposición ante este mismo despacho, en el término de cinco (5) días hábiles siguientes a su notificación, de conformidad con el artículo 207 del Código General Disciplinario.';
+      showToast('Texto de negación insertado correctamente');
+    }
+  }
+
+  // TOGGLE SOLICITUD
+  function toggleSolicitud() {
+    const body = document.getElementById('nulidad-solicitud-body');
+    const chev = document.getElementById('chev-sol');
+    body.classList.toggle('open');
+    chev.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+  }
+
+  // SELECT ACTO
+  function selectActo(element) {
+    document.querySelectorAll('.acto-item').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+  }
+
+  // SCROLL TO
+  function scrollTo_(id, element) {
+    document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'start'});
+    document.querySelectorAll('.indice-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+  }
+
+  // MODAL
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  // TOAST
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // UPLOAD ZONE
+  const zone = document.getElementById('upload-zone');
+  zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', function(){ zone.classList.remove('dragover'); });
+  zone.addEventListener('drop', function(e){ e.preventDefault(); zone.classList.remove('dragover'); var f=e.dataTransfer.files[0]; if(f) procesarArchivo(f); });
+
+  function procesarArchivo(file) {
+    if (!file.name.match(/\.(docx|doc)$/i)) { showToast('Solo se aceptan archivos .docx o .doc'); return; }
+    document.getElementById('uf-name').textContent = file.name;
+    document.getElementById('uploaded-file').classList.add('visible');
+    showToast('Archivo cargado: ' + file.name);
+  }
+
+  // INICIALIZAR
+  window.onload = function() {
+    cambiarRol('instructor');
+  };
+</script>
+
+</body>
+</html>
