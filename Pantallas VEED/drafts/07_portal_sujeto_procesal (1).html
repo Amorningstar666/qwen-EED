@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Sujeto Procesal — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --azul: #063853; --amarillo: #FFE601; --rojo: #E3201B;
+      --azul-medio: #074C84; --azul-claro: #4DBFE2;
+      --naranja: #FFC300; --verde: #33FFCC;
+      --negro: #131313; --gris-claro: #EDEDED; --gris-medio: #949494; --blanco: #FFFFFF;
+      --fondo: #F0F4F8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: var(--fondo); color: var(--negro); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--azul); display: flex; align-items: center;
+      justify-content: space-between; padding: 0 28px; height: 60px;
+      position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 10px rgba(6,56,83,0.25);
+    }
+    .navbar-brand { display: flex; align-items: center; gap: 12px; }
+    .navbar-logo { width: 36px; height: 36px; background: var(--amarillo); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .navbar-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px; color: var(--blanco); line-height: 1.2; }
+    .navbar-title span { display: block; font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.55); }
+    .navbar-right { display: flex; align-items: center; gap: 16px; }
+    .nav-icon-btn { background: rgba(255,255,255,0.08); border: none; cursor: pointer; color: rgba(255,255,255,0.8); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; position: relative; }
+    .nav-icon-btn:hover { background: rgba(255,255,255,0.16); }
+    .nav-icon-btn svg { width: 18px; height: 18px; }
+    .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: var(--rojo); border-radius: 50%; border: 2px solid var(--azul); }
+    .navbar-avatar { width: 34px; height: 34px; background: var(--azul-claro); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; color: var(--azul); }
+    .navbar-userinfo .name { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--blanco); }
+    .navbar-userinfo .role { font-size: 11px; color: rgba(255,255,255,0.55); }
+    .btn-salir { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.75); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+    .btn-salir svg { width: 13px; height: 13px; }
+    .btn-salir:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb-bar { background: var(--blanco); border-bottom: 1px solid var(--gris-claro); padding: 10px 28px; display: flex; align-items: center; gap: 6px; }
+    .breadcrumb-bar a, .breadcrumb-bar span { font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--gris-medio); text-decoration: none; }
+    .breadcrumb-bar a:hover { color: var(--azul-medio); }
+    .breadcrumb-bar .sep { color: #CBD5E1; }
+    .breadcrumb-bar .current { color: var(--azul); font-weight: 600; }
+
+    /* ── BANNER TÉRMINO ── */
+    .alerta-termino { background: #FFF8E1; border-bottom: 1px solid var(--naranja); padding: 10px 28px; display: flex; align-items: center; gap: 12px; }
+    .alerta-termino svg { width: 16px; height: 16px; color: var(--naranja); flex-shrink: 0; }
+    .alerta-termino-text { font-size: 13px; color: #7a5200; flex: 1; }
+    .alerta-termino-text strong { font-family: 'Montserrat', sans-serif; font-weight: 700; }
+    .alerta-termino-btn { background: var(--azul); color: var(--blanco); border: none; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11px; padding: 7px 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
+    .alerta-termino-btn svg { width: 13px; height: 13px; }
+    .alerta-termino-btn:hover { background: var(--azul-medio); }
+
+    /* ── CABECERA EXPEDIENTE ── */
+    .exp-header { background: var(--blanco); border-bottom: 1px solid var(--gris-claro); padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .exp-id-block { display: flex; align-items: center; gap: 14px; }
+    .exp-badge { background: var(--azul); color: var(--blanco); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 17px; padding: 6px 16px; border-radius: 8px; }
+    .exp-meta .label { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+    .exp-meta .value { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: var(--negro); }
+    .exp-header-right { display: flex; align-items: center; gap: 12px; }
+    .etapa-chip { background: #E6F0FA; color: var(--azul-medio); font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; }
+    .etapa-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--naranja); animation: pulsar 1.5s ease-in-out infinite; }
+    @keyframes pulsar { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .rol-chip { background: #F0FDF4; color: #065F46; border: 1px solid #BBF7D0; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px; }
+
+    /* ── LAYOUT 3 COLUMNAS ── */
+    .main-layout { display: grid; grid-template-columns: 260px 1fr 310px; flex: 1; min-height: 0; }
+
+    /* ── SIDEBAR IZQUIERDO ── */
+    .sidebar-left { background: var(--blanco); border-right: 1px solid var(--gris-claro); padding: 24px 0; overflow-y: auto; }
+    .sl-title { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 20px 12px; }
+    .timeline { padding: 0 20px; }
+    .timeline-item { display: flex; gap: 14px; padding-bottom: 22px; position: relative; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .tl-dot-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; z-index: 1; }
+    .timeline-line { position: absolute; left: 30px; top: 26px; bottom: 0; width: 2px; background: var(--gris-claro); z-index: 0; }
+    .timeline-item:last-child .timeline-line { display: none; }
+    .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tl-dot svg { width: 12px; height: 12px; }
+    .tl-dot.done { background: var(--azul); }
+    .tl-dot.done svg { color: var(--blanco); }
+    .tl-dot.active { background: var(--amarillo); box-shadow: 0 0 0 4px rgba(255,230,1,0.25); }
+    .tl-dot.active svg { color: var(--azul); }
+    .tl-dot.pending { background: var(--gris-claro); border: 2px solid #CBD5E1; }
+    .tl-dot.pending svg { color: var(--gris-medio); }
+    .tl-info { flex: 1; padding-top: 2px; }
+    .tl-name { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; }
+    .tl-info.done .tl-name { color: var(--negro); }
+    .tl-info.active .tl-name { color: var(--azul); }
+    .tl-info.pending .tl-name { color: var(--gris-medio); }
+    .tl-desc { font-size: 11px; color: var(--gris-medio); margin-top: 2px; line-height: 1.4; }
+    .tl-info.active .tl-desc { color: var(--azul-medio); }
+    .sl-divider { border: none; border-top: 1px solid var(--gris-claro); margin: 20px 0; }
+    .doc-list { padding: 0 20px; display: flex; flex-direction: column; gap: 7px; }
+    .doc-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid var(--gris-claro); border-radius: 8px; cursor: pointer; transition: all 0.14s; }
+    .doc-row:hover { border-color: var(--azul-claro); background: #F0F9FF; }
+    .doc-row.locked { cursor: default; }
+    .doc-row.locked:hover { border-color: var(--gris-claro); background: transparent; }
+    .doc-row-icon { width: 28px; height: 28px; border-radius: 6px; background: #E6F0FA; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .doc-row-icon svg { width: 14px; height: 14px; color: var(--azul-medio); }
+    .doc-row-icon.grey { background: var(--gris-claro); }
+    .doc-row-icon.grey svg { color: var(--gris-medio); }
+    .doc-row-info { flex: 1; min-width: 0; }
+    .doc-row-name { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: var(--negro); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .doc-row-name.muted { color: var(--gris-medio); }
+    .doc-row-date { font-size: 10px; color: var(--gris-medio); margin-top: 1px; }
+    .dbadge { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 8px; padding: 2px 6px; border-radius: 999px; flex-shrink: 0; }
+    .dbadge.nuevo { background: #FEE2E2; color: #991b1b; }
+    .dbadge.ok { background: #D1FAE5; color: #065f46; }
+    .dbadge.lock { background: var(--gris-claro); color: var(--gris-medio); }
+
+    /* ── CONTENIDO CENTRAL ── */
+    .content-center { overflow-y: auto; padding: 22px 22px; display: flex; flex-direction: column; gap: 18px; }
+    .card { background: var(--blanco); border-radius: 12px; box-shadow: 0 2px 10px rgba(6,56,83,0.06); overflow: hidden; }
+    .card-header { padding: 14px 20px; border-bottom: 1px solid var(--gris-claro); display: flex; align-items: center; gap: 10px; background: #FAFBFC; }
+    .card-header-icon { width: 32px; height: 32px; border-radius: 8px; background: #E6F0FA; display: flex; align-items: center; justify-content: center; }
+    .card-header-icon svg { width: 16px; height: 16px; color: var(--azul-medio); }
+    .card-header h3 { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; color: var(--azul); }
+    .card-header-sub { font-size: 11px; color: var(--gris-medio); margin-left: auto; }
+    .card-body { padding: 20px; }
+
+    /* TÉRMINO */
+    .termino-bar { background: #FFF8E1; border: 1px solid var(--naranja); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+    .termino-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .termino-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; color: #7a5200; display: flex; align-items: center; gap: 7px; }
+    .termino-label svg { width: 14px; height: 14px; color: var(--naranja); }
+    .termino-num { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 900; color: var(--naranja); line-height: 1; }
+    .termino-num span { font-size: 11px; font-weight: 600; color: var(--gris-medio); }
+    .prog-bg { background: #e5e7eb; border-radius: 999px; height: 6px; margin-bottom: 7px; }
+    .prog-fill { background: var(--naranja); border-radius: 999px; height: 6px; width: 68%; }
+    .termino-fechas { display: flex; justify-content: space-between; font-size: 10px; color: var(--gris-medio); }
+
+    /* CONTEXTO */
+    .contexto-box { background: #F8FAFC; border-left: 3px solid var(--azul-claro); border-radius: 0 8px 8px 0; padding: 12px 15px; font-size: 13px; color: #374151; line-height: 1.7; }
+    .contexto-box strong { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--azul); }
+
+    /* DATA GRID */
+    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .df-label { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+    .df-value { font-size: 13px; color: var(--negro); }
+    .df-value.hl { color: var(--azul-medio); font-weight: 600; }
+
+    /* NOTA INFO */
+    .info-nota { background: #EEF4FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; }
+    .info-nota svg { width: 16px; height: 16px; color: var(--azul-medio); flex-shrink: 0; margin-top: 2px; }
+    .info-nota-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; color: var(--azul-medio); margin-bottom: 4px; }
+    .info-nota-text { font-size: 12px; color: #1d4ed8; line-height: 1.6; }
+
+    /* ── SIDEBAR DERECHO ── */
+    .sidebar-right { background: var(--blanco); border-left: 1px solid var(--gris-claro); overflow-y: auto; display: flex; flex-direction: column; }
+    .sr-header { padding: 16px 20px; border-bottom: 1px solid var(--gris-claro); background: var(--azul); }
+    .sr-header h2 { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; color: var(--blanco); }
+    .sr-header p { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 3px; }
+    .sr-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .accion-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 13px; border: 1.5px solid var(--gris-claro); border-radius: 10px; cursor: pointer; transition: all 0.14s; background: var(--blanco); }
+    .accion-row:hover { border-color: var(--azul-claro); background: #F0F9FF; }
+    .accion-row.urgente { border-color: var(--naranja); background: #FFF8E1; }
+    .accion-row.urgente:hover { border-color: #d4a000; background: #fff3cc; }
+    .accion-row.disabled { opacity: 0.42; cursor: not-allowed; background: #fafafa; }
+    .accion-row.disabled:hover { border-color: var(--gris-claro); background: #fafafa; }
+    .accion-icon { width: 32px; height: 32px; border-radius: 8px; background: #E6F0FA; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .accion-icon svg { width: 15px; height: 15px; color: var(--azul-medio); }
+    .accion-row.urgente .accion-icon { background: rgba(255,195,0,0.18); }
+    .accion-row.urgente .accion-icon svg { color: #7a5200; }
+    .accion-row.disabled .accion-icon { background: var(--gris-claro); }
+    .accion-row.disabled .accion-icon svg { color: var(--gris-medio); }
+    .accion-info { flex: 1; min-width: 0; }
+    .accion-name { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; color: var(--azul); margin-bottom: 3px; }
+    .accion-row.urgente .accion-name { color: #7a5200; }
+    .accion-row.disabled .accion-name { color: var(--gris-medio); }
+    .accion-desc { font-size: 10px; color: var(--gris-medio); line-height: 1.4; }
+    .accion-row.urgente .accion-desc { color: #a06000; }
+    .atag { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 8px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 6px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; margin-top: 3px; }
+    .atag.urgente { background: var(--naranja); color: var(--azul); }
+    .atag.ok { background: #D1FAE5; color: #065F46; }
+    .atag.no { background: var(--gris-claro); color: var(--gris-medio); }
+    .sr-footer { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .sr-nota { background: #EEF4FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 11px 13px; font-size: 11px; color: #1d4ed8; line-height: 1.6; margin-bottom: 4px; }
+    .sr-nota strong { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--azul-medio); display: block; margin-bottom: 3px; }
+    .sr-nota a { color: var(--azul-medio); font-weight: 700; }
+
+    /* ── BOTONES ── */
+    .btn { padding: 10px 20px; border-radius: 8px; border: none; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+    .btn svg { width: 15px; height: 15px; }
+    .btn-primary { background: var(--azul); color: var(--blanco); }
+    .btn-primary:hover { background: var(--azul-medio); }
+    .btn-accent { background: var(--amarillo); color: var(--azul); }
+    .btn-accent:hover { background: #e6cf00; }
+    .btn-secondary { background: transparent; color: var(--azul); border: 2px solid var(--azul); }
+    .btn-secondary:hover { background: #EBF4FA; }
+    .btn-block { width: 100%; justify-content: center; }
+
+    /* ── MODALES ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(6,56,83,0.45); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--blanco); border-radius: 16px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(6,56,83,0.25); animation: slideIn 0.2s ease; }
+    @keyframes slideIn { from { transform: translateY(-16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { background: var(--azul); padding: 18px 24px; border-radius: 16px 16px 0 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 1; }
+    .modal-header h3 { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 700; color: var(--blanco); }
+    .modal-header .norm { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 3px; }
+    .modal-close { background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; padding: 0; display: flex; }
+    .modal-close svg { width: 20px; height: 20px; }
+    .modal-close:hover { color: var(--blanco); }
+    .modal-body { padding: 22px 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gris-claro); display: flex; gap: 10px; justify-content: flex-end; background: #FAFBFC; border-radius: 0 0 16px 16px; position: sticky; bottom: 0; }
+    .modal-footer .btn { padding: 10px 20px; }
+    .modal-aviso { border-radius: 8px; padding: 11px 14px; font-size: 12px; display: flex; gap: 9px; margin-bottom: 16px; line-height: 1.6; }
+    .modal-aviso svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+    .modal-aviso.amber { background: #FFF8E1; border: 1px solid var(--naranja); color: #7a5200; }
+    .modal-aviso.amber svg { color: var(--naranja); }
+    .modal-aviso.blue { background: #EEF4FF; border: 1px solid #BFDBFE; color: #1d4ed8; }
+    .modal-aviso.blue svg { color: var(--azul-claro); }
+    .form-field { margin-bottom: 14px; }
+    .form-field:last-child { margin-bottom: 0; }
+    .form-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; color: var(--azul); margin-bottom: 5px; display: block; }
+    .form-label .req { color: var(--rojo); margin-left: 2px; }
+    .form-input, .form-select, .form-textarea { width: 100%; border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 9px 12px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--negro); background: var(--blanco); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--azul); box-shadow: 0 0 0 3px rgba(6,56,83,0.08); }
+    .form-select { appearance: none; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; padding-right: 34px; cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+    .form-hint { font-size: 11px; color: var(--gris-medio); margin-top: 4px; }
+    .char-count { font-size: 10px; color: var(--gris-medio); text-align: right; margin-top: 3px; }
+    .field-error { font-size: 11px; color: var(--rojo); margin-top: 4px; display: none; align-items: center; gap: 4px; }
+    .field-error svg { width: 12px; height: 12px; }
+    .dropzone { border: 2px dashed #CBD5E1; border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.15s; }
+    .dropzone:hover { border-color: var(--azul-claro); background: #F0F9FF; }
+    .dropzone svg { width: 24px; height: 24px; color: #9ca3af; display: block; margin: 0 auto 8px; }
+    .dropzone-text { font-size: 12px; color: #6b7280; line-height: 1.6; }
+    .dropzone-text strong { color: var(--azul-medio); }
+    .file-list { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .file-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #EEF4FF; border-radius: 6px; font-size: 12px; color: var(--azul); }
+    .file-item svg { width: 13px; height: 13px; }
+    .file-remove { margin-left: auto; background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; }
+    .file-remove:hover { color: var(--rojo); }
+    .file-remove svg { width: 13px; height: 13px; }
+    .ayuda-card { border-radius: 8px; padding: 13px 15px; margin-bottom: 10px; }
+    .ayuda-card:last-child { margin-bottom: 0; }
+    .ayuda-card h4 { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+    .ayuda-card p { font-size: 13px; line-height: 1.6; }
+    .ayuda-card.verde { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .ayuda-card.verde h4 { color: #065f46; }
+    .ayuda-card.azul { background: #EEF4FF; border: 1px solid #BFDBFE; }
+    .ayuda-card.azul h4 { color: var(--azul-medio); }
+    .ayuda-card.amber { background: #FFF8E1; border: 1px solid var(--naranja); }
+    .ayuda-card.amber h4 { color: #7a5200; }
+    .ayuda-card.rojo { background: #FEF2F2; border: 1px solid #FECACA; }
+    .ayuda-card.rojo h4 { color: #991b1b; }
+    .ayuda-card p { color: #374151; }
+
+    /* ── TOAST ── */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--negro); color: var(--blanco); padding: 14px 20px; border-radius: 10px; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transform: translateY(80px); opacity: 0; transition: all 0.3s ease; z-index: 2000; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast svg { width: 18px; height: 18px; color: var(--verde); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gris-medio); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="navbar-logo"><i data-lucide="scale" style="width:20px;height:20px;color:#063853;"></i></div>
+    <div class="navbar-title">EED — Expediente Electrónico Disciplinario<span>Procuraduría General de la Nación · Portal Sujetos Procesales</span></div>
+  </div>
+  <div class="navbar-right">
+    <button class="nav-icon-btn" title="Notificaciones" aria-label="Notificaciones — 2 nuevas">
+      <i data-lucide="bell"></i><span class="notif-dot"></span>
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="text-align:right;">
+        <div class="navbar-userinfo"><div class="name">Carlos Herrera Pinzón</div></div>
+        <div class="navbar-userinfo"><div class="role">Disciplinado · EXP-2026-00847</div></div>
+      </div>
+      <div class="navbar-avatar">CH</div>
+    </div>
+    <button class="btn-salir" onclick="alert('Sesión cerrada')"><i data-lucide="log-out"></i>Salir</button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="#">Inicio</a><span class="sep">›</span>
+  <span>EXP-2026-00847</span><span class="sep">›</span>
+  <span class="current">Mi expediente</span>
+</div>
+
+<!-- BANNER TÉRMINO ACTIVO -->
+<div class="alerta-termino" role="alert">
+  <i data-lucide="clock" style="width:16px;height:16px;color:#FFC300;flex-shrink:0;"></i>
+  <div class="alerta-termino-text"><strong>Término activo — 8 días hábiles restantes</strong> para presentar descargos · Pliego notificado el 5 de mayo de 2026 · Art. 225B CGD</div>
+  <button class="alerta-termino-btn" onclick="openModal('descargos')"><i data-lucide="pencil"></i>Presentar descargos</button>
+</div>
+
+<!-- CABECERA EXPEDIENTE -->
+<div class="exp-header">
+  <div class="exp-id-block">
+    <div class="exp-badge">EXP-2026-00847</div>
+    <div class="exp-meta">
+      <div class="label">Disciplinado</div>
+      <div class="value">Carlos Herrera Pinzón · Inspector de Policía · Alcaldía de Zipaquirá</div>
+    </div>
+  </div>
+  <div class="exp-header-right">
+    <div class="etapa-chip"><span class="dot"></span>Juzgamiento en curso</div>
+    <div class="rol-chip">Su rol: Disciplinado</div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="main-layout">
+
+  <!-- SIDEBAR IZQUIERDO -->
+  <aside class="sidebar-left">
+    <div class="sl-title">Estado del proceso</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-dot-wrap"><div class="tl-dot done"><i data-lucide="check"></i></div><div class="timeline-line"></div></div>
+        <div class="tl-info done"><div class="tl-name">Noticia recibida</div><div class="tl-desc">12 feb 2026</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot-wrap"><div class="tl-dot done"><i data-lucide="check"></i></div><div class="timeline-line"></div></div>
+        <div class="tl-info done"><div class="tl-name">Evaluación</div><div class="tl-desc">15 feb 2026 — Apertura investigación</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot-wrap"><div class="tl-dot done"><i data-lucide="check"></i></div><div class="timeline-line"></div></div>
+        <div class="tl-info done"><div class="tl-name">Investigación</div><div class="tl-desc">Cerrada el 20 abr 2026</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot-wrap"><div class="tl-dot active"><i data-lucide="gavel"></i></div><div class="timeline-line"></div></div>
+        <div class="tl-info active"><div class="tl-name">Juzgamiento</div><div class="tl-desc">Pliego notificado 5 may 2026 · En descargos</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot-wrap"><div class="tl-dot pending"><i data-lucide="file-check"></i></div><div class="timeline-line"></div></div>
+        <div class="tl-info pending"><div class="tl-name">Fallo</div><div class="tl-desc">Pendiente</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot-wrap"><div class="tl-dot pending"><i data-lucide="building-2"></i></div></div>
+        <div class="tl-info pending"><div class="tl-name">Recursos / 2ª instancia</div><div class="tl-desc">Pendiente</div></div>
+      </div>
+    </div>
+
+    <hr class="sl-divider">
+
+    <div class="sl-title">Documentos disponibles</div>
+    <div class="doc-list">
+      <div class="doc-row" onclick="showToast('Descargando pliego de cargos...')">
+        <div class="doc-row-icon"><i data-lucide="file-text" style="width:14px;height:14px;color:#074C84;"></i></div>
+        <div class="doc-row-info"><div class="doc-row-name">Pliego de cargos</div><div class="doc-row-date">Notificado 5 may 2026</div></div>
+        <span class="dbadge nuevo">Nuevo</span>
+      </div>
+      <div class="doc-row" onclick="showToast('Descargando auto de fijación...')">
+        <div class="doc-row-icon"><i data-lucide="file-text" style="width:14px;height:14px;color:#074C84;"></i></div>
+        <div class="doc-row-info"><div class="doc-row-name">Auto fijación juzgamiento</div><div class="doc-row-date">Notificado 30 abr 2026</div></div>
+        <span class="dbadge ok">OK</span>
+      </div>
+      <div class="doc-row" onclick="showToast('Descargando auto de apertura...')">
+        <div class="doc-row-icon"><i data-lucide="file-text" style="width:14px;height:14px;color:#074C84;"></i></div>
+        <div class="doc-row-info"><div class="doc-row-name">Auto apertura investigación</div><div class="doc-row-date">Notificado 15 feb 2026</div></div>
+        <span class="dbadge ok">OK</span>
+      </div>
+      <div class="doc-row locked" title="Restringido — Art. 115 CGD">
+        <div class="doc-row-icon grey"><i data-lucide="lock" style="width:13px;height:13px;color:#949494;"></i></div>
+        <div class="doc-row-info"><div class="doc-row-name muted">Actas de pruebas</div><div class="doc-row-date">Restringido · Art. 115 CGD</div></div>
+        <span class="dbadge lock">Reserva</span>
+      </div>
+      <div class="doc-row locked" title="Restringido — Art. 115 CGD">
+        <div class="doc-row-icon grey"><i data-lucide="lock" style="width:13px;height:13px;color:#949494;"></i></div>
+        <div class="doc-row-info"><div class="doc-row-name muted">Dictamen pericial</div><div class="doc-row-date">Restringido · Art. 115 CGD</div></div>
+        <span class="dbadge lock">Reserva</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO CENTRAL -->
+  <main class="content-center">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon"><i data-lucide="clock" style="width:16px;height:16px;color:#074C84;"></i></div>
+        <h3>Término en curso — Presentación de descargos</h3>
+        <span class="card-header-sub">Art. 225B CGD</span>
+      </div>
+      <div class="card-body">
+        <div class="termino-bar">
+          <div class="termino-top">
+            <div class="termino-label"><i data-lucide="clock" style="width:14px;height:14px;color:#FFC300;"></i>Días hábiles restantes</div>
+            <div class="termino-num">8 <span>días hábiles</span></div>
+          </div>
+          <div class="prog-bg"><div class="prog-fill"></div></div>
+          <div class="termino-fechas"><span>Inicio: 5 de mayo de 2026</span><span>Vence: 19 de mayo de 2026</span></div>
+        </div>
+        <div class="contexto-box">
+          <strong>¿Qué está pasando en su proceso?</strong>
+          La Procuraduría formuló un pliego de cargos con los hechos que le imputa.
+          Usted tiene <strong>15 días hábiles desde la notificación</strong> para presentar sus descargos:
+          explicar su versión, contradecir los cargos y pedir pruebas.
+          Este es su derecho fundamental a la defensa (Art. 29 C.P. y Arts. 222-225 CGD).
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon"><i data-lucide="info" style="width:16px;height:16px;color:#074C84;"></i></div>
+        <h3>Datos del proceso</h3>
+      </div>
+      <div class="card-body">
+        <div class="data-grid">
+          <div><div class="df-label">Radicado</div><div class="df-value hl">EXP-2026-00847</div></div>
+          <div><div class="df-label">Dependencia a cargo</div><div class="df-value">Proc. Delegado Asuntos Disciplinarios</div></div>
+          <div><div class="df-label">Tipo de proceso</div><div class="df-value">Juicio ordinario · Art. 225A CGD</div></div>
+          <div><div class="df-label">Fecha de inicio</div><div class="df-value">12 de febrero de 2026</div></div>
+          <div><div class="df-label">Su defensor</div><div class="df-value">Sin asignar — <a href="#" onclick="openModal('defensor');return false;" style="color:var(--azul-medio);font-weight:600;">Designar ahora</a></div></div>
+          <div><div class="df-label">Etapa actual</div><div class="df-value hl">Juzgamiento — Descargos</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-nota">
+      <i data-lucide="lock" style="width:16px;height:16px;color:#074C84;flex-shrink:0;margin-top:2px;"></i>
+      <div>
+        <div class="info-nota-title">Reserva del proceso — Art. 115 CGD</div>
+        <div class="info-nota-text">Algunos documentos no están disponibles todavía porque el proceso está en etapa de instrucción activa. Estarán disponibles cuando se formule el pliego de cargos o se archive el expediente. La reserva es una obligación legal, no discrecional.</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SIDEBAR DERECHO -->
+  <aside class="sidebar-right">
+    <div class="sr-header">
+      <h2>Acciones disponibles</h2>
+      <p>Habilitadas según su rol y la etapa actual</p>
+    </div>
+    <div class="sr-body">
+
+      <div class="accion-row urgente" onclick="openModal('descargos')" tabindex="0">
+        <div class="accion-icon"><i data-lucide="pencil" style="width:15px;height:15px;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Presentar descargos</div>
+          <div class="accion-desc">Su versión y contradicción de cargos. 8 días hábiles.</div>
+        </div>
+        <span class="atag urgente">8 días</span>
+      </div>
+
+      <div class="accion-row" onclick="openModal('version_libre')" tabindex="0">
+        <div class="accion-icon"><i data-lucide="mic" style="width:15px;height:15px;color:#074C84;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Rendir versión libre</div>
+          <div class="accion-desc">Solicite audiencia para declarar voluntariamente.</div>
+        </div>
+        <span class="atag ok">Disponible</span>
+      </div>
+
+      <div class="accion-row" onclick="openModal('pruebas')" tabindex="0">
+        <div class="accion-icon"><i data-lucide="clipboard-list" style="width:15px;height:15px;color:#074C84;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Solicitar / aportar pruebas</div>
+          <div class="accion-desc">Pida nuevas pruebas o aporte documentos.</div>
+        </div>
+        <span class="atag ok">Disponible</span>
+      </div>
+
+      <div class="accion-row" onclick="openModal('defensor')" tabindex="0">
+        <div class="accion-icon"><i data-lucide="user-check" style="width:15px;height:15px;color:#074C84;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Designar defensor</div>
+          <div class="accion-desc">Nombre el abogado que lo representará. Art. 72 CGD.</div>
+        </div>
+        <span class="atag ok">Disponible</span>
+      </div>
+
+      <div class="accion-row" onclick="openModal('alegatos')" tabindex="0">
+        <div class="accion-icon"><i data-lucide="file-pen" style="width:15px;height:15px;color:#074C84;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Alegatos precalificatorios</div>
+          <div class="accion-desc">Argumentos finales antes de la calificación. Art. 220 CGD.</div>
+        </div>
+        <span class="atag ok">Disponible</span>
+      </div>
+
+      <div class="accion-row disabled" aria-disabled="true">
+        <div class="accion-icon"><i data-lucide="scale" style="width:15px;height:15px;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Interponer recurso</div>
+          <div class="accion-desc">Solo disponible tras notificación del fallo.</div>
+        </div>
+        <span class="atag no">Sin fallo</span>
+      </div>
+
+      <div class="accion-row disabled" aria-disabled="true">
+        <div class="accion-icon"><i data-lucide="check-circle" style="width:15px;height:15px;"></i></div>
+        <div class="accion-info">
+          <div class="accion-name">Aceptación de cargos</div>
+          <div class="accion-desc">Hasta la ejecutoria del auto de traslado para alegar.</div>
+        </div>
+        <span class="atag no">No aún</span>
+      </div>
+
+    </div>
+    <div class="sr-footer">
+      <div class="sr-nota">
+        <strong>¿Necesita orientación?</strong>
+        Consulte la guía del proceso o contacte la
+        <a href="#">Oficina de Atención Ciudadana</a> de la PGN.
+      </div>
+      <button class="btn btn-secondary btn-block" onclick="openModal('ayuda')">
+        <i data-lucide="help-circle" style="width:15px;height:15px;"></i>
+        ¿Qué significa esto?
+      </button>
+    </div>
+  </aside>
+
+</div><!-- /main-layout -->
+
+
+<!-- MODAL: DESCARGOS -->
+<div id="modal-descargos" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Presentar descargos</h3><div class="norm">Art. 225B CGD · Vence: 19 de mayo de 2026 · 8 días hábiles restantes</div></div>
+      <button class="modal-close" onclick="closeModal('descargos')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso amber"><i data-lucide="alert-triangle"></i>Una vez radicados los descargos no podrá modificarlos. Si tiene abogado, coordine con él antes de enviar.</div>
+      <div class="form-field">
+        <label class="form-label" for="tipo-descargo">Tipo de actuación <span class="req">*</span></label>
+        <select class="form-select" id="tipo-descargo"><option value="">Seleccione...</option><option>Descargos escritos</option><option>Solicitud de audiencia para descargos verbales</option><option>Descargos escritos + solicitud de pruebas</option></select>
+        <div class="field-error" id="err-tipo"><i data-lucide="alert-circle"></i> Seleccione el tipo de actuación</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="cont-descargo">Su relato y argumentos de defensa <span class="req">*</span></label>
+        <textarea class="form-textarea" id="cont-descargo" rows="6" placeholder="Explique su versión de los hechos, señale por qué no cometió la falta imputada y mencione las pruebas que lo respaldan..." oninput="updateCount('cont-descargo','cnt-desc',5000)" style="min-height:110px;"></textarea>
+        <div class="char-count" id="cnt-desc">0 / 5000 caracteres</div>
+        <div class="field-error" id="err-cont"><i data-lucide="alert-circle"></i> Escriba el contenido de sus descargos</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Documentos de soporte (opcional)</label>
+        <div class="dropzone" onclick="addFile('files-desc')" tabindex="0"><i data-lucide="upload-cloud"></i><div class="dropzone-text"><strong>Haga clic para adjuntar</strong><br>PDF, Word, imágenes · Máx. 20 MB</div></div>
+        <div class="file-list" id="files-desc"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('descargos')">Cancelar</button>
+      <button class="btn btn-accent" onclick="submitDescargos()"><i data-lucide="send"></i>Radicar descargos</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VERSIÓN LIBRE -->
+<div id="modal-version_libre" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Solicitar versión libre</h3><div class="norm">Art. 161 CGD · Declaración voluntaria</div></div>
+      <button class="modal-close" onclick="closeModal('version_libre')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso blue"><i data-lucide="info"></i>La versión libre es voluntaria. Puede estar acompañado por su defensor y no está obligado a declarar contra sí mismo.</div>
+      <div class="form-field">
+        <label class="form-label" for="mod-vl">Modalidad <span class="req">*</span></label>
+        <select class="form-select" id="mod-vl"><option value="">Seleccione...</option><option>Presencial en sede de la Procuraduría</option><option>Videoconferencia</option><option>Por escrito</option></select>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="disp-vl">Disponibilidad horaria</label>
+        <textarea class="form-textarea" id="disp-vl" rows="2" placeholder="Ej: disponible lunes y miércoles desde las 9 a.m. durante mayo de 2026..."></textarea>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="obs-vl">Observaciones (opcional)</label>
+        <textarea class="form-textarea" id="obs-vl" rows="2" placeholder="Ej: necesidad de intérprete, datos del defensor que asistirá..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('version_libre')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitModal('version_libre','Solicitud de versión libre radicada correctamente')"><i data-lucide="send"></i>Enviar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PRUEBAS -->
+<div id="modal-pruebas" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Solicitar / aportar pruebas</h3><div class="norm">Arts. 151-168 CGD</div></div>
+      <button class="modal-close" onclick="closeModal('pruebas')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso blue"><i data-lucide="info"></i>Puede pedir nuevas pruebas o aportar documentos. El funcionario decidirá sobre su admisión según conducencia, pertinencia y necesidad.</div>
+      <div class="form-field">
+        <label class="form-label" for="tipo-prueba">Tipo de prueba <span class="req">*</span></label>
+        <select class="form-select" id="tipo-prueba"><option value="">Seleccione...</option><option>Documental — aporte de documento</option><option>Testimonial — solicitud de testimonio</option><option>Pericial — solicitud de dictamen</option><option>Inspección disciplinaria</option><option>Otro medio de prueba legalmente reconocido</option></select>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="obj-prueba">¿Qué pretende demostrar? <span class="req">*</span></label>
+        <textarea class="form-textarea" id="obj-prueba" rows="3" placeholder="Explique qué hecho quiere probar y por qué es relevante para su defensa..." oninput="updateCount('obj-prueba','cnt-prueba',2000)"></textarea>
+        <div class="char-count" id="cnt-prueba">0 / 2000 caracteres</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Documento a aportar (si aplica)</label>
+        <div class="dropzone" onclick="addFile('files-prueba')" tabindex="0"><i data-lucide="file-plus"></i><div class="dropzone-text"><strong>Adjuntar documento</strong><br>PDF, Word · Máx. 20 MB</div></div>
+        <div class="file-list" id="files-prueba"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('pruebas')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitModal('pruebas','Solicitud de prueba radicada. Número: ACT-2026-04820')"><i data-lucide="send"></i>Radicar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DEFENSOR -->
+<div id="modal-defensor" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Designar defensor</h3><div class="norm">Art. 72 CGD mod. Ley 2094/2021</div></div>
+      <button class="modal-close" onclick="closeModal('defensor')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso blue"><i data-lucide="info"></i>Puede designar un abogado de confianza o solicitar uno de oficio gratuito. Su defensor tendrá acceso completo al expediente.</div>
+      <div class="form-field">
+        <label class="form-label" for="tipo-def">Tipo de defensor <span class="req">*</span></label>
+        <select class="form-select" id="tipo-def"><option value="">Seleccione...</option><option>Abogado de confianza</option><option>Defensor público (OADP)</option><option>Estudiante de consultorio jurídico</option></select>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="nombre-def">Nombre completo <span class="req">*</span></label>
+        <input class="form-input" type="text" id="nombre-def" placeholder="Ej: María Fernanda López Ríos">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="tp-def">Tarjeta profesional (si es abogado)</label>
+        <input class="form-input" type="text" id="tp-def" placeholder="Ej: 245.678">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="correo-def">Correo electrónico <span class="req">*</span></label>
+        <input class="form-input" type="email" id="correo-def" placeholder="defensor@bufete.com">
+        <div class="form-hint">Al correo registrado se enviarán las notificaciones procesales (Art. 122 CGD)</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="tel-def">Teléfono</label>
+        <input class="form-input" type="tel" id="tel-def" placeholder="+57 310 000 0000">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('defensor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitModal('defensor','Defensor designado. Recibirá acceso al expediente en 24 horas.')"><i data-lucide="user-check"></i>Designar defensor</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ALEGATOS -->
+<div id="modal-alegatos" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Alegatos precalificatorios</h3><div class="norm">Art. 220 CGD · Traslado de 10 días hábiles</div></div>
+      <button class="modal-close" onclick="closeModal('alegatos')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso blue"><i data-lucide="info"></i>Son sus argumentos finales antes de que el instructor decida si formula cargos o archiva el proceso. El término es de 10 días hábiles desde la notificación del auto de cierre.</div>
+      <div class="form-field">
+        <label class="form-label" for="cont-alegatos">Sus alegatos <span class="req">*</span></label>
+        <textarea class="form-textarea" id="cont-alegatos" rows="7" placeholder="Desarrolle sus argumentos sobre los hechos, señale la inexistencia de la conducta o las causales de exclusión de responsabilidad..." oninput="updateCount('cont-alegatos','cnt-aleg',8000)" style="min-height:120px;"></textarea>
+        <div class="char-count" id="cnt-aleg">0 / 8000 caracteres</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Documentos de soporte (opcional)</label>
+        <div class="dropzone" onclick="addFile('files-aleg')" tabindex="0"><i data-lucide="upload-cloud"></i><div class="dropzone-text"><strong>Adjuntar archivos</strong><br>PDF, Word · Máx. 20 MB</div></div>
+        <div class="file-list" id="files-aleg"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('alegatos')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitModal('alegatos','Alegatos radicados. Número: ACT-2026-04821')"><i data-lucide="send"></i>Radicar alegatos</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AYUDA -->
+<div id="modal-ayuda" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Guía del proceso — En lenguaje sencillo</h3><div class="norm">Sus derechos y qué está pasando</div></div>
+      <button class="modal-close" onclick="closeModal('ayuda')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="ayuda-card verde"><h4>¿Qué es el pliego de cargos?</h4><p>El documento en que la Procuraduría le informa qué hechos le imputa y por qué. Es como una "acusación formal" que usted tiene derecho a conocer y contradecir.</p></div>
+      <div class="ayuda-card azul"><h4>¿Qué son los descargos?</h4><p>Su respuesta escrita al pliego. Explica su versión, señala por qué no cometió la falta, pide pruebas y aporta documentos. Tiene 15 días hábiles desde la notificación.</p></div>
+      <div class="ayuda-card amber"><h4>¿Necesito un abogado?</h4><p>No es obligatorio, pero es recomendable. Si no tiene recursos, solicite un defensor de oficio gratuito usando el botón "Designar defensor".</p></div>
+      <div class="ayuda-card rojo"><h4>¿Qué pasa si no presento descargos?</h4><p>El proceso continúa. Pero perderá su oportunidad de contradecir los cargos y aportar pruebas. Ejercer este derecho le conviene.</p></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('ayuda')">Cerrar</button>
+      <button class="btn btn-primary" onclick="closeModal('ayuda');openModal('defensor')"><i data-lucide="user-check"></i>Solicitar defensor</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i data-lucide="check-circle"></i><span id="toast-msg">Acción completada</span></div>
+
+<script>
+  lucide.createIcons();
+
+  function openModal(id) {
+    const el = document.getElementById('modal-' + id);
+    if (!el) return;
+    el.classList.add('open');
+    lucide.createIcons();
+    const first = el.querySelector('select,input,textarea');
+    if (first) setTimeout(() => first.focus(), 80);
+  }
+  function closeModal(id) {
+    const el = document.getElementById('modal-' + id);
+    if (el) el.classList.remove('open');
+  }
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(o => o.classList.remove('open'));
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+  function submitModal(id, msg) { closeModal(id); showToast(msg); }
+
+  function submitDescargos() {
+    let ok = true;
+    const tipo = document.getElementById('tipo-descargo');
+    const cont = document.getElementById('cont-descargo');
+    const errT = document.getElementById('err-tipo');
+    const errC = document.getElementById('err-cont');
+    if (!tipo.value) { errT.style.display = 'flex'; tipo.style.borderColor = 'var(--rojo)'; ok = false; }
+    else { errT.style.display = 'none'; tipo.style.borderColor = ''; }
+    if (!cont.value.trim()) { errC.style.display = 'flex'; cont.style.borderColor = 'var(--rojo)'; ok = false; }
+    else { errC.style.display = 'none'; cont.style.borderColor = ''; }
+    if (!ok) return;
+    closeModal('descargos');
+    showToast('Descargos radicados. Número: ACT-2026-04817');
+  }
+
+  function updateCount(fId, cId, max) {
+    const f = document.getElementById(fId), c = document.getElementById(cId);
+    if (!f || !c) return;
+    c.textContent = f.value.length + ' / ' + max + ' caracteres';
+    c.style.color = f.value.length > max * 0.9 ? 'var(--rojo)' : 'var(--gris-medio)';
+  }
+
+  let fc = 0;
+  const fnames = ['Resolución_2025_047.pdf','Acta_posesión.pdf','Informe_técnico.docx','Contrato_2025.pdf'];
+  function addFile(listId) {
+    fc++;
+    const list = document.getElementById(listId);
+    if (!list) return;
+    const name = fnames[(fc-1) % fnames.length];
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<i data-lucide="file" style="width:13px;height:13px;"></i><span>${name}</span><button class="file-remove" onclick="this.parentElement.remove()"><i data-lucide="x" style="width:13px;height:13px;"></i></button>`;
+    list.appendChild(item);
+    lucide.createIcons();
+  }
+
+  document.querySelectorAll('.dropzone').forEach(d => {
+    d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); d.click(); } });
+  });
+  document.querySelectorAll('.accion-row:not(.disabled)').forEach(r => {
+    r.addEventListener('keydown', e => { if (e.key === 'Enter') r.click(); });
+  });
+</script>
+</body>
+</html>

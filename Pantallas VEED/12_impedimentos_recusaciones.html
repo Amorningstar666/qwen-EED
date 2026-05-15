@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impedimentos y Recusaciones — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* ALERTA SUSPENSION */
+    .alerta-suspension{background:var(--rojo);color:var(--blanco);padding:10px 24px;display:flex;align-items:center;gap:10px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:700;}
+    .alerta-suspension svg{width:16px;height:16px;flex-shrink:0;}
+    .alerta-suspension span{font-weight:400;margin-left:4px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT 3 COLUMNAS */
+    .editor-layout{display:grid;grid-template-columns:220px 1fr 300px;flex:1;height:calc(100vh - 112px);}
+
+    /* PANEL IZQUIERDO */
+    .panel-indice{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:20px 0;}
+    .indice-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;padding:0 16px 12px;}
+    .indice-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--negro);border-left:3px solid transparent;transition:all .15s;}
+    .indice-item:hover{background:#F8FAFC;color:var(--azul);}
+    .indice-item.active{border-left-color:var(--azul);background:#EBF4FA;color:var(--azul);font-weight:600;}
+    .indice-item svg{width:14px;height:14px;flex-shrink:0;color:var(--gris-medio);}
+    .indice-item.active svg{color:var(--azul);}
+    .indice-sep{height:1px;background:var(--gris-claro);margin:8px 16px;}
+    .indice-badge{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:auto;}
+    .indice-badge.warn{background:#FEF3C7;color:#92400E;}
+    .indice-badge.ok{background:#D1FAE5;color:#065F46;}
+    .indice-badge.pend{background:#DBEAFE;color:#1E40AF;}
+
+    /* EDITOR CENTRAL */
+    .editor-center{overflow-y:auto;padding:28px 36px;display:flex;flex-direction:column;gap:20px;}
+
+    /* CARDS GESTIÓN */
+    .seccion-titulo{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+    .seccion-titulo svg{width:16px;height:16px;}
+    .seccion-norma{font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);font-weight:400;text-transform:none;letter-spacing:0;margin-left:auto;}
+
+    /* CARD DE ACTUACIÓN */
+    .act-card{background:var(--blanco);border-radius:12px;box-shadow:0 2px 12px rgba(6,56,83,0.08);overflow:hidden;border:1.5px solid var(--gris-claro);transition:border-color .2s;}
+    .act-card:focus-within{border-color:var(--azul-claro);}
+    .act-card-header{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--gris-claro);}
+    .act-card-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .act-card-icon.imp{background:#FEF3C7;}
+    .act-card-icon.imp svg{color:#92400E;}
+    .act-card-icon.rec{background:#EDE9FE;}
+    .act-card-icon.rec svg{color:#5B21B6;}
+    .act-card-icon.sup{background:#ECFDF5;}
+    .act-card-icon.sup svg{color:#065F46;}
+    .act-card-icon.dec{background:#EEF4FF;}
+    .act-card-icon.dec svg{color:var(--azul-medio);}
+    .act-card-icon svg{width:18px;height:18px;}
+    .act-card-info{flex:1;}
+    .act-card-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);}
+    .act-card-sub{font-size:11px;color:var(--gris-medio);margin-top:2px;}
+    .act-card-badge{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;flex-shrink:0;}
+    .badge-pendiente{background:#FEF3C7;color:#92400E;}
+    .badge-tramite{background:#DBEAFE;color:#1E40AF;}
+    .badge-resuelta{background:#D1FAE5;color:#065F46;}
+    .badge-negada{background:#FCE7F3;color:#9D174D;}
+    .act-card-body{padding:16px 20px;}
+    .act-card-footer{padding:12px 20px;border-top:1px solid var(--gris-claro);background:#FAFBFC;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+
+    /* CAMPOS */
+    .campo-grupo{margin-bottom:16px;}
+    .campo-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;}
+    .campo-label .req{color:var(--rojo);}
+    .campo-input{width:100%;border:1.5px solid #D1D9E0;border-radius:8px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);outline:none;transition:border-color .15s;}
+    .campo-input:focus{border-color:var(--azul-claro);}
+    .campo-input.readonly{background:#F8FAFC;color:var(--gris-medio);cursor:not-allowed;}
+    .campo-textarea{width:100%;border:1.5px solid #D1D9E0;border-radius:8px;padding:10px 12px;font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);line-height:1.7;resize:vertical;min-height:90px;outline:none;transition:border-color .15s;}
+    .campo-textarea:focus{border-color:var(--azul-claro);}
+    .campo-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .campo-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+    /* SELECT */
+    .campo-select{width:100%;border:1.5px solid #D1D9E0;border-radius:8px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);outline:none;background:var(--blanco);cursor:pointer;transition:border-color .15s;}
+    .campo-select:focus{border-color:var(--azul-claro);}
+
+    /* CAUSALES CHIPS */
+    .causales-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+    .causal-chip{padding:9px 12px;border-radius:8px;border:1.5px solid #D1D9E0;background:var(--blanco);cursor:pointer;font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);transition:all .15s;line-height:1.4;user-select:none;}
+    .causal-chip:hover{border-color:var(--azul-claro);background:#F0F8FF;}
+    .causal-chip.selected{border-color:var(--azul);background:#EBF4FA;color:var(--azul);font-weight:600;}
+    .causal-chip .chip-num{display:block;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);margin-bottom:3px;text-transform:uppercase;}
+    .causal-chip.selected .chip-num{color:var(--azul-claro);}
+
+    /* LÍNEA DE TIEMPO — historial de actuaciones */
+    .timeline{display:flex;flex-direction:column;gap:0;}
+    .tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+    .tl-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:32px;width:2px;bottom:0;background:var(--gris-claro);}
+    .tl-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;z-index:1;}
+    .tl-dot svg{width:15px;height:15px;}
+    .tl-dot.imp-dot{background:#FEF3C7;border:2px solid #FDE68A;}
+    .tl-dot.imp-dot svg{color:#92400E;}
+    .tl-dot.rec-dot{background:#EDE9FE;border:2px solid #DDD6FE;}
+    .tl-dot.rec-dot svg{color:#5B21B6;}
+    .tl-dot.sup-dot{background:#FEF2F2;border:2px solid #FECACA;}
+    .tl-dot.sup-dot svg{color:var(--rojo);}
+    .tl-dot.dec-dot{background:#D1FAE5;border:2px solid #A7F3D0;}
+    .tl-dot.dec-dot svg{color:#065F46;}
+    .tl-dot.pend-dot{background:var(--gris-claro);border:2px solid #D1D9E0;}
+    .tl-dot.pend-dot svg{color:var(--gris-medio);}
+    .tl-body{flex:1;padding-top:4px;}
+    .tl-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);}
+    .tl-meta{font-size:11px;color:var(--gris-medio);margin-top:2px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .tl-meta-sep{color:#CBD5E1;}
+    .tl-card{background:#F7F9FB;border:1.5px solid var(--gris-claro);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:12px;color:var(--negro);line-height:1.6;}
+    .tl-card-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+    .tl-accion-row{display:flex;gap:8px;margin-top:8px;}
+
+    /* ESTADO CHIP */
+    .estado-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;}
+    .estado-chip.pendiente{background:#FEF3C7;color:#92400E;}
+    .estado-chip.tramite{background:#DBEAFE;color:#1E40AF;}
+    .estado-chip.resuelta{background:#D1FAE5;color:#065F46;}
+    .estado-chip.suspendida{background:#FEF2F2;color:var(--rojo);}
+    .estado-chip svg{width:10px;height:10px;}
+
+    /* SEMÁFORO TÉRMINOS */
+    .termino-widget{background:#FEF2F2;border:1.5px solid #FECACA;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+    .termino-widget.normal{background:#F0FDF4;border-color:#A7F3D0;}
+    .termino-widget.warn{background:#FEF9E7;border-color:#FDE68A;}
+    .termino-widget svg{width:20px;height:20px;flex-shrink:0;}
+    .termino-widget.critico svg{color:var(--rojo);}
+    .termino-widget.normal svg{color:#10B981;}
+    .termino-widget.warn svg{color:#D97706;}
+    .termino-info{flex:1;}
+    .termino-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+    .termino-widget.critico .termino-label{color:var(--rojo);}
+    .termino-widget.normal .termino-label{color:#065F46;}
+    .termino-widget.warn .termino-label{color:#92400E;}
+    .termino-dias{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;color:var(--negro);margin-top:2px;}
+    .termino-fecha{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+
+    /* BOTONES */
+    .btn{border:none;cursor:pointer;border-radius:8px;padding:9px 16px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
+    .btn svg{width:14px;height:14px;}
+    .btn-primary{background:var(--azul);color:var(--blanco);}
+    .btn-primary:hover{background:var(--azul-medio);}
+    .btn-secondary{background:transparent;color:var(--azul);border:1.5px solid var(--azul);}
+    .btn-secondary:hover{background:#EBF4FA;}
+    .btn-accent{background:var(--amarillo);color:var(--azul);}
+    .btn-accent:hover{background:#e6cf00;}
+    .btn-peligro{background:var(--rojo);color:var(--blanco);}
+    .btn-ghost{background:transparent;color:var(--gris-medio);border:1.5px solid #D1D9E0;}
+    .btn-ghost:hover{color:var(--azul);border-color:var(--azul);}
+    .btn-sm{padding:6px 12px;font-size:11px;}
+
+    /* ACCORDION */
+    .accordion{border:1.5px solid var(--gris-claro);border-radius:10px;overflow:hidden;background:var(--blanco);}
+    .accordion-header{padding:13px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);user-select:none;transition:background .15s;}
+    .accordion-header:hover{background:#F8FAFC;}
+    .accordion-header svg{width:14px;height:14px;transition:transform .2s;flex-shrink:0;}
+    .accordion-header svg.rotate{transform:rotate(180deg);}
+    .accordion-header .acc-badge{margin-left:auto;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:#DBEAFE;color:#1E40AF;}
+    .accordion-body{display:none;border-top:1px solid var(--gris-claro);padding:16px 18px;}
+    .accordion-body.open{display:block;}
+
+    /* PANEL DERECHO */
+    .panel-tools{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;display:flex;flex-direction:column;}
+    .tools-section{border-bottom:1px solid var(--gris-claro);}
+    .tools-section-header{padding:12px 16px;display:flex;align-items:center;gap:8px;}
+    .tools-section-header h4{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex:1;}
+    .tools-section-header svg{width:14px;height:14px;color:var(--azul-medio);}
+    .tools-section-body{padding:12px 16px;}
+
+    /* EXP REF */
+    .exp-ref-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+    .exp-ref-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;}
+    .exp-ref-value{font-size:12px;color:var(--negro);text-align:right;max-width:60%;}
+
+    /* FLUJO DE DECISIÓN */
+    .flujo-steps{display:flex;flex-direction:column;gap:0;}
+    .flujo-step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;position:relative;}
+    .flujo-step:not(:last-child)::after{content:'';position:absolute;left:7px;top:22px;width:2px;height:calc(100% - 4px);background:var(--gris-claro);z-index:0;}
+    .fstep-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;z-index:1;}
+    .fstep-dot.active{background:var(--amarillo);box-shadow:0 0 0 3px rgba(255,230,1,0.3);}
+    .fstep-dot.done{background:#10B981;}
+    .fstep-dot.pending{background:var(--gris-claro);border:2px solid #CBD5E1;}
+    .fstep-dot.bloq{background:var(--rojo);}
+    .fstep-name{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);}
+    .fstep-actor{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,56,83,0.5);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--blanco);border-radius:16px;width:560px;max-width:95vw;box-shadow:0 24px 60px rgba(6,56,83,0.25);animation:slideIn .2s ease;overflow:hidden;}
+    @keyframes slideIn{from{transform:translateY(-16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    .modal-header{background:var(--azul);padding:18px 24px;}
+    .modal-header h3{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--blanco);display:flex;align-items:center;gap:8px;}
+    .modal-header h3 svg{width:18px;height:18px;color:var(--amarillo);}
+    .modal-body{padding:24px;max-height:70vh;overflow-y:auto;}
+    .modal-aviso{border-radius:8px;padding:12px 14px;font-size:12px;margin-bottom:16px;display:flex;gap:8px;line-height:1.5;}
+    .modal-aviso svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;}
+    .modal-aviso.info{background:#EEF4FF;color:var(--azul-medio);}
+    .modal-aviso.warn{background:#FEF9E7;color:#92400E;}
+    .modal-aviso.danger{background:#FEF2F2;color:var(--rojo);}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:10px;justify-content:flex-end;}
+
+    /* RESUMEN CONSECUENCIAS */
+    .consecuencias-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+    .consecuencia-item{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--negro);line-height:1.5;}
+    .consecuencia-item svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;color:var(--rojo);}
+
+    /* TABS */
+    .tabs{display:flex;border-bottom:2px solid var(--gris-claro);margin-bottom:20px;}
+    .tab{padding:10px 18px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--gris-medio);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;gap:7px;}
+    .tab:hover{color:var(--azul);}
+    .tab.active{color:var(--azul);border-bottom-color:var(--azul);}
+    .tab svg{width:14px;height:14px;}
+    .tab-count{font-size:10px;padding:1px 6px;border-radius:999px;font-weight:700;}
+    .tab.active .tab-count{background:var(--azul);color:var(--blanco);}
+    .tab:not(.active) .tab-count{background:var(--gris-claro);color:var(--gris-medio);}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:var(--blanco);padding:12px 18px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.18);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:2000;max-width:340px;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast svg{width:16px;height:16px;color:var(--verde);}
+
+    /* NOTA NORMATIVA */
+    .nota-norm{background:#EEF4FF;border-left:3px solid var(--azul-claro);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:var(--azul-medio);line-height:1.6;margin-bottom:14px;}
+    .nota-norm strong{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;}
+
+    /* ACEPTAR/RECHAZAR RECUSACIÓN */
+    .dec-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+    .dec-opt{padding:12px 14px;border-radius:10px;border:1.5px solid;cursor:pointer;transition:all .15s;text-align:left;background:var(--blanco);}
+    .dec-opt-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;display:block;margin-bottom:3px;}
+    .dec-opt-sub{font-size:11px;line-height:1.4;}
+    .dec-opt.acepta{border-color:#BBF7D0;background:#F0FDF4;}
+    .dec-opt.acepta .dec-opt-label{color:#065F46;}
+    .dec-opt.acepta .dec-opt-sub{color:#10B981;}
+    .dec-opt.acepta:hover{background:#DCFCE7;}
+    .dec-opt.rechaza{border-color:#FECACA;background:#FEF2F2;}
+    .dec-opt.rechaza .dec-opt-label{color:#991B1B;}
+    .dec-opt.rechaza .dec-opt-sub{color:#DC2626;}
+    .dec-opt.rechaza:hover{background:#FEE2E2;}
+
+    /* PROYECTOR DE AUTO */
+    .auto-proyector{background:var(--blanco);border:2px solid var(--azul);border-radius:12px;overflow:hidden;margin-top:16px;}
+    .auto-proyector-header{background:var(--azul);padding:12px 18px;display:flex;align-items:center;gap:10px;}
+    .auto-proyector-header svg{width:16px;height:16px;color:var(--amarillo);}
+    .auto-proyector-header h5{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--blanco);flex:1;}
+    .auto-proyector-header .auto-num-badge{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;background:var(--amarillo);color:var(--azul);padding:3px 10px;border-radius:999px;}
+    .auto-proyector-body{padding:20px 24px;}
+    .auto-doc-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:2px solid var(--azul);margin-bottom:18px;}
+    .auto-doc-logo{display:flex;align-items:center;gap:10px;}
+    .auto-doc-logo-box{width:32px;height:32px;background:var(--amarillo);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+    .auto-doc-logo-box svg{width:18px;height:18px;color:var(--azul);}
+    .auto-doc-entidad{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);line-height:1.4;}
+    .auto-doc-entidad span{display:block;font-size:10px;font-weight:400;color:var(--gris-medio);}
+    .auto-doc-chip{background:var(--amarillo);color:var(--azul);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;padding:4px 14px;border-radius:6px;letter-spacing:.4px;}
+    .auto-campo-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+    .auto-campo{margin-bottom:12px;}
+    .auto-campo-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
+    .auto-campo-input{width:100%;border:none;outline:none;border-bottom:1.5px dashed #CBD5E1;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);background:transparent;padding:3px 0;transition:border-color .15s;}
+    .auto-campo-input:focus{border-bottom-color:var(--azul-claro);}
+    .auto-resuelve-header{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;color:var(--azul);text-align:center;letter-spacing:2px;padding:8px;border-top:2px solid var(--azul);border-bottom:2px solid var(--azul);margin:16px 0 14px;}
+    .auto-art{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start;}
+    .auto-art-num{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);flex-shrink:0;padding-top:2px;min-width:28px;}
+    .auto-art-txt{font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);line-height:1.7;flex:1;border:none;outline:none;background:transparent;resize:none;width:100%;border-bottom:1px dashed transparent;transition:border-color .15s;}
+    .auto-art-txt:focus{border-bottom-color:#CBD5E1;background:#F8FBFF;}
+    .auto-cumplase{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;letter-spacing:3px;text-align:center;margin:18px 0 24px;color:var(--negro);}
+    .auto-firma{margin-top:8px;}
+    .auto-firma-linea{width:220px;height:1px;background:var(--negro);margin-bottom:5px;}
+    .auto-firma-nombre{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);width:100%;text-transform:uppercase;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;}
+    .auto-firma-cargo{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:11px;color:var(--negro);width:100%;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;margin-top:4px;}
+    .auto-proyector-footer{padding:12px 20px;border-top:1px solid var(--gris-claro);background:#F8FAFC;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .auto-proyector-footer .autosave-indicator{font-size:11px;color:var(--gris-medio);display:flex;align-items:center;gap:5px;}
+
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:10px;}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="back-btn" aria-label="Volver al expediente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="navbar-title">
+      Impedimentos y Recusaciones — EXP-2026-00487
+      <span>Art. 104–108 CGD · Términos suspendidos</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="autosave-indicator">
+      <span class="autosave-dot"></span>
+      Guardado automáticamente
+    </div>
+    <select class="rol-select" id="rol-select" onchange="cambiarRol(this.value)">
+      <option value="instructor">Rol: Instructor</option>
+      <option value="superior">Rol: Superior Jerárquico</option>
+      <option value="secretario">Rol: Secretario</option>
+    </select>
+    <button class="btn-accion-principal" id="btn-accion" onclick="abrirModalImpedimento()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="label-accion">Declarar impedimento</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ALERTA SUSPENSIÓN ACTIVA -->
+<div class="alerta-suspension" role="alert" aria-live="assertive" id="banner-suspension">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  TÉRMINOS SUSPENDIDOS — Recusación pendiente de resolución por el Superior Jerárquico
+  <span>Suspendido desde: 08-May-2026 · Art. 105 CGD</span>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="#">Inicio</a><span class="sep">›</span>
+  <a href="#">Mi bandeja</a><span class="sep">›</span>
+  <a href="#">EXP-2026-00487</a><span class="sep">›</span>
+  <span class="current">Impedimentos y Recusaciones</span>
+</div>
+
+<div class="editor-layout">
+
+  <!-- PANEL IZQUIERDO — ÍNDICE / FILTRO -->
+  <nav class="panel-indice" aria-label="Gestión de impedimentos y recusaciones">
+    <div class="indice-title">Actuaciones</div>
+
+    <div class="indice-item active" onclick="mostrarTab('tab-activos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Activas
+      <span class="indice-badge warn">2</span>
+    </div>
+    <div class="indice-item" onclick="mostrarTab('tab-historial',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h6l3 3 3-3h6v18H3z"/></svg>
+      Historial
+      <span class="indice-badge ok">3</span>
+    </div>
+    <div class="indice-item" onclick="mostrarTab('tab-nuevo',this)" id="item-nuevo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Nueva actuación
+    </div>
+
+    <div class="indice-sep"></div>
+    <div class="indice-title" style="padding-top:4px;">Por tipo</div>
+
+    <div class="indice-item" onclick="filtrarTipo('impedimento')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Impedimentos
+      <span class="indice-badge pend">1</span>
+    </div>
+    <div class="indice-item" onclick="filtrarTipo('recusacion')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Recusaciones
+      <span class="indice-badge warn">1</span>
+    </div>
+
+    <div class="indice-sep"></div>
+    <div class="indice-title" style="padding-top:4px;">Normativa</div>
+    <div class="indice-item" style="color:var(--gris-medio);cursor:default;font-size:11px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      Art. 104–108 CGD
+    </div>
+    <div class="indice-item" style="color:var(--gris-medio);cursor:default;font-size:11px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Término: 3 días (Imp.) / 2 días (Rec.)
+    </div>
+  </nav>
+
+  <!-- EDITOR CENTRAL -->
+  <main class="editor-center" id="editor-scroll">
+
+    <!-- TABS -->
+    <div class="tabs" role="tablist">
+      <div class="tab active" id="tab-btn-activos" role="tab" aria-selected="true" onclick="activarTab('activos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Actuaciones activas
+        <span class="tab-count">2</span>
+      </div>
+      <div class="tab" id="tab-btn-historial" role="tab" aria-selected="false" onclick="activarTab('historial')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h6l3 3 3-3h6v18H3z"/></svg>
+        Historial
+        <span class="tab-count">3</span>
+      </div>
+      <div class="tab" id="tab-btn-nuevo" role="tab" aria-selected="false" onclick="activarTab('nuevo')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Nueva actuación
+        <span class="tab-count">+</span>
+      </div>
+    </div>
+
+    <!-- TAB: ACTIVAS -->
+    <div class="tab-panel active" id="panel-activos">
+
+      <!-- Recusación pendiente -->
+      <div class="act-card" style="border-color:#FECACA;">
+        <div class="act-card-header">
+          <div class="act-card-icon rec">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          </div>
+          <div class="act-card-info">
+            <div class="act-card-titulo">Recusación — DR-002-2026</div>
+            <div class="act-card-sub">Formulada por: Carlos Andrés Moreno Ríos (Disciplinado) · 08-May-2026</div>
+          </div>
+          <span class="estado-chip suspendida">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Terminos suspendidos
+          </span>
+        </div>
+        <div class="act-card-body">
+          <div class="nota-norm">
+            <strong>Art. 106 CGD</strong> — El funcionario recusado tiene 2 días hábiles para manifestar si acepta o no la causal. Vence: <strong>12-May-2026</strong>. Si acepta, el expediente pasa al superior para determinar quién continúa. Si no acepta, continúa el funcionario original.
+          </div>
+          <div class="campo-row">
+            <div class="campo-grupo">
+              <label class="campo-label">Causal invocada</label>
+              <div class="campo-input readonly" style="border:none;background:#F8FAFC;display:flex;align-items:center;">Causal 6 — Amistad íntima o enemistad grave (Art. 104 num. 6 CGD)</div>
+            </div>
+            <div class="campo-grupo">
+              <label class="campo-label">Funcionario recusado</label>
+              <div class="campo-input readonly" style="border:none;background:#F8FAFC;">Instr. Pedro Suárez Villamil — Dependencia: OCID Veeduría</div>
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label">Fundamento de la recusación (texto del sujeto procesal)</label>
+            <div class="campo-textarea readonly" style="background:#F8FAFC;min-height:70px;display:block;padding:10px 12px;border-radius:8px;border:1.5px solid #D1D9E0;font-family:'Crimson Pro',serif;font-size:15px;line-height:1.7;color:var(--gris-medio);">
+              El suscrito manifiesta que existe enemistad grave con el Instructor Pedro Suárez, quien publicó en redes sociales comentarios en contra del recusante durante el ejercicio de sus funciones el pasado año.
+            </div>
+          </div>
+
+          <!-- Decisión del recusado (rol instructor) -->
+          <div id="panel-decision-recusado">
+            <div class="campo-label" style="margin-bottom:8px;">RESPUESTA DEL FUNCIONARIO RECUSADO <span class="req">*</span> — Plazo: 2 días hábiles (Art. 106 CGD)</div>
+            <div class="termino-widget warn" style="margin-bottom:12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <div class="termino-info">
+                <div class="termino-label">Plazo para responder</div>
+                <div class="termino-dias">2 días hábiles</div>
+                <div class="termino-fecha">Vence: 12-May-2026 (martes)</div>
+              </div>
+            </div>
+            <div class="dec-opts">
+              <button class="dec-opt acepta" onclick="selDecision('acepta',this)">
+                <span class="dec-opt-label">Acepto la causal</span>
+                <span class="dec-opt-sub">El expediente pasa al superior para reasignar (Art. 106 CGD)</span>
+              </button>
+              <button class="dec-opt rechaza" onclick="selDecision('rechaza',this)">
+                <span class="dec-opt-label">No acepto la causal</span>
+                <span class="dec-opt-sub">Continúo conociendo. El superior puede revisar.</span>
+              </button>
+            </div>
+            <div id="motivo-dec" style="display:none;margin-top:12px;">
+              <label class="campo-label" for="txt-motivo-dec">Argumento de la decisión <span class="req">*</span></label>
+              <textarea class="campo-textarea" id="txt-motivo-dec" placeholder="Exponga las razones por las cuales acepta o rechaza la causal invocada..." rows="3"></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+              <button class="btn btn-accent" id="btn-enviar-dec" style="display:none;" onclick="mostrarAutoRecusacion()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Proyectar auto de respuesta
+              </button>
+            </div>
+
+            <!-- PROYECTOR DE AUTO — RESPUESTA A RECUSACIÓN -->
+            <div class="auto-proyector" id="auto-recusacion" style="display:none;">
+              <div class="auto-proyector-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <h5>Auto de Sustanciacion — Pronunciamiento sobre Recusacion</h5>
+                <span class="auto-num-badge">AUTO-2026-</span>
+              </div>
+              <div class="auto-proyector-body">
+                <div class="auto-doc-header">
+                  <div class="auto-doc-logo">
+                    <div class="auto-doc-logo-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="auto-doc-entidad">PROCURADURIA GENERAL DE LA NACION<span>Oficina de Control Interno Disciplinario — Veeduria</span></div>
+                  </div>
+                  <div class="auto-doc-chip">AUTO DE SUSTANCIACION</div>
+                </div>
+
+                <div class="auto-campo-row">
+                  <div class="auto-campo">
+                    <span class="auto-campo-label">Numero de auto</span>
+                    <input class="auto-campo-input" value="AUTO-2026-" placeholder="Asignado al firmar">
+                  </div>
+                  <div class="auto-campo">
+                    <span class="auto-campo-label">Expediente</span>
+                    <input class="auto-campo-input" value="EXP-2026-00487" readonly style="color:var(--gris-medio);">
+                  </div>
+                  <div class="auto-campo">
+                    <span class="auto-campo-label">Ciudad y fecha</span>
+                    <input class="auto-campo-input" value="Bogota D.C., 14 de mayo de 2026">
+                  </div>
+                  <div class="auto-campo">
+                    <span class="auto-campo-label">Referencia</span>
+                    <input class="auto-campo-input" value="Recusacion DR-002-2026 — Art. 106 CGD">
+                  </div>
+                </div>
+
+                <div class="auto-campo">
+                  <span class="auto-campo-label">Asunto</span>
+                  <textarea class="auto-art-txt" rows="2" style="width:100%;border:1px dashed #CBD5E1;border-radius:6px;padding:6px 8px;">Pronunciamiento del funcionario recusado respecto de la causal de recusacion formulada por el sujeto procesal Carlos Andres Moreno Rios, en el marco del expediente disciplinario EXP-2026-00487.</textarea>
+                </div>
+
+                <div class="auto-resuelve-header">RESUELVE</div>
+
+                <div class="auto-art">
+                  <span class="auto-art-num">ART. 1.</span>
+                  <textarea class="auto-art-txt" rows="3" id="art1-rec">NO ACEPTAR la causal de recusacion invocada por Carlos Andres Moreno Rios, toda vez que no se acreditan los supuestos facticos y juridicos del numeral 6 del articulo 104 de la Ley 1952 de 2019, por las razones expuestas en la parte motiva de la presente providencia.</textarea>
+                </div>
+                <div class="auto-art">
+                  <span class="auto-art-num">ART. 2.</span>
+                  <textarea class="auto-art-txt" rows="2">REMITIR el expediente al Superior Jerarquico junto con el presente pronunciamiento, para los efectos del articulo 106 del Codigo General Disciplinario.</textarea>
+                </div>
+                <div class="auto-art">
+                  <span class="auto-art-num">ART. 3.</span>
+                  <textarea class="auto-art-txt" rows="2">MANTENER la suspension de terminos del expediente hasta tanto el Superior Jerarquico profiera la decision correspondiente (Art. 105 CGD).</textarea>
+                </div>
+
+                <div class="auto-cumplase">CUMPLASE</div>
+
+                <div class="auto-firma">
+                  <div class="auto-firma-linea"></div>
+                  <input class="auto-firma-nombre" value="PEDRO SUAREZ VILLAMIL" placeholder="Nombre del funcionario">
+                  <input class="auto-firma-cargo" value="Instructor — Oficina de Control Interno Disciplinario" placeholder="Cargo">
+                </div>
+              </div>
+              <div class="auto-proyector-footer">
+                <div class="autosave-indicator">
+                  <span class="autosave-dot"></span>
+                  Borrador guardado automaticamente
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn btn-ghost btn-sm" onclick="showToast('Borrador descargado como PDF')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Descargar borrador
+                  </button>
+                  <button class="btn btn-accent" onclick="abrirModalConfirmacion('recusacion')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Enviar a revision
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="act-card-footer">
+          <div style="font-size:11px;color:var(--gris-medio);">Registro: DR-002-2026 · Recibida: 08-May-2026 14:23</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              Ver escrito
+            </button>
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              Expediente relacionado
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Impedimento en trámite ante el superior -->
+      <div class="act-card" style="border-color:#BFDBFE;margin-top:0;">
+        <div class="act-card-header">
+          <div class="act-card-icon imp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="act-card-info">
+            <div class="act-card-titulo">Impedimento — IMP-001-2026</div>
+            <div class="act-card-sub">Declarado por: Instr. Pedro Suárez Villamil · 02-May-2026 · Remitido al superior</div>
+          </div>
+          <span class="estado-chip tramite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 6 12 12 16 14"/></svg>
+            En trámite — Superior
+          </span>
+        </div>
+        <div class="act-card-body">
+          <div class="nota-norm">
+            <strong>Art. 105 CGD</strong> — El superior debe decidir dentro de 3 días hábiles si acepta o rechaza el impedimento. Vence: <strong>07-May-2026</strong>.
+          </div>
+
+          <!-- Vista del superior: aún pendiente de decidir -->
+          <div id="panel-superior-imp" style="display:block;">
+            <div class="termino-widget critico" style="margin-bottom:14px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div class="termino-info">
+                <div class="termino-label">Plazo del superior vencido</div>
+                <div class="termino-dias">0 días restantes</div>
+                <div class="termino-fecha">Debía decidirse: 07-May-2026 · Art. 105 CGD</div>
+              </div>
+            </div>
+            <div class="campo-row">
+              <div class="campo-grupo">
+                <label class="campo-label">Causal declarada</label>
+                <div style="padding:9px 12px;background:#F8FAFC;border-radius:8px;border:1.5px solid #D1D9E0;font-size:13px;color:var(--gris-medio);">Causal 3 — Interés en la actuación (Art. 104 num. 3 CGD)</div>
+              </div>
+              <div class="campo-grupo">
+                <label class="campo-label">Funcionario que se declaró impedido</label>
+                <div style="padding:9px 12px;background:#F8FAFC;border-radius:8px;border:1.5px solid #D1D9E0;font-size:13px;color:var(--gris-medio);">Instr. Pedro Suárez Villamil</div>
+              </div>
+            </div>
+            <div class="campo-grupo">
+              <label class="campo-label">Fundamento del impedimento</label>
+              <div style="padding:10px 12px;background:#F8FAFC;border-radius:8px;border:1.5px solid #D1D9E0;font-family:'Crimson Pro',serif;font-size:15px;color:var(--gris-medio);line-height:1.7;">
+                El suscrito tiene interés directo en el resultado de la actuación disciplinaria por cuanto el disciplinado es su primo en segundo grado, situación que compromete su imparcialidad.
+              </div>
+            </div>
+
+            <!-- Decisión del superior (rol: superior) -->
+            <div style="background:#F0FDF4;border:1.5px solid #A7F3D0;border-radius:10px;padding:14px;margin-top:4px;">
+              <div class="campo-label" style="color:#065F46;margin-bottom:10px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                DECISIÓN DEL SUPERIOR JERÁRQUICO — Art. 105 CGD
+              </div>
+              <div class="campo-grupo">
+                <label class="campo-label" for="dec-imp">Decisión <span class="req">*</span></label>
+                <select class="campo-select" id="dec-imp" onchange="mostrarFuncionario(this.value)">
+                  <option value="">-- Seleccione la decisión --</option>
+                  <option value="acepta">Acepta el impedimento — reasignar a otro funcionario</option>
+                  <option value="niega">Niega el impedimento — continúa el mismo funcionario</option>
+                </select>
+              </div>
+              <div id="campo-nuevo-func" style="display:none;" class="campo-grupo">
+                <label class="campo-label" for="nuevo-func">Funcionario a quien se reasigna <span class="req">*</span></label>
+                <select class="campo-select" id="nuevo-func">
+                  <option value="">-- Seleccione funcionario --</option>
+                  <option>Instr. María Lucía Torres — OCID Veeduría</option>
+                  <option>Instr. Álvaro Jiménez Cano — OCID Veeduría</option>
+                  <option>Instr. Sandra Gómez Reyes — OCID Veeduría</option>
+                </select>
+              </div>
+              <div class="campo-grupo">
+                <label class="campo-label" for="txt-dec-sup">Motivación de la decisión <span class="req">*</span></label>
+                <textarea class="campo-textarea" id="txt-dec-sup" placeholder="Exponga el fundamento jurídico y fáctico de la decisión sobre el impedimento..." rows="3"></textarea>
+              </div>
+              <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+                <button class="btn btn-ghost btn-sm">Cancelar</button>
+                <button class="btn btn-accent" onclick="mostrarAutoImpedimento()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                  Proyectar auto de decision
+                </button>
+              </div>
+
+              <!-- PROYECTOR DE AUTO — DECISIÓN SUPERIOR SOBRE IMPEDIMENTO -->
+              <div class="auto-proyector" id="auto-impedimento" style="display:none;margin-top:16px;">
+                <div class="auto-proyector-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <h5>Auto de Sustanciacion — Decision sobre Impedimento</h5>
+                  <span class="auto-num-badge">AUTO-2026-</span>
+                </div>
+                <div class="auto-proyector-body">
+                  <div class="auto-doc-header">
+                    <div class="auto-doc-logo">
+                      <div class="auto-doc-logo-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                      </div>
+                      <div class="auto-doc-entidad">PROCURADURIA GENERAL DE LA NACION<span>Superior Jerarquico — Oficina de Control Interno Disciplinario</span></div>
+                    </div>
+                    <div class="auto-doc-chip">AUTO DE SUSTANCIACION</div>
+                  </div>
+
+                  <div class="auto-campo-row">
+                    <div class="auto-campo">
+                      <span class="auto-campo-label">Numero de auto</span>
+                      <input class="auto-campo-input" value="AUTO-2026-" placeholder="Asignado al firmar">
+                    </div>
+                    <div class="auto-campo">
+                      <span class="auto-campo-label">Expediente</span>
+                      <input class="auto-campo-input" value="EXP-2026-00487" readonly style="color:var(--gris-medio);">
+                    </div>
+                    <div class="auto-campo">
+                      <span class="auto-campo-label">Ciudad y fecha</span>
+                      <input class="auto-campo-input" value="Bogota D.C., 14 de mayo de 2026">
+                    </div>
+                    <div class="auto-campo">
+                      <span class="auto-campo-label">Referencia</span>
+                      <input class="auto-campo-input" value="Decision impedimento IMP-001-2026 — Art. 105 CGD">
+                    </div>
+                  </div>
+
+                  <div class="auto-campo" style="margin-bottom:14px;">
+                    <span class="auto-campo-label">Consideraciones</span>
+                    <textarea class="auto-art-txt" rows="3" style="width:100%;border:1px dashed #CBD5E1;border-radius:6px;padding:6px 8px;">Examinada la manifestacion de impedimento formulada por el Instructor Pedro Suarez Villamil el dia 02 de mayo de 2026, con fundamento en el numeral 3 del articulo 104 del Codigo General Disciplinario, y verificados los hechos que la sustentan, el Superior Jerarquico procede a resolver.</textarea>
+                  </div>
+
+                  <div class="auto-resuelve-header">RESUELVE</div>
+
+                  <div class="auto-art">
+                    <span class="auto-art-num">ART. 1.</span>
+                    <textarea class="auto-art-txt" rows="3" id="art1-imp">ACEPTAR el impedimento declarado por el Instructor Pedro Suarez Villamil, por encontrarse acreditados los supuestos de la causal prevista en el numeral 3 del articulo 104 de la Ley 1952 de 2019 — interes en la actuacion disciplinaria, conforme a lo expuesto en la parte motiva.</textarea>
+                  </div>
+                  <div class="auto-art">
+                    <span class="auto-art-num">ART. 2.</span>
+                    <textarea class="auto-art-txt" rows="2" id="art2-imp">REASIGNAR el conocimiento del expediente EXP-2026-00487 a la Instructora Maria Lucia Torres, a quien se le correra traslado del expediente para que continue con la actuacion disciplinaria en el estado en que se encuentra.</textarea>
+                  </div>
+                  <div class="auto-art">
+                    <span class="auto-art-num">ART. 3.</span>
+                    <textarea class="auto-art-txt" rows="2">REACTIVAR los terminos del expediente a partir de la notificacion de la presente providencia a los sujetos procesales, de conformidad con el articulo 105 del Codigo General Disciplinario.</textarea>
+                  </div>
+                  <div class="auto-art">
+                    <span class="auto-art-num">ART. 4.</span>
+                    <textarea class="auto-art-txt" rows="2">NOTIFICAR la presente decision a los sujetos procesales por el canal electronico autorizado (Art. 122 CGD) y comunicar al quejoso conforme al articulo 129 del mismo codigo.</textarea>
+                  </div>
+
+                  <div class="auto-cumplase">CUMPLASE</div>
+
+                  <div class="auto-firma">
+                    <div class="auto-firma-linea"></div>
+                    <input class="auto-firma-nombre" value="DRA. ANA MARIA OSPINA REYES" placeholder="Nombre del superior jerarquico">
+                    <input class="auto-firma-cargo" value="Jefe Oficina de Control Interno Disciplinario — Veeduria PGN" placeholder="Cargo">
+                  </div>
+                </div>
+                <div class="auto-proyector-footer">
+                  <div class="autosave-indicator">
+                    <span class="autosave-dot"></span>
+                    Borrador guardado automaticamente
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showToast('Borrador descargado como PDF')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Descargar borrador
+                    </button>
+                    <button class="btn btn-accent" onclick="abrirModalConfirmacion('impedimento')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                      Enviar a revision
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="act-card-footer">
+          <div style="font-size:11px;color:var(--gris-medio);">Registro: IMP-001-2026 · Declarado: 02-May-2026 09:41 · Remitido al superior: 02-May-2026</div>
+          <button class="btn btn-ghost btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+            Ver auto de impedimento
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: HISTORIAL -->
+    <div class="tab-panel" id="panel-historial">
+      <div class="seccion-titulo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 3h6l3 3 3-3h6v18H3z"/></svg>
+        Historial de actuaciones resueltas
+        <span class="seccion-norma">EXP-2026-00487</span>
+      </div>
+      <div class="timeline">
+
+        <!-- Item 1 -->
+        <div class="tl-item">
+          <div class="tl-dot dec-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="tl-body">
+            <div class="tl-titulo">Recusación resuelta — REC-003-2025</div>
+            <div class="tl-meta">
+              <span>15-Nov-2025</span><span class="tl-meta-sep">·</span>
+              <span>Superior: Dra. Ana María Ospina</span><span class="tl-meta-sep">·</span>
+              <span class="estado-chip resuelta" style="padding:2px 8px;">Resuelta</span>
+            </div>
+            <div class="tl-card">
+              <div class="tl-card-label">Decisión del superior</div>
+              Causal declarada <strong>infundada</strong>. El recusante no acreditó prueba de la amistad íntima invocada (Art. 104 num. 6 CGD). El proceso continuó con el mismo instructor.
+            </div>
+            <div class="tl-accion-row">
+              <button class="btn btn-ghost btn-sm">Ver auto</button>
+              <button class="btn btn-ghost btn-sm">Ver escrito de recusación</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="tl-item">
+          <div class="tl-dot imp-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          </div>
+          <div class="tl-body">
+            <div class="tl-titulo">Impedimento resuelto — IMP-002-2025</div>
+            <div class="tl-meta">
+              <span>03-Ago-2025</span><span class="tl-meta-sep">·</span>
+              <span>Superior: Dra. Ana María Ospina</span><span class="tl-meta-sep">·</span>
+              <span class="estado-chip resuelta" style="padding:2px 8px;">Aceptado</span>
+            </div>
+            <div class="tl-card">
+              <div class="tl-card-label">Causal aceptada</div>
+              Interés en la actuación (Art. 104 num. 3 CGD). Se reasignó al Instr. Álvaro Jiménez. Los términos se reactivaron con la notificación de la reasignación.
+            </div>
+            <div class="tl-accion-row">
+              <button class="btn btn-ghost btn-sm">Ver auto</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="tl-item">
+          <div class="tl-dot rec-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          </div>
+          <div class="tl-body">
+            <div class="tl-titulo">Recusación resuelta — REC-001-2025</div>
+            <div class="tl-meta">
+              <span>12-Mar-2025</span><span class="tl-meta-sep">·</span>
+              <span>Superior: Dr. Jorge Beltrán</span><span class="tl-meta-sep">·</span>
+              <span class="estado-chip resuelta" style="padding:2px 8px;">Resuelta</span>
+            </div>
+            <div class="tl-card">
+              <div class="tl-card-label">Causal infundada</div>
+              No se acreditaron los supuestos del Art. 104 CGD. El instructor no aceptó la causal y el superior la declaró infundada. Proceso retomado sin cambio de funcionario.
+            </div>
+            <div class="tl-accion-row">
+              <button class="btn btn-ghost btn-sm">Ver auto</button>
+              <button class="btn btn-ghost btn-sm">Ver escrito de recusación</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB: NUEVA ACTUACIÓN -->
+    <div class="tab-panel" id="panel-nuevo">
+
+      <div class="accordion" id="acc-imp">
+        <div class="accordion-header" onclick="toggleAcc('acc-imp')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--naranja);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Declarar impedimento
+          <span style="font-size:11px;font-weight:400;color:var(--gris-medio);margin-left:6px;">Art. 105 CGD — Iniciativa del funcionario</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="acc-arrow" id="arr-imp"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body" id="body-imp">
+          <div class="nota-norm">
+            <strong>Art. 105 CGD</strong> — El funcionario que se encuentre incurso en una causal se declarará impedido. La actuación se suspende y se envía al superior, quien decide dentro de los 3 días hábiles siguientes.
+          </div>
+          <div class="campo-row">
+            <div class="campo-grupo">
+              <label class="campo-label" for="func-imp">Funcionario que se declara impedido <span class="req">*</span></label>
+              <select class="campo-select" id="func-imp">
+                <option value="">-- Seleccione --</option>
+                <option selected>Instr. Pedro Suárez Villamil (usuario activo)</option>
+                <option>Juzg. Liliana Rojas Mendez</option>
+              </select>
+            </div>
+            <div class="campo-grupo">
+              <label class="campo-label" for="fecha-imp">Fecha de la declaración <span class="req">*</span></label>
+              <input type="date" class="campo-input" id="fecha-imp" value="2026-05-14">
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label">Causal invocada (Art. 104 CGD) <span class="req">*</span></label>
+            <div class="causales-grid">
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 1</span>
+                Ser parte en el proceso
+              </div>
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 2</span>
+                Haber proferido decisión en el mismo asunto en otra instancia
+              </div>
+              <div class="causal-chip selected" onclick="selCausal(this)">
+                <span class="chip-num">Num. 3</span>
+                Interés en la actuación
+              </div>
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 4</span>
+                Cónyuge o compañero permanente del investigado
+              </div>
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 5</span>
+                Parentesco hasta 4.° de consanguinidad o 2.° de afinidad
+              </div>
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 6</span>
+                Amistad íntima o enemistad grave
+              </div>
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 7</span>
+                Haber sido apoderado o denunciante en el mismo asunto
+              </div>
+              <div class="causal-chip" onclick="selCausal(this)">
+                <span class="chip-num">Num. 8</span>
+                Otra causal legal (especificar)
+              </div>
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label" for="txt-imp">Fundamento fáctico del impedimento <span class="req">*</span></label>
+            <textarea class="campo-textarea" id="txt-imp" placeholder="Describa con precisión los hechos que configuran la causal invocada..." rows="4"></textarea>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-accent" onclick="abrirModalConfirmacion('nuevo-impedimento')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar al superior jerárquico
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion" id="acc-rec" style="margin-top:0;">
+        <div class="accordion-header" onclick="toggleAcc('acc-rec')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#5B21B6;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Registrar recusación entrante
+          <span style="font-size:11px;font-weight:400;color:var(--gris-medio);margin-left:6px;">Art. 106 CGD — Formulada por sujeto procesal</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="acc-arrow" id="arr-rec"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body" id="body-rec">
+          <div class="nota-norm">
+            <strong>Art. 106 CGD</strong> — Cualquier sujeto procesal puede recusar al funcionario. El recusado cuenta con 2 días hábiles para pronunciarse. Si no acepta, continúa conociendo; si acepta, pasa al superior.
+          </div>
+          <div class="campo-row">
+            <div class="campo-grupo">
+              <label class="campo-label" for="rec-quien">Sujeto procesal que recusa <span class="req">*</span></label>
+              <select class="campo-select" id="rec-quien">
+                <option value="">-- Seleccione --</option>
+                <option>Carlos Andrés Moreno Ríos (Disciplinado)</option>
+                <option>Dr. Luis Forero Parra (Defensor)</option>
+                <option>María Fernanda Ríos (Quejosa)</option>
+              </select>
+            </div>
+            <div class="campo-grupo">
+              <label class="campo-label" for="rec-func">Funcionario recusado <span class="req">*</span></label>
+              <select class="campo-select" id="rec-func">
+                <option value="">-- Seleccione --</option>
+                <option>Instr. Pedro Suárez Villamil</option>
+                <option>Juzg. Liliana Rojas Mendez</option>
+              </select>
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label">Causal invocada (Art. 104 CGD) <span class="req">*</span></label>
+            <div class="causales-grid">
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 1</span>Ser parte en el proceso</div>
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 2</span>Haber proferido decisión en otra instancia</div>
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 3</span>Interés en la actuación</div>
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 4</span>Cónyuge o compañero permanente</div>
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 5</span>Parentesco hasta 4.° consanguinidad</div>
+              <div class="causal-chip selected" onclick="selCausal(this)"><span class="chip-num">Num. 6</span>Amistad íntima o enemistad grave</div>
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 7</span>Apoderado o denunciante en el mismo asunto</div>
+              <div class="causal-chip" onclick="selCausal(this)"><span class="chip-num">Num. 8</span>Otra causal legal (especificar)</div>
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label" for="txt-rec-esc">Resumen del escrito de recusación <span class="req">*</span></label>
+            <textarea class="campo-textarea" id="txt-rec-esc" placeholder="Registre el argumento del sujeto procesal tal como fue presentado..." rows="3"></textarea>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label" for="doc-rec">Documento de la recusación</label>
+            <div style="border:1.5px dashed #CBD5E1;border-radius:8px;padding:16px;text-align:center;cursor:pointer;" onclick="showToast('Carga de documento: función disponible en producción')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;color:var(--gris-medio);margin:0 auto 6px;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span style="font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);">Cargar escrito PDF o DOCX</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary" onclick="showToast('Recusación registrada. Términos suspendidos automáticamente. Notificación enviada al funcionario recusado.')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              Registrar recusación
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- PANEL DERECHO -->
+  <aside class="panel-tools" aria-label="Panel de referencia del expediente">
+
+    <!-- Datos del expediente -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        <h4>Expediente</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="exp-ref-row"><span class="exp-ref-label">Radicado</span><span class="exp-ref-value" style="font-weight:700;font-family:'Montserrat',sans-serif;">EXP-2026-00487</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Disciplinado</span><span class="exp-ref-value">Carlos Andrés Moreno Ríos</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Cargo</span><span class="exp-ref-value">Secretario de Hacienda — Alcaldía de Funza</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Etapa</span><span class="exp-ref-value"><span class="estado-chip tramite">Investigación disciplinaria</span></span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Instructor</span><span class="exp-ref-value">Pedro Suárez Villamil</span></div>
+        <div class="exp-ref-row"><span class="exp-ref-label">Quejoso</span><span class="exp-ref-value">Juan Pérez García (sin cédula)</span></div>
+      </div>
+    </div>
+
+    <!-- Estado de términos del expediente -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <h4>Términos del expediente</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="termino-widget critico" style="margin-bottom:10px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="termino-info">
+            <div class="termino-label">Terminos SUSPENDIDOS</div>
+            <div style="font-size:12px;color:var(--rojo);font-weight:700;margin-top:2px;">Desde: 08-May-2026</div>
+            <div class="termino-fecha">Reactivarán al resolverse la recusación</div>
+          </div>
+        </div>
+        <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--negro);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--gris-medio);">Término Investigación</span><span style="font-weight:600;">6 meses</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--gris-medio);">Inicio</span><span>15-Ene-2026</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--gris-medio);">Vence (sin susp.)</span><span>15-Jul-2026</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--gris-medio);">Días suspendidos</span><span style="color:var(--rojo);font-weight:700;">6 días hábiles</span></div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--gris-medio);line-height:1.5;">Los días en suspensión no cuentan para efectos de prescripción (Art. 33 CGD).</div>
+      </div>
+    </div>
+
+    <!-- Flujo de trámite actual -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h4>Flujo de trámite — Recusación activa</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="flujo-steps">
+          <div class="flujo-step">
+            <div class="fstep-dot done"></div>
+            <div><div class="fstep-name">Recusación radicada</div><div class="fstep-actor">Carlos A. Moreno · 08-May-2026</div></div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot active"></div>
+            <div><div class="fstep-name">Respuesta del recusado</div><div class="fstep-actor">Pedro Suárez · Plazo: 12-May-2026</div></div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending"></div>
+            <div><div class="fstep-name">Envío al superior</div><div class="fstep-actor">Si acepta la causal</div></div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending"></div>
+            <div><div class="fstep-name">Decisión del superior</div><div class="fstep-actor">3 días hábiles · Art. 105 CGD</div></div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending"></div>
+            <div><div class="fstep-name">Reactivación de términos</div><div class="fstep-actor">Automática al notificar la decisión</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Normativa quick ref -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <h4>Referencia normativa</h4>
+      </div>
+      <div class="tools-section-body" style="font-size:12px;color:var(--negro);line-height:1.7;">
+        <div style="margin-bottom:8px;"><strong style="font-family:'Montserrat',sans-serif;font-size:11px;color:var(--azul);">Art. 104 CGD</strong> — Causales de impedimento y recusación</div>
+        <div style="margin-bottom:8px;"><strong style="font-family:'Montserrat',sans-serif;font-size:11px;color:var(--azul);">Art. 105 CGD</strong> — Tramite del impedimento: 3 días hábiles para que el superior decida</div>
+        <div style="margin-bottom:8px;"><strong style="font-family:'Montserrat',sans-serif;font-size:11px;color:var(--azul);">Art. 106 CGD</strong> — Recusación: 2 días para pronunciarse el recusado</div>
+        <div style="margin-bottom:8px;"><strong style="font-family:'Montserrat',sans-serif;font-size:11px;color:var(--azul);">Art. 108 CGD</strong> — Procurador General: si no acepta, remite a la Sala de Consulta del Consejo de Estado (5 días)</div>
+        <div style="padding-top:8px;border-top:1px solid var(--gris-claro);color:var(--gris-medio);font-size:11px;">La suspensión de términos es automática desde la declaratoria. No se requiere auto expreso.</div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-overlay" id="modal-conf" role="dialog" aria-modal="true" aria-labelledby="modal-conf-titulo">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span id="modal-conf-titulo">Confirmar actuación</span>
+      </h3>
+    </div>
+    <div class="modal-body" id="modal-conf-body">
+      <!-- Contenido dinámico -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-conf')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Cancelar
+      </button>
+      <button class="btn btn-accent" id="btn-modal-confirmar" onclick="confirmarActuacion()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirmar y registrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DECLARAR IMPEDIMENTO RÁPIDO (desde botón navbar) -->
+<div class="modal-overlay" id="modal-imp-rapido" role="dialog" aria-modal="true" aria-labelledby="modal-imp-titulo">
+  <div class="modal" style="width:600px;">
+    <div class="modal-header">
+      <h3>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <span id="modal-imp-titulo">Declarar impedimento — Art. 105 CGD</span>
+      </h3>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Al confirmar, los términos de este expediente quedan suspendidos de forma inmediata y el expediente es remitido al superior para su decision en un plazo de 3 dias habiles. Esta accion queda registrada en el log de auditoria.
+      </div>
+      <div class="consecuencias-list">
+        <div class="consecuencia-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Los terminos procesales del expediente EXP-2026-00487 quedan suspendidos desde hoy.
+        </div>
+        <div class="consecuencia-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          El expediente pasa a bandeja del Superior Jerarquico para decision.
+        </div>
+        <div class="consecuencia-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Los terminos se reactivaran automaticamente cuando el superior notifique su decision.
+        </div>
+        <div class="consecuencia-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Los dias de suspension no cuentan para prescripcion (Art. 33 CGD).
+        </div>
+      </div>
+      <div class="campo-grupo">
+        <label class="campo-label" for="causal-rapida">Causal invocada (Art. 104 CGD) <span class="req">*</span></label>
+        <select class="campo-select" id="causal-rapida">
+          <option value="">-- Seleccione la causal --</option>
+          <option>Num. 1 — Ser parte en el proceso</option>
+          <option>Num. 2 — Haber proferido decision en otra instancia</option>
+          <option>Num. 3 — Interes en la actuacion</option>
+          <option>Num. 4 — Conyuge o companero permanente del investigado</option>
+          <option>Num. 5 — Parentesco hasta 4.o consanguinidad o 2.o afinidad</option>
+          <option>Num. 6 — Amistad intima o enemistad grave</option>
+          <option>Num. 7 — Apoderado o denunciante en el mismo asunto</option>
+          <option>Num. 8 — Otra causal legal (especificar abajo)</option>
+        </select>
+      </div>
+      <div class="campo-grupo">
+        <label class="campo-label" for="txt-fund-rapido">Fundamento factico <span class="req">*</span></label>
+        <textarea class="campo-textarea" id="txt-fund-rapido" placeholder="Describa los hechos que configuran la causal..." rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-imp-rapido')">Cancelar</button>
+      <button class="btn btn-accent" onclick="confirmarImpedimentoRapido()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Declarar y enviar al superior
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Accion registrada</span>
+</div>
+
+<script>
+  // TABS
+  function activarTab(id) {
+    ['activos','historial','nuevo'].forEach(t => {
+      document.getElementById('panel-' + t).classList.remove('active');
+      document.getElementById('tab-btn-' + t).classList.remove('active');
+      document.getElementById('tab-btn-' + t).setAttribute('aria-selected','false');
+    });
+    document.getElementById('panel-' + id).classList.add('active');
+    document.getElementById('tab-btn-' + id).classList.add('active');
+    document.getElementById('tab-btn-' + id).setAttribute('aria-selected','true');
+  }
+
+  function mostrarTab(id, el) {
+    // Sincronizar panel lateral con tabs
+    const map = {'tab-activos':'activos','tab-historial':'historial','tab-nuevo':'nuevo'};
+    if (map[id]) activarTab(map[id]);
+    document.querySelectorAll('.indice-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ACCORDION
+  function toggleAcc(id) {
+    const body = document.getElementById('body-' + id.replace('acc-',''));
+    const arr = document.getElementById('arr-' + id.replace('acc-',''));
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open');
+    arr.classList.toggle('rotate');
+  }
+
+  // CAUSAL CHIPS
+  function selCausal(el) {
+    const parent = el.closest('.causales-grid');
+    parent.querySelectorAll('.causal-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ROL
+  function cambiarRol(rol) {
+    const btn = document.getElementById('btn-accion');
+    const label = document.getElementById('label-accion');
+    if (rol === 'instructor') {
+      label.textContent = 'Declarar impedimento';
+      btn.onclick = abrirModalImpedimento;
+    } else if (rol === 'superior') {
+      label.textContent = 'Resolver impedimento';
+      btn.onclick = () => showToast('Seleccione una actuacion activa para resolverla');
+    } else {
+      label.textContent = 'Registrar recusacion';
+      btn.onclick = () => activarTab('nuevo');
+    }
+  }
+
+  // DECISION RECUSACIÓN
+  function selDecision(tipo, el) {
+    document.querySelectorAll('.dec-opt').forEach(d => {
+      d.style.outline = 'none';
+      d.style.boxShadow = 'none';
+    });
+    el.style.outline = '2px solid var(--azul)';
+    el.style.boxShadow = '0 0 0 4px rgba(6,56,83,0.1)';
+    document.getElementById('motivo-dec').style.display = 'block';
+    document.getElementById('btn-enviar-dec').style.display = 'flex';
+  }
+
+  // MOSTRAR CAMPO FUNCIONARIO
+  function mostrarFuncionario(val) {
+    document.getElementById('campo-nuevo-func').style.display = val === 'acepta' ? 'block' : 'none';
+  }
+
+  // MODAL CONFIRMACIÓN
+  let accionActual = '';
+  const contenidosModal = {
+    'impedimento': {
+      titulo: 'Resolver impedimento — IMP-001-2026',
+      html: `
+        <div class="modal-aviso warn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Esta decision es definitiva. Los terminos del expediente se reactivaran automaticamente al notificarse la resolucion.
+        </div>
+        <div class="consecuencias-list">
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Se generara auto de decision del superior (Art. 105 CGD) con los datos ingresados.
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Si se acepta, el expediente se reasigna al nuevo funcionario y los terminos se reanudan.
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Si se niega, el instructor original continua y los terminos se reanudan.
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Se notifica a los sujetos procesales por el canal autorizado (Art. 122 o 121 CGD).
+          </div>
+        </div>`
+    },
+    'recusacion': {
+      titulo: 'Enviar respuesta de recusacion — DR-002-2026',
+      html: `
+        <div class="modal-aviso info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          La respuesta sera remitida al Superior Jerarquico junto con el expediente. El superior tomara la decision final (Art. 106 CGD).
+        </div>
+        <div class="consecuencias-list">
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Su pronunciamiento queda registrado en el log de auditoria del expediente.
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            El expediente y la recusacion se remiten al superior de forma inmediata.
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Los terminos permanecen suspendidos hasta la decision del superior.
+          </div>
+        </div>`
+    },
+    'nuevo-impedimento': {
+      titulo: 'Declarar impedimento — Art. 105 CGD',
+      html: `
+        <div class="modal-aviso danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Esta accion suspende inmediatamente los terminos del expediente y lo remite al superior. No se puede revertir unilateralmente.
+        </div>
+        <div class="consecuencias-list">
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Terminos suspendidos desde hoy 14-May-2026 (Art. 105 CGD).
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            El expediente pasa a bandeja del Superior Jerarquico.
+          </div>
+          <div class="consecuencia-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            El superior tiene 3 dias habiles para decidir si acepta o rechaza el impedimento.
+          </div>
+        </div>`
+    }
+  };
+
+  function abrirModalConfirmacion(tipo) {
+    accionActual = tipo;
+    const cfg = contenidosModal[tipo];
+    document.getElementById('modal-conf-titulo').textContent = cfg.titulo;
+    document.getElementById('modal-conf-body').innerHTML = cfg.html;
+    document.getElementById('modal-conf').classList.add('open');
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function confirmarActuacion() {
+    cerrarModal('modal-conf');
+    const msgs = {
+      'impedimento': 'Impedimento resuelto. Terminos reactivados. Notificacion enviada a los sujetos procesales.',
+      'recusacion': 'Respuesta enviada al superior. Expediente en bandeja del Superior Jerarquico.',
+      'nuevo-impedimento': 'Impedimento declarado. Terminos suspendidos. Expediente remitido al superior.'
+    };
+    showToast(msgs[accionActual] || 'Actuacion registrada correctamente');
+  }
+
+  function abrirModalImpedimento() {
+    document.getElementById('modal-imp-rapido').classList.add('open');
+  }
+
+  function confirmarImpedimentoRapido() {
+    cerrarModal('modal-imp-rapido');
+    showToast('Impedimento declarado. Terminos suspendidos. Expediente remitido al superior jerarquico.');
+  }
+
+  function filtrarTipo(tipo) {
+    showToast('Filtro aplicado: ' + tipo + 's');
+  }
+
+  // TOAST
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  // MOSTRAR AUTO RECUSACIÓN
+  function mostrarAutoRecusacion() {
+    const auto = document.getElementById('auto-recusacion');
+    auto.style.display = auto.style.display === 'none' ? 'block' : 'none';
+    if (auto.style.display === 'block') {
+      auto.scrollIntoView({behavior:'smooth', block:'nearest'});
+      showToast('Auto proyectado. Revise y edite el contenido antes de enviar a revision.');
+    }
+  }
+
+  // MOSTRAR AUTO IMPEDIMENTO
+  function mostrarAutoImpedimento() {
+    const auto = document.getElementById('auto-impedimento');
+    auto.style.display = auto.style.display === 'none' ? 'block' : 'none';
+    if (auto.style.display === 'block') {
+      const dec = document.getElementById('dec-imp').value;
+      if (dec === 'niega') {
+        document.getElementById('art1-imp').value = 'NEGAR el impedimento declarado por el Instructor Pedro Suarez Villamil, por no encontrarse acreditados los supuestos facticos y juridicos de la causal invocada en el numeral 3 del articulo 104 de la Ley 1952 de 2019, conforme a lo expuesto en la parte motiva.';
+        document.getElementById('art2-imp').value = 'ORDENAR al Instructor Pedro Suarez Villamil continuar con el conocimiento del expediente EXP-2026-00487 y reactivar los terminos procesales a partir de la notificacion de la presente providencia.';
+      }
+      auto.scrollIntoView({behavior:'smooth', block:'nearest'});
+      showToast('Auto proyectado. Revise y edite el contenido antes de enviar a revision.');
+    }
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    }
+  });
+
+  // Click fuera cierra modal
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>

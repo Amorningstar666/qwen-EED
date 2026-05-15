@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Notificaciones y Comunicaciones | EED</title>
+    
+    <!-- Fuentes Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --pgn-blue: #063853;
+            --pgn-blue-light: #0b4d6f;
+            --pgn-yellow: #FFE601;
+            --pgn-red: #E3201B;
+            --bg-gray: #f4f6f9;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Para manejar el scroll interno */
+        }
+
+        /* Header */
+        header {
+            background-color: var(--pgn-blue);
+            color: var(--white);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-text h1 { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; }
+        .logo-text span { font-size: 0.75rem; font-weight: 300; opacity: 0.8; display: block; }
+        
+        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+        .avatar { width: 32px; height: 32px; background: var(--pgn-yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--pgn-blue); font-weight: bold; }
+
+        /* Layout Principal */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Panel Izquierdo: Listado de Pendientes */
+        .list-panel {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .panel-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .panel-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            color: var(--pgn-blue);
+            font-weight: 700;
+        }
+
+        .expediente-info {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--pgn-yellow);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            font-size: 0.85rem;
+        }
+
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .info-label { color: var(--text-light); font-weight: 500; }
+        .info-value { font-weight: 600; color: var(--text-dark); }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn.active { color: var(--pgn-blue); border-bottom-color: var(--pgn-blue); }
+        .tab-btn:hover:not(.active) { color: var(--pgn-blue); background: rgba(6, 56, 83, 0.05); border-radius: 4px 4px 0 0; }
+
+        /* Tarjetas de Gestión */
+        .task-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--pgn-blue);
+        }
+
+        .task-card.locked {
+            background: #f8f9fa;
+            opacity: 0.7;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+        .task-card.locked:hover { transform: none; box-shadow: none; border-color: var(--border-color); }
+
+        .task-info h4 { font-size: 0.95rem; color: var(--pgn-blue); margin-bottom: 0.3rem; font-weight: 600; }
+        .task-meta { font-size: 0.8rem; color: var(--text-light); display: flex; gap: 10px; align-items: center; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+        .badge-legal { background: #e3f2fd; color: #0d47a1; }
+        .badge-urgent { background: #ffebee; color: #c62828; }
+        .badge-pending { background: #fff3e0; color: #e65100; }
+
+        .task-action i { font-size: 1.2rem; color: var(--pgn-blue); }
+        .task-card.locked .task-action i { color: #ccc; }
+
+        /* Panel Derecho: Editor de Oficios (Deslizante) */
+        .editor-panel {
+            width: 0;
+            background: var(--white);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+        }
+
+        .editor-panel.open { width: 600px; }
+
+        .editor-content {
+            padding: 2rem;
+            width: 600px; /* Ancho fijo para evitar reflow */
+            opacity: 0;
+            transition: opacity 0.3s delay 0.1s;
+        }
+        .editor-panel.open .editor-content { opacity: 1; }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-light); cursor: pointer; }
+        .close-btn:hover { color: var(--pgn-red); }
+
+        /* Formulario */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem; }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: border 0.2s;
+        }
+        .form-control:focus { border-color: var(--pgn-blue); box-shadow: 0 0 0 2px rgba(6, 56, 83, 0.1); }
+        
+        textarea.form-control { resize: vertical; min-height: 150px; line-height: 1.6; }
+
+        .recipient-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem;
+        }
+        .recipient-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 0.85rem;
+        }
+        .recipient-item:last-child { border-bottom: none; }
+        .recipient-item input { margin-right: 10px; }
+
+        .file-drop {
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-drop:hover { border-color: var(--pgn-blue); background: #f8f9fa; }
+
+        .btn-primary {
+            background-color: var(--pgn-blue);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background-color: var(--pgn-blue-light); }
+
+        /* Modal Personalizado (Reemplazo de alert) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(6, 56, 83, 0.6);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .modal-box {
+            background: white; padding: 2rem; border-radius: 8px;
+            width: 450px; box-shadow: var(--shadow-lg);
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-icon { font-size: 3rem; color: var(--pgn-blue); margin-bottom: 1rem; }
+        .modal-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .modal-text { color: var(--text-light); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5; }
+        
+        .modal-actions { display: flex; gap: 1rem; justify-content: center; }
+        .btn-modal { padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: 500; cursor: pointer; border: none; font-family: 'Poppins', sans-serif; }
+        .btn-cancel { background: #e9ecef; color: var(--text-dark); }
+        .btn-confirm { background: var(--pgn-blue); color: white; }
+
+        /* Utilidades */
+        .hidden { display: none; }
+        .text-small { font-size: 0.75rem; color: var(--text-light); margin-top: 0.2rem; }
+        .alert-box {
+            background: #fff3cd; color: #856404; padding: 1rem; border-radius: 4px;
+            font-size: 0.85rem; margin-bottom: 1.5rem; border-left: 4px solid #ffc107;
+            display: flex; gap: 10px; align-items: start;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <i class="fas fa-balance-scale fa-lg" style="color: var(--pgn-yellow);"></i>
+            <div class="logo-text">
+                <h1>EED - Expediente Electrónico Disciplinario</h1>
+                <span>Procuraduría General de la Nación</span>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="avatar">JP</div>
+            <div>
+                <div style="font-weight: 600;">Juan Pérez</div>
+                <div style="font-size: 0.75rem; opacity: 0.8;">Funcionario de Instrucción</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- PANEL IZQUIERDO: LISTADO Y GESTIÓN -->
+        <div class="list-panel">
+            
+            <div class="panel-header">
+                <h2 class="panel-title">Centro de Notificaciones y Comunicaciones</h2>
+            </div>
+
+            <div class="expediente-info">
+                <div class="info-row">
+                    <span class="info-label">Radicado:</span>
+                    <span class="info-value">2023-001234</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Etapa Actual:</span>
+                    <span class="info-value" style="color: var(--pgn-blue);">Investigación Disciplinaria</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Reserva Procesal:</span>
+                    <span class="info-value" style="color: var(--pgn-red);"><i class="fas fa-lock"></i> Activa (Art. 115 CGD)</span>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('procesales')">Sujetos Procesales</button>
+                <button class="tab-btn" onclick="switchTab('quejoso')">Quejoso / Terceros</button>
+                <button class="tab-btn" onclick="switchTab('externas')">Solicitudes Externas</button>
+            </div>
+
+            <!-- CONTENIDO: SUJETOS PROCESALES -->
+            <div id="content-procesales" class="tab-content">
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-light);">
+                    Gestione las notificaciones personales electrónicas obligatorias. Al firmar el acto, el sistema genera automáticamente el envío.
+                </p>
+
+                <div class="task-card" onclick="openEditor('Auto de Apertura', 'procesal')">
+                    <div class="task-info">
+                        <h4>Notificar Auto de Apertura de Investigación</h4>
+                        <div class="task-meta">
+                            <span class="badge badge-pending">Pendiente</span>
+                            <span><i class="far fa-clock"></i> Vence: 2 días</span>
+                        </div>
+                        <div class="text-small">Destinatarios: Disciplinado, Defensor, Ministerio Público</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="task-card" onclick="openEditor('Decreto de Pruebas', 'procesal')">
+                    <div class="task-info">
+                        <h4>Notificar Decreto de Pruebas</h4>
+                        <div class="task-meta">
+                            <span class="badge badge-legal">Automático</span>
+                        </div>
+                        <div class="text-small">Se genera al firmar el auto decretorio</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+            <!-- CONTENIDO: QUEJOSO (CON BLOQUEOS) -->
+            <div id="content-quejoso" class="tab-content hidden">
+                <div class="alert-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Restricción Legal Vigente:</strong> Durante la etapa de Investigación, rige la reserva procesal (Art. 115 CGD). 
+                        Solo se permiten comunicaciones en casos taxativos (Inhibitorio, Competencia, Poder Preferente).
+                    </div>
+                </div>
+
+                <div class="task-card locked">
+                    <div class="task-info">
+                        <h4>Informe de Avance de Investigación</h4>
+                        <div class="task-meta"><span class="badge" style="background:#eee; color:#666;">Bloqueado</span></div>
+                        <div class="text-small">No permitido hasta fallo o archivo</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-lock"></i></div>
+                </div>
+
+                <div class="task-card" onclick="openEditor('Auto Inhibitorio', 'quejoso')">
+                    <div class="task-info">
+                        <h4>Comunicar Auto Inhibitorio</h4>
+                        <div class="task-meta"><span class="badge badge-legal">Excepción Legal</span></div>
+                        <div class="text-small">Art. 209 CGD. Obligatorio si se inhibe</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="task-card" onclick="openEditor('Remisión por Competencia', 'quejoso')">
+                    <div class="task-info">
+                        <h4>Informar Remisión por Competencia</h4>
+                        <div class="task-meta"><span class="badge badge-legal">Excepción Legal</span></div>
+                        <div class="text-small">Art. 76 CGD. Traslado a entidad competente</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+            <!-- CONTENIDO: SOLICITUDES EXTERNAS -->
+            <div id="content-externas" class="tab-content hidden">
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-light);">
+                    Bandeja de entrada para Tutelas, Derechos de Petición y solicitudes de copias.
+                </p>
+
+                <div class="task-card" onclick="openEditor('Respuesta a Tutela', 'externo')">
+                    <div class="task-info">
+                        <h4>Atender Acción de Tutela T-12345</h4>
+                        <div class="task-meta">
+                            <span class="badge badge-urgent">Urgente</span>
+                            <span><i class="far fa-clock"></i> Vence: 24 horas</span>
+                        </div>
+                        <div class="text-small">Solicitante: Juan Ciudadano. Requiere informe de actuaciones.</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="task-card" onclick="openEditor('Entrega de Copias', 'externo')">
+                    <div class="task-info">
+                        <h4>Solicitud de Copias del Expediente</h4>
+                        <div class="task-meta">
+                            <span class="badge badge-pending">Pendiente</span>
+                        </div>
+                        <div class="text-small">Solicitante: Dr. Rodríguez (Apoderado). Etapa: Juzgamiento.</div>
+                    </div>
+                    <div class="task-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PANEL DERECHO: EDITOR DE OFICIOS -->
+        <div class="editor-panel" id="editorPanel">
+            <div class="editor-content">
+                <div class="editor-header">
+                    <h3 style="font-family: 'Montserrat'; color: var(--pgn-blue);" id="editorTitle">Nuevo Oficio</h3>
+                    <button class="close-btn" onclick="closeEditor()">&times;</button>
+                </div>
+
+                <form id="commsForm" onsubmit="handleSend(event)">
+                    <!-- Tipo de Libramiento -->
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Comunicación</label>
+                        <select class="form-control" id="commType">
+                            <option>Oficio de Notificación Personal</option>
+                            <option>Comunicación Administrativa</option>
+                            <option>Respuesta a Tutela/Petición</option>
+                            <option>Certificación</option>
+                        </select>
+                    </div>
+
+                    <!-- Destinatarios -->
+                    <div class="form-group">
+                        <label class="form-label">Destinatarios</label>
+                        <div class="recipient-list" id="recipientList">
+                            <!-- Se llena dinámicamente con JS -->
+                            <div class="recipient-item">
+                                <input type="checkbox" checked disabled>
+                                <label>Disciplinado (correo@ejemplo.com)</label>
+                            </div>
+                        </div>
+                        <div class="text-small">Seleccione los sujetos procesales a notificar.</div>
+                    </div>
+
+                    <!-- Cuerpo del Oficio -->
+                    <div class="form-group">
+                        <label class="form-label">Cuerpo del Oficio / Texto de la Comunicación</label>
+                        <textarea class="form-control" placeholder="Redacte aquí el contenido oficial de la comunicación..." required></textarea>
+                        <div class="text-small">El sistema anexará automáticamente el acto administrativo firmado (PDF).</div>
+                    </div>
+
+                    <!-- Adjuntos -->
+                    <div class="form-group">
+                        <label class="form-label">Documentos Adjuntos</label>
+                        <div class="file-drop" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                            <p style="margin-top: 0.5rem;">Arrastre archivos o haga clic para adjuntar</p>
+                            <input type="file" id="fileInput" hidden multiple>
+                        </div>
+                        <div id="fileList" style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light);"></div>
+                    </div>
+
+                    <!-- Botón de Acción -->
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Firmar y Enviar Comunicación
+                    </button>
+                    
+                    <div style="margin-top: 1rem; text-align: center;">
+                        <span class="text-small" style="color: var(--pgn-blue);">
+                            <i class="fas fa-shield-alt"></i> Esta acción queda registrada en el Audit Log inmutable.
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN PERSONALIZADO -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <i class="fas fa-file-signature modal-icon"></i>
+            <h3 class="modal-title">Confirmar Envío</h3>
+            <p class="modal-text" id="modalText">
+                ¿Está seguro de firmar y enviar esta comunicación? 
+                Esta acción es irreversible y surte efectos legales inmediatos.
+            </p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-modal btn-confirm" onclick="finalizeSend()">Confirmar y Firmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global
+        let currentTask = '';
+        let currentTargetGroup = '';
+
+        // Navegación de Tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // Abrir Editor
+        function openEditor(taskName, targetGroup) {
+            currentTask = taskName;
+            currentTargetGroup = targetGroup;
+            
+            document.getElementById('editorTitle').innerText = `Gestionar: ${taskName}`;
+            
+            // Configurar destinatarios según contexto
+            const list = document.getElementById('recipientList');
+            list.innerHTML = ''; // Limpiar
+
+            if (targetGroup === 'procesal') {
+                list.innerHTML += createRecipientItem('Disciplinado', 'disciplinado@pgn.gov.co', true);
+                list.innerHTML += createRecipientItem('Defensor', 'defensor@pgn.gov.co', true);
+                list.innerHTML += createRecipientItem('Ministerio Público', 'mp@pgn.gov.co', false);
+            } else if (targetGroup === 'quejoso') {
+                list.innerHTML += createRecipientItem('Quejoso / Informante', 'quejoso@email.com', true);
+            } else if (targetGroup === 'externo') {
+                list.innerHTML += createRecipientItem('Solicitante Externo', 'ciudadano@email.com', true);
+                list.innerHTML += createRecipientItem('Secretaría Jurídica (Copia)', 'secretaria@pgn.gov.co', false);
+            }
+
+            // Abrir panel
+            document.getElementById('editorPanel').classList.add('open');
+        }
+
+        function createRecipientItem(name, email, checked) {
+            return `
+                <div class="recipient-item">
+                    <input type="checkbox" ${checked ? 'checked' : ''}>
+                    <div>
+                        <div style="font-weight: 600;">${name}</div>
+                        <div style="font-size: 0.75rem; color: #666;">${email}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeEditor() {
+            document.getElementById('editorPanel').classList.remove('open');
+        }
+
+        // Manejo de Archivos (Visual)
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            if (this.files.length > 0) {
+                fileList.innerHTML = `<i class="fas fa-check-circle" style="color: var(--pgn-blue)"></i> ${this.files.length} archivo(s) seleccionado(s): ${Array.from(this.files).map(f => f.name).join(', ')}`;
+            }
+        });
+
+        // Confirmación
+        function handleSend(e) {
+            e.preventDefault();
+            const modal = document.getElementById('confirmModal');
+            const text = document.getElementById('modalText');
+            
+            text.innerHTML = `Se procederá a firmar digitalmente el <strong>"${currentTask}"</strong> y enviarlo a los destinatarios seleccionados. Quedará constancia en el expediente electrónico.`;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        function finalizeSend() {
+            const modal = document.getElementById('confirmModal');
+            modal.style.display = 'none';
+            closeEditor();
+            
+            // Simular éxito con otro modal o feedback visual
+            alert("✅ COMUNICACIÓN ENVIADA EXITOSAMENTE\n\nEl oficio ha sido firmado electrónicamente, notificado a las partes y registrado en el Audit Log del expediente.");
+            // En producción, esto recargaría la lista o marcaría la tarea como completada
+        }
+
+        // Cerrar modal al hacer click fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

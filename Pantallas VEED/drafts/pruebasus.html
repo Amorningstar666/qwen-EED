@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suspensión Provisional — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT 3 COLUMNAS */
+    .editor-layout{display:grid;grid-template-columns:220px 1fr 320px;flex:1;height:calc(100vh - 96px);}
+
+    /* PANEL IZQUIERDO — ÍNDICE */
+    .panel-indice{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:20px 0;}
+    .indice-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;padding:0 16px 12px;}
+    .indice-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--negro);border-left:3px solid transparent;transition:all .15s;}
+    .indice-item:hover{background:#F8FAFC;color:var(--azul);}
+    .indice-item.active{border-left-color:var(--azul);background:#EBF4FA;color:var(--azul);font-weight:600;}
+    .indice-item svg{width:14px;height:14px;flex-shrink:0;color:var(--gris-medio);}
+    .indice-item.active svg{color:var(--azul);}
+    .indice-sep{height:1px;background:var(--gris-claro);margin:8px 16px;}
+
+    /* EDITOR CENTRAL */
+    .editor-center{overflow-y:auto;padding:32px 40px;display:flex;flex-direction:column;gap:0;}
+
+    /* ROL BANNER */
+    .rol-banner{display:none;align-items:center;gap:10px;padding:10px 16px;flex-shrink:0;}
+    .rol-banner.visible{display:flex;}
+    .rol-banner.revisor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
+    .rol-banner.aprobador{background:#FFFBEB;border-bottom:2px solid #FDE68A;}
+    .rol-banner.jefe{background:#33FFCC;border-bottom:2px solid #BBF7D0;}
+    .rol-banner svg{width:16px;height:16px;flex-shrink:0;}
+    .rol-banner.revisor svg{color:#2563EB;}
+    .rol-banner.aprobador svg{color:#D97706;}
+    .rol-banner.jefe svg{color:#059669;}
+    .rol-banner-text{flex:1;}
+    .rol-banner-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;}
+    .rol-banner.revisor .rol-banner-title{color:#1D4ED8;}
+    .rol-banner.aprobador .rol-banner-title{color:#B45309;}
+    .rol-banner.jefe .rol-banner-title{color:#065F46;}
+    .rol-banner-sub{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+
+    /* DOCUMENTO */
+    .doc-sheet{background:var(--blanco);border-radius:4px;box-shadow:0 2px 20px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.04);min-height:900px;overflow:hidden;}
+    .doc-header-oficial{background:var(--azul);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+    .doc-logo-area{display:flex;align-items:center;gap:12px;}
+    .doc-logo-box{width:40px;height:40px;background:var(--amarillo);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .doc-logo-box svg{width:22px;height:22px;color:var(--azul);}
+    .doc-entidad .ent-name{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--blanco);}
+    .doc-entidad .ent-dep{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px;}
+    .doc-tipo-chip{background:var(--rojo);color:var(--blanco);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:5px 16px;border-radius:6px;letter-spacing:.5px;}
+    .doc-meta-table{width:100%;border-collapse:collapse;border-bottom:2px solid var(--gris-claro);}
+    .doc-meta-table td{padding:8px 16px;font-size:12px;border-right:1px solid var(--gris-claro);border-bottom:1px solid var(--gris-claro);vertical-align:top;}
+    .doc-meta-table td:last-child{border-right:none;}
+    .meta-label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
+    .meta-value{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);}
+    .meta-value.editable{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--negro);width:100%;cursor:text;border-bottom:1.5px dashed #CBD5E1;}
+    .meta-value.editable:focus{border-bottom-color:var(--azul-claro);}
+    .decision-badge-meta{display:inline-flex;align-items:center;gap:6px;background:#FEF2F2;color:#991B1B;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--rojo);}
+    .doc-body{padding:36px 48px 48px;}
+    .doc-ciudad-fecha{font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);margin-bottom:28px;text-align:right;}
+    .auto-section{margin-bottom:28px;scroll-margin-top:80px;}
+    .auto-section-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .auto-section-title .section-num{width:22px;height:22px;background:var(--azul);color:var(--blanco);border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .auto-subsection{margin-bottom:16px;}
+    .auto-subsection-title{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);margin-bottom:8px;}
+    .auto-textarea{width:100%;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:16px;color:var(--negro);line-height:1.8;resize:none;background:transparent;transition:background .15s;border-radius:4px;padding:8px;min-height:80px;}
+    .auto-textarea:focus{background:#F8FBFF;outline:2px solid rgba(77,191,226,0.3);}
+    .auto-textarea::placeholder{color:#CBD5E1;font-style:italic;}
+    
+    /* CONSIDERANDO BLOCK */
+    .considerando-block{background:#F8FAFC;border-left:4px solid var(--azul);padding:16px 18px;margin-bottom:16px;border-radius:0 8px 8px 0;}
+    .considerando-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .considerando-title svg{width:14px;height:14px;}
+    .considerando-input{width:100%;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);line-height:1.7;background:transparent;resize:none;}
+    .considerando-input:focus{background:#FFFFFF;}
+    .considerando-input::placeholder{color:#CBD5E1;font-style:italic;}
+
+    /* MOTIVOS SUSPENSIÓN */
+    .motivos-box{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:18px;margin-bottom:20px;}
+    .motivos-box-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:#92400E;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+    .motivos-box-title svg{width:14px;height:14px;}
+    .motivo-option{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:8px;margin-bottom:8px;background:var(--blanco);border:1.5px solid var(--gris-claro);cursor:pointer;transition:all .15s;}
+    .motivo-option:hover{border-color:var(--naranja);}
+    .motivo-option.selected{border-color:var(--rojo);background:#FEF2F2;}
+    .motivo-checkbox{width:20px;height:20px;border:2px solid var(--gris-medio);border-radius:5px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .motivo-option.selected .motivo-checkbox{background:var(--rojo);border-color:var(--rojo);}
+    .motivo-checkbox svg{width:12px;height:12px;color:white;display:none;}
+    .motivo-option.selected .motivo-checkbox svg{display:block;}
+    .motivo-label{flex:1;}
+    .motivo-label-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px;}
+    .motivo-option.selected .motivo-label-title{color:#991B1B;}
+    .motivo-label-desc{font-size:12px;color:var(--gris-medio);line-height:1.5;}
+    .motivo-option.selected .motivo-label-desc{color:#7F1D1D;}
+    .motivo-add-otra{display:flex;align-items:center;gap:8px;padding:12px;border:2px dashed #CBD5E1;border-radius:8px;background:transparent;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--gris-medio);transition:all .15s;}
+    .motivo-add-otra:hover{border-color:var(--azul-medio);color:var(--azul-medio);background:#EEF4FF;}
+    .motivo-add-otra svg{width:14px;height:14px;}
+    .motivo-otra-input{display:none;width:100%;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:15px;color:var(--negro);line-height:1.7;background:transparent;padding:8px;border-bottom:1.5px dashed #CBD5E1;}
+    .motivo-otra-input.visible{display:block;}
+
+    /* DURACIÓN */
+    .duracion-row{display:flex;gap:16px;align-items:flex-end;margin-bottom:16px;}
+    .duracion-field{flex:1;}
+    .duracion-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;}
+    .duracion-input{width:100%;border:1.5px solid var(--gris-claro);border-radius:8px;padding:10px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--negro);outline:none;transition:border-color .15s;}
+    .duracion-input:focus{border-color:var(--azul-claro);}
+    .duracion-hint{font-size:11px;color:var(--gris-medio);margin-top:4px;}
+
+    /* EFECTOS */
+    .efectos-lista{list-style:none;padding:0;margin:0;}
+    .efecto-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gris-claro);}
+    .efecto-item:last-child{border-bottom:none;}
+    .efecto-icon{width:28px;height:28px;background:#EEF4FF;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .efecto-icon svg{width:16px;height:16px;color:var(--azul-medio);}
+    .efecto-content{flex:1;}
+    .efecto-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--negro);margin-bottom:3px;}
+    .efecto-desc{font-size:12px;color:var(--gris-medio);line-height:1.5;}
+    .efecto-input{width:100%;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:14px;color:var(--negro);line-height:1.6;background:transparent;margin-top:6px;border-bottom:1px dashed transparent;transition:border-color .15s;}
+    .efecto-input:focus{border-bottom-color:#CBD5E1;}
+    .efecto-input::placeholder{color:#CBD5E1;font-style:italic;}
+
+    /* RESUELVE SECTION */
+    .resuelve-header{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:var(--azul);text-align:center;letter-spacing:2px;margin:28px 0 16px;padding:10px;border-top:2px solid var(--azul);border-bottom:2px solid var(--azul);}
+    .articulo-resuelve{margin-bottom:12px;display:flex;gap:10px;}
+    .art-num{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex-shrink:0;padding-top:9px;}
+    .art-input{flex:1;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:16px;color:var(--negro);line-height:1.8;resize:none;background:transparent;border-radius:4px;padding:6px 8px;min-height:60px;transition:background .15s;}
+    .art-input:focus{background:#F8FBFF;outline:2px solid rgba(77,191,226,0.3);}
+    .cumplase{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;text-align:center;margin:28px 0 40px;color:var(--negro);}
+    .firma-block{margin-top:20px;}
+    .firma-linea{width:240px;height:1px;background:var(--negro);margin-bottom:6px;}
+    .firma-nombre-input{border:none;outline:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--negro);width:100%;text-transform:uppercase;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;}
+    .firma-cargo-input{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:12px;color:var(--negro);width:100%;border-bottom:1.5px dashed #CBD5E1;padding:2px 0;margin-top:4px;}
+    .firma-pie{margin-top:24px;font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);line-height:1.8;}
+    .firma-pie-input{border:none;outline:none;background:transparent;font-family:'Poppins',sans-serif;font-size:11px;color:var(--gris-medio);width:100%;border-bottom:1px dashed #E2E8F0;margin-bottom:4px;}
+
+    /* PANEL DERECHO */
+    .panel-tools{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;display:flex;flex-direction:column;}
+    .tools-section{border-bottom:1px solid var(--gris-claro);}
+    .tools-section-header{padding:12px 16px;display:flex;align-items:center;gap:8px;}
+    .tools-section-header h4{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--azul);flex:1;}
+    .tools-section-header svg{width:14px;height:14px;color:var(--azul-medio);}
+    .tools-section-body{padding:12px 16px;}
+
+    /* INFO EXPEDIENTE */
+    .exp-ref-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+    .exp-ref-label{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;}
+    .exp-ref-value{font-size:12px;color:var(--negro);text-align:right;max-width:65%;}
+
+    /* INVESTIGADO CARD */
+    .inv-card{background:#F8FAFC;border:1.5px solid var(--gris-claro);border-radius:10px;padding:14px;margin-bottom:12px;}
+    .inv-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .inv-avatar{width:40px;height:40px;background:var(--azul);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);flex-shrink:0;}
+    .inv-info{flex:1;}
+    .inv-name{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--negro);}
+    .inv-cargo{font-size:11px;color:var(--gris-medio);margin-top:2px;}
+    .inv-actions{display:flex;gap:6px;}
+    .inv-action-btn{background:var(--blanco);border:1px solid var(--gris-claro);border-radius:6px;padding:6px;cursor:pointer;transition:all .15s;}
+    .inv-action-btn:hover{border-color:var(--azul-medio);color:var(--azul-medio);}
+    .inv-action-btn svg{width:14px;height:14px;}
+    .inv-details{font-size:11px;color:var(--gris-medio);line-height:1.7;}
+    .inv-details strong{color:var(--negro);font-family:'Montserrat',sans-serif;font-weight:600;}
+
+    /* FLUJO APROBACIÓN */
+    .flujo-steps{display:flex;flex-direction:column;gap:0;}
+    .flujo-step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;position:relative;}
+    .flujo-step:not(:last-child)::after{content:'';position:absolute;left:7px;top:22px;width:2px;height:calc(100% - 4px);background:var(--gris-claro);z-index:0;}
+    .fstep-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;z-index:1;}
+    .fstep-dot.active{background:var(--amarillo);box-shadow:0 0 0 3px rgba(255,230,1,0.3);}
+    .fstep-dot.pending{background:var(--gris-claro);border:2px solid #CBD5E1;}
+    .fstep-name{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--negro);}
+    .fstep-actor{font-size:11px;color:var(--gris-medio);margin-top:1px;}
+    .fstep-dot.firma{background:#F0FDF4;border:2px solid #BBF7D0;}
+
+    /* CHECKLIST */
+    .chk-r{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--gris-claro);cursor:pointer;}
+    .chk-b{width:18px;height:18px;border:2px solid var(--gris-medio);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+    .chk-b.on{background:var(--azul);border-color:var(--azul);}
+    .chk-b svg{width:10px;height:10px;color:#fff;display:none;}
+    .chk-b.on svg{display:block;}
+    .chk-t{flex:1;font-size:12px;font-family:'Poppins',sans-serif;color:var(--negro);}
+    .chk-n{font-size:10px;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--azul-medio);white-space:nowrap;}
+
+    /* NOTIFICACIONES */
+    .notif-section{margin-top:12px;}
+    .notif-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+    .notif-channel{display:flex;gap:8px;margin-bottom:8px;}
+    .canal-opt{padding:6px 12px;border-radius:7px;border:1.5px solid var(--gris-claro);background:#F8FAFC;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);transition:all .15s;user-select:none;}
+    .canal-opt.active{border-color:var(--azul);background:#EBF4FA;color:var(--azul);}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,56,83,0.5);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--blanco);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 60px rgba(6,56,83,0.25);animation:slideIn .2s ease;overflow:hidden;}
+    @keyframes slideIn{from{transform:translateY(-16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    .modal-header{background:var(--azul);padding:18px 24px;}
+    .modal-header h3{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--blanco);display:flex;align-items:center;gap:8px;}
+    .modal-header h3 svg{width:18px;height:18px;color:var(--amarillo);}
+    .modal-body{padding:24px;}
+    .modal-aviso{background:#EEF4FF;border-radius:8px;padding:12px 14px;font-size:12px;color:var(--azul-medio);margin-bottom:16px;display:flex;gap:8px;line-height:1.5;}
+    .modal-aviso svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:10px;justify-content:flex-end;}
+    .btn{border:none;cursor:pointer;border-radius:8px;padding:10px 18px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;transition:all .15s;}
+    .btn svg{width:15px;height:15px;}
+    .btn-secondary{background:transparent;color:var(--azul);border:2px solid var(--azul);}
+    .btn-accent{background:var(--amarillo);color:var(--azul);}
+    .btn-accent:hover{background:#e6cf00;}
+    .btn-firma{background:var(--azul);color:var(--blanco);}
+    .btn-firma:hover{background:var(--azul-medio);}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:var(--blanco);padding:12px 18px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.18);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:2000;max-width:340px;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast svg{width:16px;height:16px;color:var(--verde);}
+
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:10px;}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="back-btn" aria-label="Volver" onclick="window.history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="navbar-title">
+      Suspensión Provisional
+      <span>Medida Cautelar · Art. 45-48 CGD</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="autosave-indicator">
+      <span class="autosave-dot"></span>
+      Guardado automáticamente
+    </div>
+    <button class="nav-btn ghost" onclick="showToast('Borrador guardado correctamente')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Guardar borrador
+    </button>
+    <button class="nav-btn secondary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      Vista previa
+    </button>
+    <select class="rol-select" id="rol-select" onchange="cambiarRol(this.value)">
+      <option value="instructor">Rol: Instructor</option>
+      <option value="revisor">Rol: Revisor</option>
+      <option value="aprobador">Rol: Aprobador</option>
+      <option value="jefe">Rol: Jefe / Firmante</option>
+    </select>
+    <button class="btn-accion-principal" id="btn-accion" onclick="accionPrincipal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="icon-accion"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <span id="label-accion">Enviar a revisión</span>
+    </button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="#">Inicio</a><span class="sep">›</span>
+  <a href="#">Mi bandeja</a><span class="sep">›</span>
+  <a href="#">EXP-2026-00487</a><span class="sep">›</span>
+  <a href="#">Investigación disciplinaria</a><span class="sep">›</span>
+  <span class="current">Decretar suspensión provisional</span>
+</div>
+
+<div class="editor-layout">
+
+  <!-- ÍNDICE IZQUIERDO -->
+  <nav class="panel-indice" aria-label="Secciones del auto">
+    <div class="indice-title">Estructura del auto</div>
+    <div class="indice-item active" onclick="scrollTo_('encabezado',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+      Encabezado
+    </div>
+    <div class="indice-item" onclick="scrollTo_('antecedentes',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Antecedentes
+    </div>
+    <div class="indice-item" onclick="scrollTo_('motivos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      Motivos de Suspensión
+    </div>
+    <div class="indice-item" onclick="scrollTo_('duracion',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Duración
+    </div>
+    <div class="indice-item" onclick="scrollTo_('efectos',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Efectos de la Medida
+    </div>
+    <div class="indice-sep"></div>
+    <div class="indice-item" onclick="scrollTo_('resuelve',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Parte Resolutiva
+    </div>
+    <div class="indice-item" onclick="scrollTo_('firma',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+      Firma
+    </div>
+  </nav>
+
+  <!-- EDITOR CENTRAL -->
+  <main class="editor-center">
+
+    <!-- ROL BANNER -->
+    <div class="rol-banner revisor" id="rol-banner" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      <div class="rol-banner-text">
+        <div class="rol-banner-title">Modo Revisor</div>
+        <div class="rol-banner-sub">Estás revisando la suspensión provisional proyectada por el instructor</div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTO -->
+    <article class="doc-sheet" id="encabezado">
+
+      <!-- HEADER OFICIAL -->
+      <header class="doc-header-oficial">
+        <div class="doc-logo-area">
+          <div class="doc-logo-box">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-7zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="doc-entidad">
+            <div class="ent-name">PROCURADURÍA GENERAL DE LA NACIÓN</div>
+            <div class="ent-dep">Sistema de Gestión Disciplinaria - EED</div>
+          </div>
+        </div>
+        <div class="doc-tipo-chip">SUSPENSIÓN PROVISIONAL</div>
+      </header>
+
+      <!-- META DATOS -->
+      <table class="doc-meta-table">
+        <tr>
+          <td style="width:25%;">
+            <span class="meta-label">Número de Radicado</span>
+            <div class="meta-value editable" contenteditable="true">EXP-2026-00487</div>
+          </td>
+          <td style="width:25%;">
+            <span class="meta-label">Fecha de Decisión</span>
+            <input type="date" class="meta-value editable" value="2026-01-15" style="background:transparent;font-family:inherit;">
+          </td>
+          <td style="width:25%;">
+            <span class="meta-label">Tipo de Medida</span>
+            <span class="decision-badge-meta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              CAUTELAR
+            </span>
+          </td>
+          <td style="width:25%;">
+            <span class="meta-label">Estado</span>
+            <div class="meta-value editable" contenteditable="true">En Proyección</div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- CUERPO DEL AUTO -->
+      <div class="doc-body">
+
+        <div class="doc-ciudad-fecha">
+          Bogotá D.C., 15 de enero de 2026
+        </div>
+
+        <!-- ANTECEDENTES -->
+        <section class="auto-section" id="antecedentes">
+          <div class="auto-section-title">
+            <span class="section-num">1</span>
+            Antecedentes
+          </div>
+
+          <div class="considerando-block">
+            <div class="considerando-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Contexto del Caso
+            </div>
+            <textarea class="considerando-input" rows="4" placeholder="Describa los antecedentes relevantes del caso que justifican considerar la suspensión provisional...">Que mediante Auto de fecha 10 de diciembre de 2025 se dio apertura a investigación disciplinaria en contra del señor [NOMBRE DEL INVESTIGADO], identificado con cédula de ciudadanía No. [NÚMERO], quien se desempeñaba como [CARGO] en [ENTIDAD].</textarea>
+          </div>
+
+          <div class="considerando-block">
+            <div class="considerando-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Hechos Investigados
+            </div>
+            <textarea class="considerando-input" rows="5" placeholder="Relate los hechos que son objeto de investigación y que generan la necesidad de la medida cautelar...">Los hechos investigados se relacionan con presuntas irregularidades en [DESCRIPCIÓN BREVE], las cuales podrían configurar la conducta disciplinaria prevista en el artículo [ARTÍCULO] del Código General Disciplinario.</textarea>
+          </div>
+        </section>
+
+        <!-- MOTIVOS DE SUSPENSIÓN -->
+        <section class="auto-section" id="motivos">
+          <div class="auto-section-title">
+            <span class="section-num">2</span>
+            Motivos para Decretar la Suspensión
+          </div>
+
+          <div class="motivos-box">
+            <div class="motivos-box-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              Seleccione los motivos que justifican la suspensión provisional
+            </div>
+
+            <div class="motivo-option selected" onclick="toggleMotivo(this)">
+              <div class="motivo-checkbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="motivo-label">
+                <div class="motivo-label-title">Gravedad de la Conducta</div>
+                <div class="motivo-label-desc">La conducta investigada reviste especial gravedad por su naturaleza, modalidad o consecuencias, conforme al Art. 45 numeral 1 del CGD.</div>
+              </div>
+            </div>
+
+            <div class="motivo-option" onclick="toggleMotivo(this)">
+              <div class="motivo-checkbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="motivo-label">
+                <div class="motivo-label-title">Riesgo para la Sociedad o Administración</div>
+                <div class="motivo-label-desc">Existe un riesgo evidente de permanencia del investigado en el cargo que pueda afectar la moralidad administrativa o causar perjuicios irreparables.</div>
+              </div>
+            </div>
+
+            <div class="motivo-option" onclick="toggleMotivo(this)">
+              <div class="motivo-checkbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="motivo-label">
+                <div class="motivo-label-title">Obstaculización de la Investigación</div>
+                <div class="motivo-label-desc">Existen elementos probatorios que sugieren que el investigado podría obstaculizar el正常 desarrollo de la investigación.</div>
+              </div>
+            </div>
+
+            <div class="motivo-option" onclick="toggleMotivo(this)">
+              <div class="motivo-checkbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="motivo-label">
+                <div class="motivo-label-title">Reiteración en la Conducta</div>
+                <div class="motivo-label-desc">El investigado ha incurrido en conductas similares con anterioridad, lo que evidencia un patrón que justifica la medida cautelar.</div>
+              </div>
+            </div>
+
+            <button class="motivo-add-otra" onclick="mostrarOtroMotivo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar otro motivo
+            </button>
+            <textarea class="motivo-otra-input" id="otra-motivo" rows="2" placeholder="Especifique el motivo adicional que justifica la suspensión..."></textarea>
+          </div>
+        </section>
+
+        <!-- DURACIÓN -->
+        <section class="auto-section" id="duracion">
+          <div class="auto-section-title">
+            <span class="section-num">3</span>
+            Duración de la Medida
+          </div>
+
+          <div class="duracion-row">
+            <div class="duracion-field">
+              <label class="duracion-label">Fecha de Inicio</label>
+              <input type="date" class="duracion-input" value="2026-01-15">
+              <div class="duracion-hint">Fecha desde la cual surte efectos la suspensión</div>
+            </div>
+            <div class="duracion-field">
+              <label class="duracion-label">Duración Máxima Legal</label>
+              <input type="text" class="duracion-input" value="Hasta 180 días hábiles prorrogables" readonly>
+              <div class="duracion-hint">Conforme al Art. 47 del CGD</div>
+            </div>
+          </div>
+
+          <div class="considerando-block">
+            <div class="considerando-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Justificación de la Duración
+            </div>
+            <textarea class="considerando-input" rows="3" placeholder="Fundamente la duración propuesta para la medida de suspensión...">Se considera necesario decretar la suspensión por el término máximo legal, toda vez que la complejidad de la investigación requiere de un tiempo prudencial para la práctica de las pruebas necesarias.</textarea>
+          </div>
+        </section>
+
+        <!-- EFECTOS DE LA MEDIDA -->
+        <section class="auto-section" id="efectos">
+          <div class="auto-section-title">
+            <span class="section-num">4</span>
+            Efectos de la Suspensión
+          </div>
+
+          <ul class="efectos-lista">
+            <li class="efecto-item">
+              <div class="efecto-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div class="efecto-content">
+                <div class="efecto-title">Separación Temporal del Cargo</div>
+                <div class="efecto-desc">El investigado queda separado temporalmente de sus funciones mientras dure la medida</div>
+                <textarea class="efecto-input" rows="2" placeholder="Especifique detalles sobre la separación del cargo..."></textarea>
+              </div>
+            </li>
+            <li class="efecto-item">
+              <div class="efecto-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/></svg>
+              </div>
+              <div class="efecto-content">
+                <div class="efecto-title">Prohibición de Ingreso a las Oficinas</div>
+                <div class="efecto-desc">No podrá ingresar a las dependencias donde laboraba sin autorización expresa</div>
+                <textarea class="efecto-input" rows="2" placeholder="Especifique restricciones de acceso..."></textarea>
+              </div>
+            </li>
+            <li class="efecto-item">
+              <div class="efecto-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <div class="efecto-content">
+                <div class="efecto-title">Pago de Haberes</div>
+                <div class="efecto-desc">Durante la suspensión se causará el 75% de la remuneración según Art. 48 CGD</div>
+                <textarea class="efecto-input" rows="2" placeholder="Indique aspectos relacionados con el pago durante la suspensión..."></textarea>
+              </div>
+            </li>
+            <li class="efecto-item">
+              <div class="efecto-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              </div>
+              <div class="efecto-content">
+                <div class="efecto-title">Entrega de Credenciales y Accesos</div>
+                <div class="efecto-desc">Debe hacer entrega de credenciales, accesos y documentación oficial</div>
+                <textarea class="efecto-input" rows="2" placeholder="Detalle los elementos que deben ser entregados..."></textarea>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- PARTE RESOLUTIVA -->
+        <section class="auto-section" id="resuelve">
+          <div class="resuelve-header">RESUELVE</div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">PRIMERO:</div>
+            <textarea class="art-input" rows="3" placeholder="Redacte el primer artículo resolutivo...">DECRETAR la SUSPENSIÓN PROVISIONAL del señor [NOMBRE COMPLETO DEL INVESTIGADO], identificado con cédula de ciudadanía No. [NÚMERO], quien se desempeñaba como [CARGO] en [ENTIDAD], por un término de [DURACIÓN] días hábiles, contados a partir de la notificación del presente acto administrativo.</textarea>
+          </div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">SEGUNDO:</div>
+            <textarea class="art-input" rows="6" placeholder="Redacte el segundo artículo resolutivo...">ENVIAR a CONSULTA OBLIGATORIA la presente medida de Suspensión Provisional ante el Superior Jerárquico, de conformidad con el artículo 47 de la Ley 1952 de 2019. Para los efectos propios de la consulta, el funcionario remitirá de inmediato el proceso al superior, previa comunicación de la decisión al afectado. Recibido el expediente, el superior dispondrá que permanezca en Secretaría por el término de tres días, durante los cuales el disciplinado podrá presentar alegaciones en su favor, acompañadas de las pruebas en que las sustente. Vencido dicho término, se decidirá dentro de los diez días siguientes.</textarea>
+          </div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">TERCERO:</div>
+            <textarea class="art-input" rows="3" placeholder="Redacte el tercer artículo resolutivo...">INFORMAR que durante la suspensión el investigado tendrá derecho al pago del 75% de su remuneración mensual, conforme lo establece el artículo 48 de la Ley 1952 de 2019 (Código General Disciplinario).</textarea>
+          </div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">CUARTO:</div>
+            <textarea class="art-input" rows="3" placeholder="Redacte el cuarto artículo resolutivo...">NOTIFICAR personalmente al investigado, a la entidad empleadora, y a las demás partes interesadas en los términos del artículo 106 del CGD.</textarea>
+          </div>
+
+          <div class="articulo-resuelve">
+            <div class="art-num">QUINTO:</div>
+            <textarea class="art-input" rows="2" placeholder="Redacte el artículo sobre recursos...">CONTRA la presente decisión proceden los recursos de reposición y apelación en los términos del artículo 194 del CGD.</textarea>
+          </div>
+        </section>
+
+        <!-- FIRMAS -->
+        <section class="auto-section" id="firma">
+          <div class="cumplase">CÚMPLASE Y NOTIFÍQUESE</div>
+
+          <div class="firma-block">
+            <div class="firma-linea"></div>
+            <input type="text" class="firma-nombre-input" value="[NOMBRE DEL PROCURADOR REGIONAL]" placeholder="Nombre del funcionario">
+            <input type="text" class="firma-cargo-input" value="Procurador Regional [REGIÓN]" placeholder="Cargo">
+          </div>
+
+          <div class="firma-pie">
+            <input type="text" class="firma-pie-input" value="Documento firmado electrónicamente por el Sistema de Expediente Electrónico Disciplinario (EED)" placeholder="Pie de firma">
+            <input type="text" class="firma-pie-input" value="Código de verificación: [CÓDIGO DE VERIFICACIÓN]" placeholder="Código de verificación">
+            <div style="margin-top:16px;font-size:10px;color:#949494;">
+              Este documento es una copia auténtica del original electrónico. Puede verificar su autenticidad en el portal www.procuraduria.gov.co con el código de verificación suministrado.
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </article>
+  </main>
+
+  <!-- PANEL DERECHO -->
+  <aside class="panel-tools">
+
+    <!-- INFORMACIÓN DEL EXPEDIENTE -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <h4>Información del Expediente</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="exp-ref-row">
+          <span class="exp-ref-label">Radicado</span>
+          <span class="exp-ref-value">EXP-2026-00487</span>
+        </div>
+        <div class="exp-ref-row">
+          <span class="exp-ref-label">Origen</span>
+          <span class="exp-ref-value">Queja Ciudadana</span>
+        </div>
+        <div class="exp-ref-row">
+          <span class="exp-ref-label">Fecha Radicación</span>
+          <span class="exp-ref-value">15/11/2025</span>
+        </div>
+        <div class="exp-ref-row">
+          <span class="exp-ref-label">Estado Actual</span>
+          <span class="exp-ref-value" style="color:var(--azul-medio);font-weight:700;">Investigación</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVESTIGADO -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <h4>Investigado</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="inv-card">
+          <div class="inv-card-header">
+            <div class="inv-avatar">JL</div>
+            <div class="inv-info">
+              <div class="inv-name">Juan López Martínez</div>
+              <div class="inv-cargo">Secretario General - Alcaldía Municipal</div>
+            </div>
+            <div class="inv-actions">
+              <button class="inv-action-btn" title="Ver expediente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="inv-details">
+            <div><strong>CC:</strong> 1.098.765.432</div>
+            <div><strong>Email:</strong> jlopez@email.com</div>
+            <div><strong>Teléfono:</strong> +57 310 123 4567</div>
+            <div><strong>Entidad:</strong> Alcaldía Municipal de San José</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLUJO DE APROBACIÓN -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h4>Flujo de Aprobación</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="flujo-steps">
+          <div class="flujo-step">
+            <div class="fstep-dot active"></div>
+            <div>
+              <div class="fstep-name">Proyección</div>
+              <div class="fstep-actor">Instructor - Dr. Ramírez</div>
+            </div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending"></div>
+            <div>
+              <div class="fstep-name">Revisión</div>
+              <div class="fstep-actor">Revisor - Dra. Gómez</div>
+            </div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot pending"></div>
+            <div>
+              <div class="fstep-name">Aprobación</div>
+              <div class="fstep-actor">Procurador Regional</div>
+            </div>
+          </div>
+          <div class="flujo-step">
+            <div class="fstep-dot firma"></div>
+            <div>
+              <div class="fstep-name">Firma Electrónica </div>
+              <div class="fstep-actor">Sistema EED</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <h4>Verificación Previa</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="chk-r" onclick="toggleCheck(this)">
+          <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="chk-t">Motivos debidamente fundamentados</div>
+          <div class="chk-n">Obligatorio</div>
+        </div>
+        <div class="chk-r" onclick="toggleCheck(this)">
+          <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="chk-t">Duración dentro de límites legales</div>
+          <div class="chk-n">Obligatorio</div>
+        </div>
+        <div class="chk-r" onclick="toggleCheck(this)">
+          <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="chk-t">Efectos claramente especificados</div>
+          <div class="chk-n">Obligatorio</div>
+        </div>
+        <div class="chk-r" onclick="toggleCheck(this)">
+          <div class="chk-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="chk-t">Recursos informados correctamente</div>
+          <div class="chk-n">Obligatorio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICACIONES -->
+    <div class="tools-section">
+      <div class="tools-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <h4>Notificaciones</h4>
+      </div>
+      <div class="tools-section-body">
+        <div class="notif-section">
+          <div class="notif-title">Canales de Notificación</div>
+          <div class="notif-channel">
+            <div class="canal-opt active">Email</div>
+            <div class="canal-opt">SEDNotifica</div>
+            <div class="canal-opt">Correo Certificado</div>
+          </div>
+        </div>
+        <div class="notif-section">
+          <div class="notif-title">Destinatarios</div>
+          <div style="font-size:11px;color:var(--gris-medio);line-height:1.7;">
+            • Investigado<br>
+            • Entidad Empleadora<br>
+            • Defensor Público (si aplica)<br>
+            • Ministerio Público
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Confirmar Envío a Revisión
+      </h3>
+    </div>
+    <div class="modal-body">
+      <div class="modal-aviso">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div>
+          <strong>Importante:</strong> La suspensión provisional es una medida cautelar de especial trascendencia. Verifique que todos los motivos estén debidamente fundamentados antes de enviar.
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--negro);line-height:1.7;margin-bottom:16px;">
+        ¿Está seguro de que desea enviar este auto de suspensión provisional a revisión? Una vez enviado, el revisor validará:
+        <ul style="margin:8px 0 0 16px;">
+          <li>Fundamentación jurídica de los motivos</li>
+          <li>Proporcionalidad de la duración</li>
+          <li>Claridad en los efectos de la medida</li>
+          <li>Correcta notificación a las partes</li>
+        </ul>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">
+        Cancelar
+      </button>
+      <button class="btn btn-accent" onclick="confirmarEnvio()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Confirmar y Enviar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toast-message">Operación exitosa</span>
+</div>
+
+<script>
+  // Scroll to section
+  function scrollTo_(sectionId, element) {
+    document.querySelectorAll('.indice-item').forEach(el => el.classList.remove('active'));
+    if(element) element.classList.add('active');
+    const target = document.getElementById(sectionId);
+    if(target) {
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
+
+  // Toggle motivo selection
+  function toggleMotivo(element) {
+    element.classList.toggle('selected');
+  }
+
+  // Mostrar otro motivo
+  function mostrarOtroMotivo() {
+    const input = document.getElementById('otra-motivo');
+    input.classList.toggle('visible');
+    if(input.classList.contains('visible')) {
+      input.focus();
+    }
+  }
+
+  // Toggle checklist
+  function toggleCheck(element) {
+    const checkbox = element.querySelector('.chk-b');
+    checkbox.classList.toggle('on');
+  }
+
+  // Cambiar rol
+  function cambiarRol(rol) {
+    const banner = document.getElementById('rol-banner');
+    const btnAccion = document.getElementById('btn-accion');
+    const labelAccion = document.getElementById('label-accion');
+    const iconAccion = document.getElementById('icon-accion');
+
+    banner.style.display = 'none';
+    banner.className = 'rol-banner visible';
+
+    switch(rol) {
+      case 'revisor':
+        banner.classList.add('revisor');
+        labelAccion.textContent = 'Devolver para corrección';
+        iconAccion.innerHTML = '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>';
+        break;
+      case 'aprobador':
+        banner.classList.add('aprobador');
+        labelAccion.textContent = 'Aprobar y enviar a firma';
+        iconAccion.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+        break;
+      case 'jefe':
+        banner.classList.add('jefe');
+        labelAccion.textContent = 'Firmar electrónicamente ';
+        iconAccion.innerHTML = '<path d="M12 19l7-7 3 3-7 7-3-3z"/>';
+        break;
+      default:
+        labelAccion.textContent = 'Enviar a revisión';
+        iconAccion.innerHTML = '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>';
+    }
+  }
+
+  // Acción principal
+  function accionPrincipal() {
+    const rol = document.getElementById('rol-select').value;
+    if(rol === 'instructor') {
+      document.getElementById('modal-confirm').classList.add('open');
+    } else {
+      showToast('Acción completada exitosamente');
+    }
+  }
+
+  // Confirmar envío
+  function confirmarEnvio() {
+    closeModal();
+    showToast('Auto de suspensión enviado a revisión correctamente');
+    setTimeout(() => {
+      // Simular navegación
+      console.log('Navegando a bandeja de entrada...');
+    }, 1500);
+  }
+
+  // Cerrar modal
+  function closeModal() {
+    document.getElementById('modal-confirm').classList.remove('open');
+  }
+
+  // Toast notification
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    toastMessage.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modal-confirm').addEventListener('click', function(e) {
+    if(e.target === this) {
+      closeModal();
+    }
+  });
+
+  // Canal de notificación
+  document.querySelectorAll('.canal-opt').forEach(canal => {
+    canal.addEventListener('click', function() {
+      this.parentElement.querySelectorAll('.canal-opt').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
