@@ -16,7 +16,7 @@
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
 
-    /* NAVBAR */
+    /* NAVBAR SUPERIOR */
     .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
     .navbar-left{display:flex;align-items:center;gap:12px;}
     .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
@@ -261,23 +261,52 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo"><i class="fas fa-balance-scale"></i> EED PGN</div>
-        <div class="nav-item"><i class="fas fa-home"></i> Inicio</div>
-        <div class="nav-item"><i class="fas fa-folder-open"></i> Mis Expedientes</div>
-        <div class="nav-item active"><i class="fas fa-gavel"></i> Instrucción</div>
-        <div class="nav-item"><i class="fas fa-users"></i> Sujetos Procesales</div>
-        <div class="nav-item"><i class="fas fa-file-contract"></i> Actuaciones</div>
-        <div style="margin-top: auto; font-size: 12px; opacity: 0.6;">v2.4.0 - Módulo Instrucción</div>
-    </div>
+    <!-- NAVBAR SUPERIOR -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <button class="back-btn" onclick="window.history.back()" title="Volver">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <div class="navbar-title">
+          Cierre de Investigación
+          <span>Expediente: 2023-00158-000</span>
+        </div>
+      </div>
+      <div class="navbar-right">
+        <select class="rol-select" id="selectorRol" onchange="cambiarRol()">
+          <option value="instructor">👤 Instructor</option>
+          <option value="revisor">👁️ Revisor</option>
+          <option value="aprobador">✅ Aprobador</option>
+          <option value="jefe">📋 Jefe</option>
+        </select>
+        <div class="autosave-indicator">
+          <span class="autosave-dot"></span>
+          Guardado automático
+        </div>
+        <button class="nav-btn ghost" title="Notificaciones">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+        </button>
+        <button class="nav-btn secondary" onclick="exportarPDF()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          Exportar
+        </button>
+        <button class="btn-accion-principal" onclick="enviarARolSiguiente()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <span id="btnEnviarTexto">Enviar a Revisión</span>
+        </button>
+      </div>
+    </nav>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <div>
-                <div class="breadcrumb">Expediente 2023-00158 / Instrucción / Cierre</div>
-                <h1 class="page-title">Cierre de Investigación y Traslado a Alegatos</h1>
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-bar">
+      <a href="#">Inicio</a>
+      <span class="sep">/</span>
+      <a href="#">Gestión Disciplinaria</a>
+      <span class="sep">/</span>
+      <a href="#">Investigación</a>
+      <span class="sep">/</span>
+      <span class="current">Cierre y Traslado a Alegatos</span>
+    </div>
             </div>
             <div class="exp-badge">
                 <i class="fas fa-id-card"></i> RAD: 2023-00158-000
