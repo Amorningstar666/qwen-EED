@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulación Pliego de Cargos - EED</title>
+    
+    <!-- Fuentes Institucionales -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Tokens PGN */
+            --pgn-blue: #063853;
+            --pgn-yellow: #FFE601;
+            --pgn-red: #E3201B;
+            --pgn-light-blue: #F0F4F8;
+            --pgn-gray: #6B7280;
+            --pgn-dark-gray: #374151;
+            --white: #FFFFFF;
+            
+            /* Spacing & Radius */
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            /* Transiciones */
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--pgn-light-blue);
+            color: var(--pgn-dark-gray);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        /* ================= SHELL DE NAVEGACIÓN ================= */
+        .sidebar {
+            width: 260px;
+            background-color: var(--pgn-blue);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-pgn {
+            font-size: 24px;
+            color: var(--pgn-yellow);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--white);
+            border-left: 4px solid var(--pgn-yellow);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            height: 70px;
+            background-color: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: var(--pgn-gray);
+        }
+
+        .breadcrumb span {
+            color: var(--pgn-blue);
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--pgn-blue);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* ================= CONTENIDO PRINCIPAL ================= */
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Widget de Términos */
+        .terms-widget {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid var(--pgn-yellow);
+        }
+
+        .terms-info h3 {
+            font-size: 18px;
+            color: var(--pgn-blue);
+            margin-bottom: 4px;
+        }
+
+        .terms-info p {
+            font-size: 14px;
+            color: var(--pgn-gray);
+        }
+
+        .terms-badge {
+            background-color: #FEF3C7;
+            color: #92400E;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tarjeta Principal del Proceso */
+        .process-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .card-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 20px;
+            color: var(--pgn-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-body {
+            padding: 32px;
+        }
+
+        /* Wizard Steps */
+        .wizard-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .wizard-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #E5E7EB;
+            z-index: 0;
+        }
+
+        .step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 25%;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            background: #E5E7EB;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 12px;
+            transition: var(--transition);
+        }
+
+        .step.active .step-circle {
+            background: var(--pgn-blue);
+            box-shadow: 0 0 0 4px rgba(6, 56, 83, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background: var(--pgn-yellow);
+            color: var(--pgn-blue);
+        }
+
+        .step-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pgn-gray);
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: var(--pgn-blue);
+            font-weight: 700;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--pgn-dark-gray);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #D1D5DB;
+            border-radius: var(--radius-md);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--pgn-blue);
+            box-shadow: 0 0 0 3px rgba(6, 56, 83, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .legal-reference {
+            font-size: 12px;
+            color: var(--pgn-gray);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legal-reference i {
+            color: var(--pgn-blue);
+        }
+
+        /* Botones */
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--pgn-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #052b40;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--pgn-dark-gray);
+            border: 1px solid #D1D5DB;
+        }
+
+        .btn-secondary:hover {
+            background-color: #F9FAFB;
+        }
+
+        .btn-danger {
+            background-color: var(--pgn-red);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #c01a16;
+        }
+
+        .actions-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        /* ================= MODALES PERSONALIZADOS ================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            background: var(--pgn-blue);
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 24px;
+            color: var(--pgn-dark-gray);
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background: #F9FAFB;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        /* Estilos específicos para modal de éxito/crítico */
+        .modal-icon-large {
+            font-size: 48px;
+            color: var(--pgn-yellow);
+            text-align: center;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .alert-critical {
+            background-color: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        /* procuradurIA Button */
+        .ia-fab {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--pgn-blue), #0F5278);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(6, 56, 83, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 900;
+            border: 2px solid var(--pgn-yellow);
+        }
+
+        .ia-fab:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 25px rgba(6, 56, 83, 0.4);
+        }
+
+        .ia-tooltip {
+            position: absolute;
+            right: 75px;
+            background: var(--white);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--pgn-blue);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .ia-fab:hover .ia-tooltip {
+            opacity: 1;
+        }
+
+        /* Utilidades */
+        .hidden { display: none; }
+        .text-right { text-align: right; }
+        .mt-4 { margin-top: 16px; }
+        
+        /* Lista de cargos dinámica */
+        .cargo-item {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        
+        .cargo-details h4 {
+            font-size: 15px;
+            color: var(--pgn-blue);
+            margin-bottom: 4px;
+        }
+        
+        .cargo-details p {
+            font-size: 13px;
+            color: var(--pgn-gray);
+        }
+        
+        .btn-remove {
+            color: var(--pgn-red);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-balance-scale logo-pgn"></i>
+            <div>
+                <h3 style="font-size: 16px; margin: 0;">EED</h3>
+                <p style="font-size: 11px; opacity: 0.8;">Expediente Electrónico</p>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item"><i class="fas fa-home"></i> Inicio</a>
+            <a href="#" class="menu-item"><i class="fas fa-folder-open"></i> Mis Expedientes</a>
+            <a href="#" class="menu-item active"><i class="fas fa-gavel"></i> Juzgamiento</a>
+            <a href="#" class="menu-item"><i class="fas fa-file-contract"></i> Fallos</a>
+            <a href="#" class="menu-item"><i class="fas fa-history"></i> Historial</a>
+            <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="#" class="menu-item"><i class="fas fa-cog"></i> Configuración</a>
+                <a href="#" class="menu-item"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Navbar -->
+        <header class="navbar">
+            <div class="breadcrumb">
+                Juzgamiento / <span>Formulación Pliego de Cargos</span>
+            </div>
+            <div class="user-profile">
+                <div style="text-align: right;">
+                    <p style="font-size: 14px; font-weight: 600; margin: 0;">Dr. Juan Pérez</p>
+                    <p style="font-size: 12px; color: var(--pgn-gray); margin: 0;">Procurador Judicial</p>
+                </div>
+                <div class="avatar">JP</div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="content-scroll">
+            <div class="container">
+                
+                <!-- Widget Términos -->
+                <div class="terms-widget">
+                    <div class="terms-info">
+                        <h3>Término de Formulación</h3>
+                        <p>Expediente: 2023-001234-PROC</p>
+                    </div>
+                    <div class="terms-badge">
+                        <i class="fas fa-clock"></i>
+                        <span>Vence en: 12 días hábiles</span>
+                    </div>
+                </div>
+
+                <!-- Card Principal -->
+                <div class="process-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-file-signature"></i>
+                            Nuevo Pliego de Cargos
+                        </h2>
+                        <span style="background: #FEF3C7; color: #92400E; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            Fase: Juzgamiento
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Wizard Steps -->
+                        <div class="wizard-steps">
+                            <div class="step active" id="step1-indicator">
+                                <div class="step-circle">1</div>
+                                <div class="step-label">Fundamentos</div>
+                            </div>
+                            <div class="step" id="step2-indicator">
+                                <div class="step-circle">2</div>
+                                <div class="step-label">Cargos</div>
+                            </div>
+                            <div class="step" id="step3-indicator">
+                                <div class="step-circle">3</div>
+                                <div class="step-label">Pruebas</div>
+                            </div>
+                            <div class="step" id="step4-indicator">
+                                <div class="step-circle">4</div>
+                                <div class="step-label">Revisión</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: Fundamentos -->
+                        <div id="step1-content" class="step-content">
+                            <h3 style="margin-bottom: 20px; color: var(--pgn-blue);">1. Fundamentos Fácticos y Jurídicos</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Descripción de los Hechos</label>
+                                <textarea class="form-control" placeholder="Describa cronológicamente los hechos que dieron lugar a la investigación..."></textarea>
+                                <div class="legal-reference">
+                                    <i class="fas fa-book"></i> Art. 222 Num. 1 CGD (Relato fáctico)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Análisis de Ilicidad Sustancial</label>
+                                <textarea class="form-control" placeholder="Fundamente por qué la conducta es antijurídica..."></textarea>
+                                <div class="legal-reference">
+                                    <i class="fas fa-book"></i> Art. 222 Num. 2 CGD
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Análisis de Culpabilidad</label>
+                                <select class="form-control">
+                                    <option value="">Seleccione el tipo de culpabilidad...</option>
+                                    <option value="dolo">Dolo (Intención)</option>
+                                    <option value="culpa_grave">Culpa Grave</option>
+                                    <option value="culpa_leve">Culpa Leve (Solo si aplica)</option>
+                                </select>
+                                <div class="legal-reference">
+                                    <i class="fas fa-book"></i> Art. 222 Num. 3 CGD
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Cargos -->
+                        <div id="step2-content" class="step-content hidden">
+                            <h3 style="margin-bottom: 20px; color: var(--pgn-blue);">2. Definición de Cargos</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Norma Vulnerada</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" class="form-control" placeholder="Ej: Ley 734 de 2002 Art. 35" style="flex: 1;">
+                                    <button class="btn btn-secondary" onclick="openModal('modal-norma')"><i class="fas fa-search"></i> Buscar</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descripción del Cargo Específico</label>
+                                <textarea class="form-control" placeholder="Enuncie claramente el cargo imputado al disciplinado..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Gravedad de la Conducta</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div style="border: 1px solid #D1D5DB; padding: 15px; border-radius: 8px; cursor: pointer;" onclick="selectGravedad(this)">
+                                        <i class="fas fa-exclamation-triangle" style="color: var(--pgn-red);"></i>
+                                        <strong>Alta</strong>
+                                        <p style="font-size: 12px; color: var(--pgn-gray); margin-top: 5px;">Afectación grave al servicio</p>
+                                    </div>
+                                    <div style="border: 1px solid #D1D5DB; padding: 15px; border-radius: 8px; cursor: pointer;" onclick="selectGravedad(this)">
+                                        <i class="fas fa-exclamation-circle" style="color: var(--pgn-yellow);"></i>
+                                        <strong>Media</strong>
+                                        <p style="font-size: 12px; color: var(--pgn-gray); margin-top: 5px;">Afectación moderada</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="lista-cargos" style="margin-top: 20px;">
+                                <!-- Aquí se agregan los cargos dinámicamente -->
+                            </div>
+                            
+                            <button class="btn btn-secondary mt-4" style="width: 100%; border-style: dashed;" onclick="agregarCargo()">
+                                <i class="fas fa-plus"></i> Agregar Otro Cargo
+                            </button>
+                        </div>
+
+                        <!-- Step 3: Pruebas -->
+                        <div id="step3-content" class="step-content hidden">
+                            <h3 style="margin-bottom: 20px; color: var(--pgn-blue);">3. Acervo Probatorio</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Pruebas Documentales</label>
+                                <div style="border: 2px dashed #D1D5DB; padding: 30px; text-align: center; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition);" onmouseover="this.style.borderColor='var(--pgn-blue)'" onmouseout="this.style.borderColor='#D1D5DB'">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--pgn-blue); margin-bottom: 10px;"></i>
+                                    <p>Arrastre archivos aquí o haga clic para buscar</p>
+                                    <p style="font-size: 12px; color: var(--pgn-gray);">PDF, DOCX, JPG (Máx 50MB)</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Testigos Propuestos</label>
+                                <input type="text" class="form-control" placeholder="Nombre completo del testigo">
+                                <input type="text" class="form-control mt-4" placeholder="Objeto del testimonio (Qué debe probar)">
+                                <button class="btn btn-secondary mt-2"><i class="fas fa-plus"></i> Agregar Testigo</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Revisión -->
+                        <div id="step4-content" class="step-content hidden">
+                            <h3 style="margin-bottom: 20px; color: var(--pgn-blue);">4. Revisión Final y Firma</h3>
+                            
+                            <div class="alert-critical">
+                                <i class="fas fa-shield-alt" style="font-size: 24px;"></i>
+                                <div>
+                                    <strong>Advertencia Legal:</strong> La formulación del pliego de cargos interrumpe los términos de prescripción y genera notificación personal obligatoria al disciplinado dentro de los 3 días siguientes.
+                                </div>
+                            </div>
+
+                            <div style="background: #F9FAFB; padding: 20px; border-radius: var(--radius-md); margin-bottom: 20px;">
+                                <h4 style="margin-bottom: 10px;">Resumen del Documento</h4>
+                                <ul style="list-style: none; font-size: 14px; line-height: 2;">
+                                    <li><i class="fas fa-check" style="color: green;"></i> Hechos relatados: <strong>Sí</strong></li>
+                                    <li><i class="fas fa-check" style="color: green;"></i> Cargos formulados: <strong>2</strong></li>
+                                    <li><i class="fas fa-check" style="color: green;"></i> Pruebas anexadas: <strong>5 documentos</strong></li>
+                                    <li><i class="fas fa-check" style="color: green;"></i> Firma digital lista: <strong>Certificado válido</strong></li>
+                                </ul>
+                            </div>
+
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 20px; height: 20px;">
+                                    <span style="font-size: 14px;">Declaro que la información es veraz y se ajusta a derecho.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="actions-footer">
+                            <button class="btn btn-secondary" id="btn-prev" onclick="changeStep(-1)" disabled>Anterior</button>
+                            <button class="btn btn-primary" id="btn-next" onclick="changeStep(1)">Siguiente</button>
+                            <button class="btn btn-danger hidden" id="btn-submit" onclick="confirmSubmit()">Firmar y Generar Pliego</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botón Flotante IA -->
+    <div class="ia-fab" onclick="openModal('modal-ia')">
+        <i class="fas fa-robot"></i>
+        <div class="ia-tooltip">Asistente procuradurIA</div>
+    </div>
+
+    <!-- MODAL: Confirmación Crítica -->
+    <div class="modal-overlay" id="modal-confirm">
+        <div class="modal-container">
+            <div class="modal-header" style="background: var(--pgn-red);">
+                <h3 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Acción Irreversible</h3>
+                <button class="modal-close" onclick="closeModal('modal-confirm')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Está a punto de formular <strong>Pliego de Cargos</strong> contra el disciplinado.</p>
+                <br>
+                <p style="font-size: 14px; color: var(--pgn-gray);">Esta acción:</p>
+                <ul style="margin-left: 20px; margin-top: 10px; font-size: 14px;">
+                    <li>Mueve el expediente a fase de Juzgamiento.</li>
+                    <li>Inicia el conteo de términos para la audiencia.</li>
+                    <li>Genera notificación personal automática.</li>
+                </ul>
+                <br>
+                <p><strong>¿Confirma que el documento ha sido revisado y cumple con todos los requisitos del Art. 222 CGD?</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">Cancelar</button>
+                <button class="btn btn-danger" onclick="executeSubmit()">Sí, Firmar y Notificar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Éxito -->
+    <div class="modal-overlay" id="modal-success">
+        <div class="modal-container">
+            <div class="modal-header" style="background: #059669;">
+                <h3 class="modal-title"><i class="fas fa-check-circle"></i> Proceso Exitoso</h3>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <i class="fas fa-file-signature modal-icon-large" style="color: #059669;"></i>
+                <h4>Pliego de Cargos Generado</h4>
+                <p style="margin-top: 10px; font-size: 14px;">El documento ha sido firmado digitalmente y puesto a disposición para notificación.</p>
+                <p style="font-size: 12px; color: var(--pgn-gray); margin-top: 15px;">Radicado: EED-2023-PLIEGO-8892</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-primary" onclick="closeModal('modal-success'); window.location.href='#'">Ir a Bandeja de Notificaciones</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Asistente IA -->
+    <div class="modal-overlay" id="modal-ia">
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-robot"></i> procuradurIA</h3>
+                <button class="modal-close" onclick="closeModal('modal-ia')">&times;</button>
+            </div>
+            <div class="modal-body" style="height: 300px; display: flex; flex-direction: column;">
+                <div style="background: #F3F4F6; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 13px;">
+                    <strong>IA:</strong> Hola Dr. Pérez. Detecto que está en la fase de formulación de cargos. ¿Desea que valide la tipicidad de los artículos citados o que redacte un borrador de los hechos basado en la investigación?
+                </div>
+                <div style="margin-top: auto; display: flex; gap: 10px;">
+                    <input type="text" class="form-control" placeholder="Escriba su consulta..." style="flex: 1;">
+                    <button class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Buscador Normas -->
+    <div class="modal-overlay" id="modal-norma">
+        <div class="modal-container" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Buscador de Normas Disciplinarias</h3>
+                <button class="modal-close" onclick="closeModal('modal-norma')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" placeholder="Buscar por palabra clave (ej: deberes, prohibiciones)...">
+                <div style="margin-top: 20px; max-height: 300px; overflow-y: auto;">
+                    <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectNorma('Art. 35 Ley 734 - Deberes')">
+                        <strong>Art. 35 Ley 734/2002</strong> - Deberes del servidor público
+                    </div>
+                    <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectNorma('Art. 38 Ley 734 - Prohibiciones')">
+                        <strong>Art. 38 Ley 734/2002</strong> - Prohibiciones
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function changeStep(direction) {
+            // Validación simple antes de avanzar
+            if (direction === 1 && currentStep === 1) {
+                // Aquí iría validación real de campos
+            }
+
+            // Ocultar paso actual
+            document.getElementById(`step${currentStep}-content`).classList.add('hidden');
+            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.add('completed');
+
+            // Calcular nuevo paso
+            currentStep += direction;
+
+            // Mostrar nuevo paso
+            document.getElementById(`step${currentStep}-content`).classList.remove('hidden');
+            document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+
+            // Actualizar botones
+            document.getElementById('btn-prev').disabled = (currentStep === 1);
+            
+            if (currentStep === totalSteps) {
+                document.getElementById('btn-next').classList.add('hidden');
+                document.getElementById('btn-submit').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-next').classList.remove('hidden');
+                document.getElementById('btn-submit').classList.add('hidden');
+            }
+        }
+
+        function confirmSubmit() {
+            // Abrir modal de confirmación crítica en lugar de alert()
+            openModal('modal-confirm');
+        }
+
+        function executeSubmit() {
+            closeModal('modal-confirm');
+            // Simular proceso
+            setTimeout(() => {
+                openModal('modal-success');
+            }, 500);
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('active');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('active');
+        }
+
+        // Cerrar modal al hacer click fuera
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        function selectGravedad(element) {
+            // Remover selección previa
+            document.querySelectorAll('#step2-content .form-group div[onclick]').forEach(el => {
+                el.style.borderColor = '#D1D5DB';
+                el.style.backgroundColor = 'transparent';
+            });
+            // Seleccionar actual
+            element.style.borderColor = 'var(--pgn-blue)';
+            element.style.backgroundColor = '#EFF6FF';
+        }
+
+        function agregarCargo() {
+            const container = document.getElementById('lista-cargos');
+            const id = container.children.length + 1;
+            const html = `
+                <div class="cargo-item">
+                    <div class="cargo-details">
+                        <h4>Cargo #${id}: Incumplimiento de Deberes</h4>
+                        <p>Art. 35 Ley 734 - Omisión en la función de vigilancia</p>
+                    </div>
+                    <button class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function selectNorma(norma) {
+            document.querySelector('#step2-content input[type="text"]').value = norma;
+            closeModal('modal-norma');
+        }
+    </script>
+</body>
+</html>
