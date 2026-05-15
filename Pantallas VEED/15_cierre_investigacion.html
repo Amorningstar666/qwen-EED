@@ -1,283 +1,263 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cierre de Investigación - EED PGN</title>
-    <!-- Fuentes PGN -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cierre de Investigación y Traslado a Alegatos — EED PGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#063853;--amarillo:#FFE601;--rojo:#E3201B;
+      --azul-medio:#074C84;--azul-claro:#4DBFE2;
+      --naranja:#FFC300;--verde:#33FFCC;
+      --negro:#131313;--gris-claro:#EDEDED;--gris-medio:#949494;--blanco:#FFFFFF;
+      --fondo:#F0F4F8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:var(--fondo);color:var(--negro);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAVBAR */
+    .navbar{background:var(--azul);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(6,56,83,0.25);}
+    .navbar-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:var(--blanco);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .back-btn svg{width:16px;height:16px;}
+    .navbar-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--blanco);line-height:1.2;}
+    .navbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);}
+    .navbar-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{border:none;cursor:pointer;height:34px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;padding:0 14px;transition:all .15s;}
+    .nav-btn svg{width:14px;height:14px;}
+    .nav-btn.ghost{background:rgba(255,255,255,0.1);color:var(--blanco);}
+    .nav-btn.ghost:hover{background:rgba(255,255,255,0.2);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.12);color:var(--blanco);border:1px solid rgba(255,255,255,0.2);}
+    .autosave-indicator{font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+    .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block;}
+    .rol-select{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:0 12px;height:34px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;}
+    .btn-accion-principal{height:34px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:0 16px;background:var(--amarillo);color:var(--azul);transition:all .15s;}
+    .btn-accion-principal:hover{background:#e6cf00;}
+    .btn-accion-principal svg{width:14px;height:14px;}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{background:var(--blanco);border-bottom:1px solid var(--gris-claro);padding:9px 24px;display:flex;align-items:center;gap:6px;}
+    .breadcrumb-bar a,.breadcrumb-bar span{font-size:12px;color:var(--gris-medio);text-decoration:none;}
+    .breadcrumb-bar a:hover{color:var(--azul-medio);}
+    .breadcrumb-bar .sep{color:#CBD5E1;}
+    .breadcrumb-bar .current{color:var(--azul);font-weight:600;}
+
+    /* LAYOUT 3 COLUMNAS */
+    .editor-layout{display:grid;grid-template-columns:280px 1fr 320px;flex:1;height:calc(100vh - 96px);}
+
+    /* PANEL IZQUIERDO: FLUJO + TÉRMINO */
+    .panel-flujo{background:var(--blanco);border-right:1px solid var(--gris-claro);overflow-y:auto;padding:0;}
     
-    <style>
-        :root {
-            --pgn-blue: #063853;
-            --pgn-yellow: #FFE601;
-            --pgn-red: #E3201B;
-            --pgn-gray: #F4F6F8;
-            --text-dark: #1A1A1A;
-            --text-light: #666666;
-            --success: #28A745;
-            --warning: #FFC107;
-            --border-radius: 8px;
-            --shadow: 0 4px 12px rgba(6, 56, 83, 0.08);
-        }
+    /* ALERTA DE VENCIMIENTO */
+    .alerta-vencimiento{padding:16px;border-bottom:1px solid var(--gris-claro);animation:pulse-border 1.5s infinite;}
+    @keyframes pulse-border{
+      0%{box-shadow:inset 0 0 0 0 transparent;}
+      50%{box-shadow:inset 0 0 20px 5px rgba(227,32,27,0.3);}
+      100%{box-shadow:inset 0 0 0 0 transparent;}
+    }
+    .alerta-vencimiento.critico{background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);border-left:4px solid var(--rojo);}
+    .alerta-vencimiento.advertencia{background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);border-left:4px solid var(--naranja);}
+    .alerta-icono{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:8px;animation:rotate-alert 2s linear infinite;}
+    @keyframes rotate-alert{
+      0%{transform:rotate(0deg);}
+      25%{transform:rotate(-10deg);}
+      75%{transform:rotate(10deg);}
+      100%{transform:rotate(0deg);}
+    }
+    .alerta-vencimiento.critico .alerta-icono{background:var(--rojo);color:white;}
+    .alerta-vencimiento.advertencia .alerta-icono{background:var(--naranja);color:white;}
+    .alerta-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-bottom:4px;}
+    .alerta-vencimiento.critico .alerta-titulo{color:var(--rojo);}
+    .alerta-vencimiento.advertencia .alerta-titulo{color:#B45309;}
+    .alerta-mensaje{font-size:11px;line-height:1.4;}
+    .alerta-vencimiento.critico .alerta-mensaje{color:#991B1B;}
+    .alerta-vencimiento.advertencia .alerta-mensaje{color:#92400E;}
+    .alerta-dias{margin-top:8px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;}
+    .alerta-vencimiento.critico .alerta-dias{color:var(--rojo);}
+    .alerta-vencimiento.advertencia .alerta-dias{color:#B45309;}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--pgn-gray);
-            color: var(--text-dark);
-            display: flex;
-            min-height: 100vh;
-        }
+    /* FLUJO DE APROBACIÓN */
+    .flujo-section{padding:16px;border-bottom:1px solid var(--gris-claro);}
+    .flujo-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+    .flujo-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+    .flujo-step{display:flex;align-items:flex-start;gap:12px;padding:12px 0;position:relative;}
+    .flujo-step:not(:last-child)::after{content:'';position:absolute;left:15px;top:36px;width:2px;height:calc(100% - 12px);background:var(--gris-claro);}
+    .flujo-step.completed:not(:last-child)::after{background:var(--azul);}
+    .flujo-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;}
+    .flujo-step.pendiente .flujo-icon{background:var(--gris-claro);color:var(--gris-medio);}
+    .flujo-step.activo .flujo-icon{background:var(--azul);color:white;box-shadow:0 0 0 3px rgba(6,56,83,0.2);}
+    .flujo-step.completado .flujo-icon{background:var(--verde);color:var(--azul);}
+    .flujo-info{flex:1;}
+    .flujo-rol{font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;margin-bottom:2px;}
+    .flujo-step.activo .flujo-rol{color:var(--azul);}
+    .flujo-step.completado .flujo-rol{color:var(--azul);}
+    .flujo-nombre{font-size:11px;color:var(--gris-medio);}
+    .flujo-step.activo .flujo-nombre{color:var(--azul-medio);font-weight:500;}
+    .flujo-fecha{font-size:10px;color:var(--gris-medio);margin-top:3px;}
+    .flujo-badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;margin-left:6px;}
+    .flujo-step.activo .flujo-badge{background:var(--amarillo);color:var(--azul);}
+    .flujo-step.completado .flujo-badge{background:var(--verde);color:var(--azul);}
 
-        /* Sidebar (Simplificado para contexto) */
-        .sidebar {
-            width: 260px;
-            background: var(--pgn-blue);
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100%;
-        }
-        .logo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .logo i { color: var(--pgn-yellow); }
-        .nav-item { padding: 12px 15px; margin-bottom: 8px; border-radius: var(--border-radius); cursor: pointer; transition: 0.3s; opacity: 0.8; }
-        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); opacity: 1; border-left: 4px solid var(--pgn-yellow); }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            padding: 30px;
-        }
+    /* MARCO NORMATIVO */
+    .marco-section{padding:16px;}
+    .marco-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+    .marco-item{background:#F8FAFC;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--azul);}
+    .marco-art{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--azul);margin-bottom:3px;}
+    .marco-desc{font-size:10px;line-height:1.4;color:var(--gris-medio);}
 
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .breadcrumb { font-size: 14px; color: var(--text-light); margin-bottom: 5px; }
-        .page-title { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: var(--pgn-blue); }
-        .exp-badge { background: #eef2f5; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--pgn-blue); border: 1px solid #d1d9e6; }
+    /* ROL BANNER EN EDITOR */
+    .rol-banner{display:none;align-items:center;gap:10px;padding:10px 16px;flex-shrink:0;}
+    .rol-banner.visible{display:flex;}
+    .rol-banner.instructor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
+    .rol-banner.revisor{background:#EFF6FF;border-bottom:2px solid #BFDBFE;}
+    .rol-banner.aprobador{background:#FFFBEB;border-bottom:2px solid #FDE68A;}
+    .rol-banner.jefe{background:#F0FDF4;border-bottom:2px solid #BBF7D0;}
+    .rol-banner svg{width:16px;height:16px;flex-shrink:0;}
+    .rol-banner.instructor svg{color:#2563EB;}
+    .rol-banner.revisor svg{color:#2563EB;}
+    .rol-banner.aprobador svg{color:#D97706;}
+    .rol-banner.jefe svg{color:#059669;}
+    .rol-banner-text{flex:1;}
+    .rol-banner-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;}
+    .rol-banner.instructor .rol-banner-title{color:#1D4ED8;}
+    .rol-banner.revisor .rol-banner-title{color:#1D4ED8;}
+    .rol-banner.aprobador .rol-banner-title{color:#B45309;}
+    .rol-banner.jefe .rol-banner-title{color:#065F46;}
+    .rol-banner-sub{font-size:11px;color:var(--gris-medio);margin-top:1px;}
 
-        /* Grid Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 25px;
-        }
+    /* EDITOR CENTRAL */
+    .editor-center{overflow-y:auto;padding:32px 40px;display:flex;flex-direction:column;gap:24px;}
 
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            margin-bottom: 25px;
-            border-top: 4px solid transparent;
-        }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .card-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; color: var(--pgn-blue); }
-        
-        /* Saneamiento Checklist */
-        .checklist-section { border-top-color: var(--pgn-blue); }
-        .check-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: var(--border-radius);
-            margin-bottom: 12px;
-            transition: 0.2s;
-            background: #fafafa;
-        }
-        .check-item:hover { background: #f0f7ff; border-color: #b3d4fc; }
-        .check-item.critical { border-left: 4px solid var(--pgn-red); }
-        .check-item.validated { border-left: 4px solid var(--success); background: #f0fff4; }
-        
-        .checkbox-custom {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #ccc;
-            border-radius: 6px;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        .check-item input[type="checkbox"] { display: none; }
-        .check-item input[type="checkbox"]:checked + .checkbox-custom {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-        .check-item input[type="checkbox"]:checked + .checkbox-custom::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            font-size: 12px;
-        }
-        
-        .check-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-        .check-content p { font-size: 12px; color: var(--text-light); line-height: 1.4; }
-        .status-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
-        .status-ok { background: #d4edda; color: #155724; }
-        .status-pending { background: #fff3cd; color: #856404; }
+    /* CABECERA EXPEDIENTE */
+    .exp-header{background:var(--azul);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-radius:12px;margin-bottom:8px;}
+    .exp-logo-area{display:flex;align-items:center;gap:12px;}
+    .exp-logo-box{width:40px;height:40px;background:var(--amarillo);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .exp-logo-box svg{width:22px;height:22px;color:var(--azul);}
+    .exp-entidad .ent-name{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--blanco);}
+    .exp-entidad .ent-dep{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px;}
+    .exp-chip{background:var(--amarillo);color:var(--azul);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:6px 16px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase;}
 
-        /* Editor Auto */
-        .editor-section { border-top-color: var(--pgn-yellow); }
-        .ai-assistant-bar {
-            background: linear-gradient(90deg, #063853 0%, #0b4d6e 100%);
-            color: white;
-            padding: 10px 15px;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-        }
-        .ai-btn {
-            background: var(--pgn-yellow);
-            color: var(--pgn-blue);
-            border: none;
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .editor-area {
-            width: 100%;
-            height: 250px;
-            border: 1px solid #ddd;
-            border-top: none;
-            padding: 15px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            line-height: 1.6;
-            resize: vertical;
-            outline: none;
-        }
-        .editor-area:focus { border-color: var(--pgn-blue); }
+    /* SECCIONES DEL AUTO */
+    .auto-seccion{background:var(--blanco);border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+    .seccion-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--gris-claro);}
+    .seccion-num{width:32px;height:32px;border-radius:8px;background:var(--azul);color:white;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;}
+    .seccion-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px;color:var(--azul);}
+    .seccion-contenido{font-family:'Crimson Pro',serif;font-size:14px;line-height:1.8;color:var(--negro);}
+    .campo-label{display:block;font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:var(--gris-medio);margin-bottom:6px;}
+    .campo-input{width:100%;border:1px solid var(--gris-claro);border-radius:8px;padding:10px 12px;font-family:'Poppins',sans-serif;font-size:13px;transition:border .15s;}
+    .campo-input:focus{outline:none;border-color:var(--azul);}
+    .campo-textarea{width:100%;border:1px solid var(--gris-claro);border-radius:8px;padding:12px;font-family:'Crimson Pro',serif;font-size:14px;line-height:1.7;min-height:120px;resize:vertical;}
+    .campo-textarea:focus{outline:none;border-color:var(--azul);}
+    .rich-editor{border:1px solid var(--gris-claro);border-radius:8px;overflow:hidden;}
+    .editor-toolbar{background:#F8FAFC;padding:8px 12px;border-bottom:1px solid var(--gris-claro);display:flex;gap:6px;flex-wrap:wrap;}
+    .toolbar-btn{width:28px;height:28px;border:1px solid var(--gris-claro);background:var(--blanco);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+    .toolbar-btn:hover{background:var(--azul);color:white;border-color:var(--azul);}
+    .editor-content{min-height:150px;padding:12px;font-family:'Crimson Pro',serif;font-size:14px;line-height:1.7;}
+    .editor-content[contenteditable]:empty::before{content:'Escriba el contenido aquí...';color:var(--gris-medio);font-style:italic;}
 
-        /* Panel Derecho: Traslado y Flujo */
-        .sidebar-panel { display: flex; flex-direction: column; gap: 25px; }
-        
-        .transfer-card { border-top-color: var(--pgn-blue); }
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-        }
-        .subject-list { max-height: 150px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; }
-        .subject-item { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-        .subject-item:last-child { border-bottom: none; }
-        .subject-item i { color: var(--pgn-blue); font-size: 12px; }
+    /* CHECKLIST DE SANEAMIENTO (Recordatorio) */
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:8px;margin-bottom:8px;transition:background .15s;background:#F8FAFC;}
+    .checklist-item:hover{background:#EBF4FA;}
+    .checklist-checkbox{width:20px;height:20px;border:2px solid var(--gris-medio);border-radius:5px;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .checklist-checkbox.checked{background:var(--azul);border-color:var(--azul);}
+    .checklist-checkbox.checked::after{content:'✓';color:white;font-size:13px;font-weight:700;}
+    .checklist-label{flex:1;font-size:13px;line-height:1.5;cursor:pointer;}
+    .checklist-hint{font-size:11px;color:var(--gris-medio);margin-top:3px;display:block;}
+    .checklist-art{display:inline-block;background:#EFF6FF;color:var(--azul-medio);font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;}
 
-        .workflow-card { border-top-color: var(--text-light); }
-        .workflow-steps { display: flex; flex-direction: column; gap: 15px; position: relative; }
-        .step { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
-        .step-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: var(--text-light);
-            flex-shrink: 0;
-        }
-        .step.active .step-icon { background: var(--pgn-blue); color: white; }
-        .step.completed .step-icon { background: var(--success); color: white; }
-        .step-info h5 { font-size: 14px; font-weight: 600; }
-        .step-info p { font-size: 11px; color: var(--text-light); }
+    /* TABS */
+    .tabs-nav{background:var(--blanco);border-bottom:2px solid var(--gris-claro);display:flex;overflow-x:auto;padding:0 20px;margin-bottom:20px;}
+    .tab-btn{border:none;background:transparent;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:var(--gris-medio);padding:14px 16px;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;}
+    .tab-btn:hover{color:var(--azul-medio);}
+    .tab-btn.active{color:var(--azul);border-bottom-color:var(--azul);}
+    .tab-btn svg{width:13px;height:13px;}
+    .tab-pane{display:none;}
+    .tab-pane.active{display:block;}
 
-        /* Action Bar */
-        .action-bar {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 260px;
-            background: white;
-            padding: 15px 30px;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            z-index: 100;
-        }
-        .btn {
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-secondary { background: #f1f3f5; color: var(--text-dark); }
-        .btn-secondary:hover { background: #e9ecef; }
-        .btn-primary { background: var(--pgn-blue); color: white; }
-        .btn-primary:hover { background: #042a3e; }
-        .btn-disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
-        
-        /* Alert Box */
-        .alert-box {
-            background: #fff8e1;
-            border-left: 4px solid var(--warning);
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #856404;
-            display: flex;
-            gap: 10px;
-        }
+    /* SUJETOS PROCESALES */
+    .subject-list{border:1px solid var(--gris-claro);border-radius:8px;overflow:hidden;}
+    .subject-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--gris-claro);background:var(--blanco);}
+    .subject-item:last-child{border-bottom:none;}
+    .subject-avatar{width:36px;height:36px;border-radius:50%;background:var(--azul);color:white;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;flex-shrink:0;}
+    .subject-info{flex:1;}
+    .subject-name{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:var(--negro);}
+    .subject-role{font-size:11px;color:var(--gris-medio);}
+    .subject-status{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;}
+    .status-notificado{background:#D1FAE5;color:#065F46;}
+    .status-pendiente{background:#FEF3C7;color:#92400E;}
 
-        /* Modal Simulation */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal {
-            background: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            width: 400px;
-            text-align: center;
-        }
-        .modal h3 { color: var(--pgn-blue); margin-bottom: 10px; }
-        .modal p { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
-        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+    /* BOTONES DE ACCIÓN */
+    .acciones-footer{display:flex;gap:12px;padding:16px 24px;background:var(--blanco);border-top:1px solid var(--gris-claro);position:sticky;bottom:0;}
+    .btn{height:40px;border:none;cursor:pointer;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;padding:0 16px;transition:all .15s;}
+    .btn svg{width:16px;height:16px;}
+    .btn-secondary{background:var(--blanco);border:1px solid var(--gris-claro);color:var(--gris-medio);}
+    .btn-secondary:hover{background:#F8FAFC;border-color:var(--gris-medio);color:var(--negro);}
+    .btn-primary{background:var(--azul);color:white;}
+    .btn-primary:hover{background:var(--azul-medio);}
+    .btn-warning{background:var(--naranja);color:var(--azul);}
+    .btn-warning:hover{background:#FFB300;}
+    .btn-success{background:var(--verde);color:var(--azul);}
+    .btn-success:hover{background:#22DDBB;}
+    .btn-disabled{background:var(--gris-claro);color:var(--gris-medio);cursor:not-allowed;}
 
-    </style>
+    /* PANEL DERECHO — ACCIONES DE ROL */
+    .panel-derecho{background:var(--blanco);border-left:1px solid var(--gris-claro);overflow-y:auto;}
+    .rol-action-panel{display:none;flex-direction:column;}
+    .rol-action-panel.visible{display:flex;}
+    .rap-header{padding:16px;border-bottom:1px solid var(--gris-claro);}
+    .rap-rol-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+    .rap-rol-badge.instructor{background:#DBEAFE;color:#1D4ED8;}
+    .rap-rol-badge.revisor{background:#DBEAFE;color:#1D4ED8;}
+    .rap-rol-badge.aprobador{background:#FEF3C7;color:#B45309;}
+    .rap-rol-badge.jefe{background:#D1FAE5;color:#065F46;}
+    .rap-rol-badge svg{width:12px;height:12px;}
+    .rap-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--azul);margin-bottom:4px;}
+    .rap-desc{font-size:11px;color:var(--gris-medio);line-height:1.5;}
+    .rap-opciones{padding:16px;display:flex;flex-direction:column;gap:10px;}
+    .rap-opcion{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:8px;border:2px solid;cursor:pointer;transition:all .15s;text-align:left;width:100%;background:var(--blanco);}
+    .rap-opcion svg{width:18px;height:18px;flex-shrink:0;margin-top:1px;}
+    .rap-opcion-body{flex:1;}
+    .rap-opcion-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;display:block;line-height:1.2;margin-bottom:3px;}
+    .rap-opcion-sub{font-size:11px;line-height:1.4;}
+    .rap-opcion.via-aprobar{border-color:#BBF7D0;background:#F0FDF4;}
+    .rap-opcion.via-aprobar svg,.rap-opcion.via-aprobar .rap-opcion-sub{color:#059669;}
+    .rap-opcion.via-aprobar .rap-opcion-label{color:#065F46;}
+    .rap-opcion.via-aprobar:hover{background:#DCFCE7;border-color:#86EFAC;}
+    .rap-opcion.via-devolver{border-color:#FECACA;background:#FEF2F2;}
+    .rap-opcion.via-devolver svg,.rap-opcion.via-devolver .rap-opcion-sub{color:#DC2626;}
+    .rap-opcion.via-devolver .rap-opcion-label{color:#991B1B;}
+    .rap-opcion.via-devolver:hover{background:#FEE2E2;border-color:#FCA5A5;}
+
+    /* IA FLOTANTE */
+    .ia-float{position:fixed;bottom:24px;right:24px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--azul) 0%,var(--azul-medio) 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(6,56,83,0.3);z-index:1000;transition:all .3s;animation:float-ia 3s ease-in-out infinite;}
+    @keyframes float-ia{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    .ia-float:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(6,56,83,0.4);}
+    .ia-float svg{width:32px;height:32px;color:var(--amarillo);}
+    .ia-tooltip{position:absolute;bottom:70px;right:0;background:var(--azul);color:white;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .ia-float:hover .ia-tooltip{opacity:1;}
+
+    /* TOAST NOTIFICATION */
+    .toast-container{position:fixed;top:80px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--blanco);border-radius:8px;padding:12px 16px;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;min-width:300px;animation:slide-in .3s ease-out;}
+    @keyframes slide-in{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    .toast-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+    .toast.success .toast-icon{background:var(--verde);color:var(--azul);}
+    .toast.warning .toast-icon{background:var(--naranja);color:var(--azul);}
+    .toast.error .toast-icon{background:var(--rojo);color:white;}
+    .toast-message{flex:1;font-size:12px;font-weight:500;}
+
+    /* MODAL CONFIRMACIÓN */
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:3000;}
+    .modal-overlay.active{display:flex;}
+    .modal-content{background:var(--blanco);border-radius:12px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+    .modal-header{padding:20px 24px;border-bottom:1px solid var(--gris-claro);display:flex;align-items:center;justify-content:space-between;}
+    .modal-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px;color:var(--azul);}
+    .modal-close{width:32px;height:32px;border:none;background:transparent;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .modal-close:hover{background:#F8FAFC;}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gris-claro);display:flex;gap:12px;justify-content:flex-end;}
+  </style>
 </head>
 <body>
 
@@ -521,5 +501,240 @@
             alert("Redirigiendo a bandeja de 'En revisión'...");
         }
     </script>
+</body>
+</html>
+  <script>
+    // CAMBIAR ROL
+    function cambiarRol() {
+      const rol = document.getElementById('rolSelector').value;
+      const banner = document.getElementById('rolBanner');
+      const panelInstructor = document.getElementById('panel-instructor');
+      const panelRevisor = document.getElementById('panel-revisor');
+      const panelAprobador = document.getElementById('panel-aprobador');
+      const panelJefe = document.getElementById('panel-jefe');
+      const btnPrincipal = document.getElementById('btnPrincipal');
+
+      // Ocultar todos los paneles
+      panelInstructor.classList.remove('visible');
+      panelRevisor.classList.remove('visible');
+      panelAprobador.classList.remove('visible');
+      panelJefe.classList.remove('visible');
+
+      // Mostrar banner y panel según rol
+      banner.className = 'rol-banner visible ' + rol;
+      
+      if (rol === 'instructor') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como INSTRUCTOR';
+        banner.querySelector('.rol-banner-sub').textContent = 'Prepara el proyecto de auto de cierre de investigación y configura el traslado para alegatos precalificatorios.';
+        panelInstructor.classList.add('visible');
+        btnPrincipal.textContent = 'Enviar a Revisión';
+        actualizarFlujoVisual('instructor');
+      } else if (rol === 'revisor') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como REVISOR';
+        banner.querySelector('.rol-banner-sub').textContent = 'Verifica que el proyecto de auto cumpla con todos los requisitos legales antes de enviarlo al aprobador.';
+        panelRevisor.classList.add('visible');
+        btnPrincipal.textContent = 'Aprobar y Continuar';
+        actualizarFlujoVisual('revisor');
+      } else if (rol === 'aprobador') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como APROBADOR';
+        banner.querySelector('.rol-banner-sub').textContent = 'Realizas la validación final del auto antes de su envío a firma del Jefe de Dependencia.';
+        panelAprobador.classList.add('visible');
+        btnPrincipal.textContent = 'Aprobar y Enviar a Firma';
+        actualizarFlujoVisual('aprobador');
+      } else if (rol === 'jefe') {
+        banner.querySelector('.rol-banner-title').textContent = 'Estás actuando como JEFE DE DEPENDENCIA';
+        banner.querySelector('.rol-banner-sub').textContent = 'Firmas el auto y dispones su notificación y cumplimiento.';
+        panelJefe.classList.add('visible');
+        btnPrincipal.textContent = 'Firmar Auto';
+        actualizarFlujoVisual('jefe');
+      }
+    }
+
+    // ACTUALIZAR FLUJO VISUAL
+    function actualizarFlujoVisual(rolActual) {
+      const steps = ['instructor', 'revisor', 'aprobador', 'jefe'];
+      const stepElements = {
+        instructor: document.getElementById('step-instructor'),
+        revisor: document.getElementById('step-revisor'),
+        aprobador: document.getElementById('step-aprobador'),
+        jefe: document.getElementById('step-jefe')
+      };
+
+      steps.forEach((step, index) => {
+        const el = stepElements[step];
+        el.className = 'flujo-step pendiente';
+        
+        if (steps.indexOf(rolActual) > index) {
+          el.className = 'flujo-step completado';
+        } else if (step === rolActual) {
+          el.className = 'flujo-step activo';
+        }
+      });
+    }
+
+    // AVANZAR FLUJO
+    function avanzarFlujo(rolOrigen) {
+      mostrarModalConfirmacion(
+        `¿Confirmas enviar este proyecto al siguiente nivel del flujo?`,
+        `El proyecto será enviado desde ${rolOrigen.toUpperCase()} hacia el siguiente aprobador en la cadena.`,
+        () => {
+          cerrarModal();
+          mostrarToast('success', 'Proyecto enviado correctamente al siguiente nivel');
+          
+          // Simular avance
+          const roles = ['instructor', 'revisor', 'aprobador', 'jefe'];
+          const indiceActual = roles.indexOf(rolOrigen);
+          if (indiceActual < roles.length - 1) {
+            document.getElementById('rolSelector').value = roles[indiceActual + 1];
+            cambiarRol();
+          }
+        }
+      );
+    }
+
+    // DEVOLVER FLUJO
+    function devolverFlujo(rolOrigen) {
+      mostrarModalConfirmacion(
+        `¿Devolver proyecto al ${rolOrigen === 'revisor' ? 'Instructor' : rolOrigen === 'aprobador' ? 'Revisor' : 'Aprobador'}?`,
+        `El proyecto será devuelto con observaciones para corrección.`,
+        () => {
+          cerrarModal();
+          mostrarToast('warning', 'Proyecto devuelto con observaciones');
+        }
+      );
+    }
+
+    // FIRMAR AUTO
+    function firmarAuto() {
+      mostrarModalConfirmacion(
+        `¿Confirmas la firma y expedición del Auto de Cierre?`,
+        `Una vez firmado, el auto será notificado a los sujetos procesales y se iniciará el término para alegatos.`,
+        () => {
+          cerrarModal();
+          mostrarToast('success', 'Auto firmado y expedido correctamente');
+          setTimeout(() => {
+            alert('✅ Auto de Cierre de Investigación expedido.\n\n📋 Próximo paso: Notificación a sujetos procesales e inicio del término de 10 días hábiles para alegatos precalificatorios.');
+          }, 500);
+        }
+      );
+    }
+
+    // GUARDAR BORRADOR
+    function guardarBorrador() {
+      mostrarToast('success', 'Borrador guardado automáticamente');
+    }
+
+    // ACCIÓN PRINCIPAL
+    function accionPrincipal() {
+      const rol = document.getElementById('rolSelector').value;
+      if (rol === 'instructor') {
+        avanzarFlujo('instructor');
+      } else if (rol === 'revisor') {
+        avanzarFlujo('revisor');
+      } else if (rol === 'aprobador') {
+        avanzarFlujo('aprobador');
+      } else if (rol === 'jefe') {
+        firmarAuto();
+      }
+    }
+
+    // CAMBIAR TAB
+    function cambiarTab(tabId) {
+      // Ocultar todos los tabs
+      document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Mostrar tab seleccionado
+      document.getElementById('tab-' + tabId).classList.add('active');
+      event.target.closest('.tab-btn').classList.add('active');
+    }
+
+    // TOGGLE CHECKBOX
+    function toggleCheck(element) {
+      const checkbox = element.querySelector('.checklist-checkbox');
+      const isChecked = checkbox.getAttribute('data-checked') === 'true';
+      checkbox.setAttribute('data-checked', !isChecked);
+      checkbox.classList.toggle('checked');
+    }
+
+    // GENERAR CON IA
+    function generarConIA() {
+      mostrarToast('success', 'procuradurIA está generando las consideraciones jurídicas...');
+      setTimeout(() => {
+        const editor = document.getElementById('editorConsideraciones');
+        editor.innerHTML = '<p><strong>PRIMERO.</strong> De conformidad con lo establecido en el artículo 221 del Código General Disciplinario (Ley 1952 de 2019), modificado por la Ley 2094 de 2021, una vez concluida la etapa de investigación, el instructor deberá proferir auto de cierre si encuentra mérito para formular pliego de cargos o sobreseer la actuación.</p><br><p><strong>SEGUNDO.</strong> En el presente caso, del acervo probatorio reunido durante la investigación se desprende que existe mérito para formular pliego de cargos en contra del investigado, toda vez que los medios de prueba permiten establecer la realización de la conducta y la participación del disciplinado.</p><br><p><strong>TERCERO.</strong> Conforme al artículo 222 del CGD, una vez proferido el auto de cierre con formulación de pliego de cargos, se deberá conceder traslado al disciplinado, a su defensor y al Ministerio Público por el término de diez (10) días hábiles para presentar alegatos precalificatorios.</p><br><p><strong>CUARTO.</strong> Esta autoridad disciplinaria ha verificado el cumplimiento de los presupuestos procesales y no encuentra causales de nulidad que afecten lo actuado.</p>';
+        mostrarToast('success', 'Contenido generado exitosamente');
+      }, 1500);
+    }
+
+    // INSERTAR ARTÍCULO
+    function insertarArticulo() {
+      const articulo = prompt('Ingrese el número del artículo:', '221');
+      if (articulo) {
+        const texto = `<strong>Artículo ${articulo} CGD:</strong> `;
+        document.execCommand('insertHTML', false, texto);
+      }
+    }
+
+    // CALCULAR VENCIMIENTO
+    function calcularVencimiento() {
+      const dias = parseInt(document.getElementById('diasTraslado').value) || 10;
+      const fechaInicio = new Date('2025-01-20');
+      let fechaFin = new Date(fechaInicio);
+      
+      // Sumar días hábiles (excluyendo fines de semana)
+      let diasSumados = 0;
+      while (diasSumados < dias) {
+        fechaFin.setDate(fechaFin.getDate() + 1);
+        const diaSemana = fechaFin.getDay();
+        if (diaSemana !== 0 && diaSemana !== 6) {
+          diasSumados++;
+        }
+      }
+      
+      const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById('fechaVencimiento').textContent = fechaFin.toLocaleDateString('es-ES', opciones);
+    }
+
+    // MOSTRAR MODAL
+    function mostrarModalConfirmacion(titulo, mensaje, callback) {
+      document.getElementById('modalMensaje').innerHTML = `<strong>${titulo}</strong><br><br>${mensaje}`;
+      document.getElementById('modalBtnAccion').onclick = callback;
+      document.getElementById('modalConfirmacion').classList.add('active');
+    }
+
+    // CERRAR MODAL
+    function cerrarModal() {
+      document.getElementById('modalConfirmacion').classList.remove('active');
+    }
+
+    // MOSTRAR TOAST
+    function mostrarToast(tipo, mensaje) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${tipo}`;
+      toast.innerHTML = `
+        <div class="toast-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14">
+            ${tipo === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' : 
+              tipo === 'warning' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>' :
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>'}
+          </svg>
+        </div>
+        <div class="toast-message">${mensaje}</div>
+      `;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slide-in .3s ease-out reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // INICIALIZAR
+    document.addEventListener('DOMContentLoaded', function() {
+      calcularVencimiento();
+    });
+  </script>
 </body>
 </html>
