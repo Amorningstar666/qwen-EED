@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cierre de Investigación - EED PGN</title>
+    <!-- Fuentes PGN -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --pgn-blue: #063853;
+            --pgn-yellow: #FFE601;
+            --pgn-red: #E3201B;
+            --pgn-gray: #F4F6F8;
+            --text-dark: #1A1A1A;
+            --text-light: #666666;
+            --success: #28A745;
+            --warning: #FFC107;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(6, 56, 83, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--pgn-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar (Simplificado para contexto) */
+        .sidebar {
+            width: 260px;
+            background: var(--pgn-blue);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .logo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--pgn-yellow); }
+        .nav-item { padding: 12px 15px; margin-bottom: 8px; border-radius: var(--border-radius); cursor: pointer; transition: 0.3s; opacity: 0.8; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); opacity: 1; border-left: 4px solid var(--pgn-yellow); }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .breadcrumb { font-size: 14px; color: var(--text-light); margin-bottom: 5px; }
+        .page-title { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: var(--pgn-blue); }
+        .exp-badge { background: #eef2f5; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--pgn-blue); border: 1px solid #d1d9e6; }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-top: 4px solid transparent;
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; color: var(--pgn-blue); }
+        
+        /* Saneamiento Checklist */
+        .checklist-section { border-top-color: var(--pgn-blue); }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            transition: 0.2s;
+            background: #fafafa;
+        }
+        .check-item:hover { background: #f0f7ff; border-color: #b3d4fc; }
+        .check-item.critical { border-left: 4px solid var(--pgn-red); }
+        .check-item.validated { border-left: 4px solid var(--success); background: #f0fff4; }
+        
+        .checkbox-custom {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .check-item input[type="checkbox"] { display: none; }
+        .check-item input[type="checkbox"]:checked + .checkbox-custom {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        .check-item input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 12px;
+        }
+        
+        .check-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .check-content p { font-size: 12px; color: var(--text-light); line-height: 1.4; }
+        .status-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+        .status-ok { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+
+        /* Editor Auto */
+        .editor-section { border-top-color: var(--pgn-yellow); }
+        .ai-assistant-bar {
+            background: linear-gradient(90deg, #063853 0%, #0b4d6e 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .ai-btn {
+            background: var(--pgn-yellow);
+            color: var(--pgn-blue);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .editor-area {
+            width: 100%;
+            height: 250px;
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 15px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+        }
+        .editor-area:focus { border-color: var(--pgn-blue); }
+
+        /* Panel Derecho: Traslado y Flujo */
+        .sidebar-panel { display: flex; flex-direction: column; gap: 25px; }
+        
+        .transfer-card { border-top-color: var(--pgn-blue); }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+        .subject-list { max-height: 150px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; }
+        .subject-item { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .subject-item:last-child { border-bottom: none; }
+        .subject-item i { color: var(--pgn-blue); font-size: 12px; }
+
+        .workflow-card { border-top-color: var(--text-light); }
+        .workflow-steps { display: flex; flex-direction: column; gap: 15px; position: relative; }
+        .step { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
+        .step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-light);
+            flex-shrink: 0;
+        }
+        .step.active .step-icon { background: var(--pgn-blue); color: white; }
+        .step.completed .step-icon { background: var(--success); color: white; }
+        .step-info h5 { font-size: 14px; font-weight: 600; }
+        .step-info p { font-size: 11px; color: var(--text-light); }
+
+        /* Action Bar */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 260px;
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            z-index: 100;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary { background: #f1f3f5; color: var(--text-dark); }
+        .btn-secondary:hover { background: #e9ecef; }
+        .btn-primary { background: var(--pgn-blue); color: white; }
+        .btn-primary:hover { background: #042a3e; }
+        .btn-disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
+        
+        /* Alert Box */
+        .alert-box {
+            background: #fff8e1;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Modal Simulation */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 400px;
+            text-align: center;
+        }
+        .modal h3 { color: var(--pgn-blue); margin-bottom: 10px; }
+        .modal p { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-balance-scale"></i> EED PGN</div>
+        <div class="nav-item"><i class="fas fa-home"></i> Inicio</div>
+        <div class="nav-item"><i class="fas fa-folder-open"></i> Mis Expedientes</div>
+        <div class="nav-item active"><i class="fas fa-gavel"></i> Instrucción</div>
+        <div class="nav-item"><i class="fas fa-users"></i> Sujetos Procesales</div>
+        <div class="nav-item"><i class="fas fa-file-contract"></i> Actuaciones</div>
+        <div style="margin-top: auto; font-size: 12px; opacity: 0.6;">v2.4.0 - Módulo Instrucción</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">Expediente 2023-00158 / Instrucción / Cierre</div>
+                <h1 class="page-title">Cierre de Investigación y Traslado a Alegatos</h1>
+            </div>
+            <div class="exp-badge">
+                <i class="fas fa-id-card"></i> RAD: 2023-00158-000
+                <span style="margin: 0 10px; color:#ccc;">|</span>
+                <span style="color: var(--pgn-red); font-weight: 700;">ETAPA: INSTRUCCIÓN</span>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- Columna Izquierda: Saneamiento y Redacción -->
+            <div class="left-col">
+                
+                <!-- 1. Checklist de Saneamiento -->
+                <div class="card checklist-section">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-clipboard-check"></i> Validación de Saneamiento (Art. 216 CGD)</h3>
+                        <span class="status-tag status-pending" id="sanity-status">Pendiente de validación</span>
+                    </div>
+                    
+                    <div class="alert-box">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Requisito Legal:</strong> Antes de proyectar el Auto de Cierre, debe certificar que no existen vacíos probatorios ni nulidades pendientes.
+                        </div>
+                    </div>
+
+                    <label class="check-item critical">
+                        <input type="checkbox" id="check-pruebas" onchange="validateSanity()">
+                        <div class="checkbox-custom"></div>
+                        <div class="check-content">
+                            <h4>Integridad Probatoria <span class="status-tag status-ok">Verificado</span></h4>
+                            <p>Declaro que se han practicado todas las pruebas decretadas y solicitadas. No existen medios de prueba pendientes que afecten el derecho de defensa.</p>
+                        </div>
+                    </label>
+
+                    <label class="check-item critical">
+                        <input type="checkbox" id="check-notificaciones" onchange="validateSanity()">
+                        <div class="checkbox-custom"></div>
+                        <div class="check-content">
+                            <h4>Notificaciones a Sujetos Procesales <span class="status-tag status-pending">Por revisar</span></h4>
+                            <p>Confirmo que el Disciplinado, la Víctima y el Ministerio Público han sido notificados de todas las actuaciones relevantes (Art. 133 CGD).</p>
+                        </div>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" id="check-medidas" onchange="validateSanity()">
+                        <div class="checkbox-custom"></div>
+                        <div class="check-content">
+                            <h4>Medidas Preventivas y Cautelares</h4>
+                            <p>Se ha verificado la vigencia o necesidad de revocatoria de medidas preventivas impuestas durante la investigación.</p>
+                        </div>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" id="check-prescripcion" onchange="validateSanity()">
+                        <div class="checkbox-custom"></div>
+                        <div class="check-content">
+                            <h4>Control de Términos y Prescripción</h4>
+                            <p>El cierre se realiza dentro del término legal (6 meses prorrogables). No hay causal de prescripción de la acción disciplinaria.</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- 2. Proyección del Auto -->
+                <div class="card editor-section">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-file-signature"></i> Proyección de Auto de Cierre</h3>
+                        <button class="ai-btn" onclick="generateAuto()"><i class="fas fa-magic"></i> Generar con procuradurIA</button>
+                    </div>
+                    
+                    <div class="ai-assistant-bar">
+                        <span><i class="fas fa-robot"></i> Asistente de Redacción Jurídica</span>
+                        <span style="font-size: 11px; opacity: 0.8;">Basado en Art. 221 CGD</span>
+                    </div>
+                    <textarea class="editor-area" id="auto-editor" placeholder="El Auto de Cierre se generará aquí tras validar el saneamiento..."></textarea>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" style="padding: 8px 15px; font-size: 12px;"><i class="fas fa-upload"></i> Adjuntar Borrador Externo</button>
+                        <button class="btn btn-secondary" style="padding: 8px 15px; font-size: 12px;"><i class="fas fa-save"></i> Guardar Borrador</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna Derecha: Traslado y Flujo -->
+            <div class="sidebar-panel">
+                
+                <!-- Configuración de Traslado -->
+                <div class="card transfer-card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-share-alt"></i> Configurar Traslado (Alegatos)</h3>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Término para Alegatos (Art. 220 CGD)</label>
+                        <select class="form-control">
+                            <option value="10">10 Días Hábiles (Estándar)</option>
+                            <option value="5">5 Días Hábiles (Allanamiento)</option>
+                        </select>
+                        <small style="color: var(--text-light); font-size: 11px; display: block; margin-top: 5px;">El término corre a partir de la última notificación personal.</small>
+                    </div>
+
+                    <label class="form-label">Sujetos a Notificar</label>
+                    <div class="subject-list">
+                        <div class="subject-item"><i class="fas fa-user-tie"></i> Juan Pérez (Disciplinado) - Defensor: Dr. Gómez</div>
+                        <div class="subject-item"><i class="fas fa-user-injured"></i> María López (Víctima)</div>
+                        <div class="subject-item"><i class="fas fa-balance-scale-right"></i> Ministerio Público (Procuraduría)</div>
+                    </div>
+                </div>
+
+                <!-- Flujo de Aprobación -->
+                <div class="card workflow-card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-project-diagram"></i> Circuito de Aprobación</h3>
+                    </div>
+                    
+                    <div class="workflow-steps">
+                        <div class="step completed">
+                            <div class="step-icon"><i class="fas fa-check"></i></div>
+                            <div class="step-info">
+                                <h5>Instructor</h5>
+                                <p>Proyecta y valida saneamiento</p>
+                            </div>
+                        </div>
+                        <div class="step active">
+                            <div class="step-icon"><i class="fas fa-user-edit"></i></div>
+                            <div class="step-info">
+                                <h5>Revisor / Supervisor</h5>
+                                <p>Valida jurídica y formalmente</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon"><i class="fas fa-user-tie"></i></div>
+                            <div class="step-info">
+                                <h5>Jefe de Grupo</h5>
+                                <p>Aprobación final y firma</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon"><i class="fas fa-paper-plane"></i></div>
+                            <div class="step-info">
+                                <h5>Notificación</h5>
+                                <p>Traslado a alegatos precalificatorios</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Espacio para el footer fijo -->
+        <div style="height: 80px;"></div>
+    </div>
+
+    <!-- Action Bar Fija -->
+    <div class="action-bar">
+        <button class="btn btn-secondary" onclick="window.location.href='14_gestion_investigacion_.html'"><i class="fas fa-arrow-left"></i> Volver a Gestión</button>
+        <button class="btn btn-primary btn-disabled" id="btn-send-review" disabled onclick="sendToReview()">
+            <i class="fas fa-paper-plane"></i> Enviar a Revisión
+        </button>
+    </div>
+
+    <!-- Modal Confirmación -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <i class="fas fa-check-circle" style="font-size: 48px; color: var(--success); margin-bottom: 15px;"></i>
+            <h3>Enviado a Revisión</h3>
+            <p>El Auto de Cierre ha sido remitido al Revisor asignado. Se ha notificado el inicio del término de aprobación.</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="closeModal()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateSanity() {
+            const checkPruebas = document.getElementById('check-pruebas').checked;
+            const checkNotif = document.getElementById('check-notificaciones').checked;
+            const btnSend = document.getElementById('btn-send-review');
+            const statusLabel = document.getElementById('sanity-status');
+
+            // Lógica crítica: Solo habilita si los dos checks principales están marcados
+            if (checkPruebas && checkNotif) {
+                btnSend.classList.remove('btn-disabled');
+                btnSend.disabled = false;
+                statusLabel.textContent = "Saneamiento Completado";
+                statusLabel.className = "status-tag status-ok";
+                
+                // Simular generación automática del auto si está vacío
+                const editor = document.getElementById('auto-editor');
+                if(editor.value.trim() === "") {
+                    editor.value = "Iniciando redacción asistida...\n\nAUTO DE CIERRE DE INVESTIGACIÓN\n\nVistos los antecedentes disciplinarios...";
+                }
+            } else {
+                btnSend.classList.add('btn-disabled');
+                btnSend.disabled = true;
+                statusLabel.textContent = "Pendiente de validación";
+                statusLabel.className = "status-tag status-pending";
+            }
+        }
+
+        function generateAuto() {
+            if (!document.getElementById('check-pruebas').checked || !document.getElementById('check-notificaciones').checked) {
+                alert("⚠️ Debe completar el Saneamiento (Checks rojos) antes de generar el Auto.");
+                return;
+            }
+            
+            const editor = document.getElementById('auto-editor');
+            editor.value = "REPÚBLICA DE COLOMBIA\nPROCURADURÍA GENERAL DE LA NACIÓN\n\nASUNTO: AUTO DE CIERRE DE INVESTIGACIÓN Y TRASLADO A ALEGATOS PRECALIFICATORIOS\n\nREFERENCIA: Expediente No. 2023-00158-000\nDISCIPLINADO: Juan Pérez\nCARGO: [Cargo]\nENTIDAD: [Entidad]\n\nEL INSTRUCTOR DE LA PROCURADURÍA GENERAL DE LA NACIÓN,\n\nEn ejercicio de sus facultades legales y reglamentarias, especialmente las conferidas por el artículo 221 de la Ley 1952 de 2019 (Código General Disciplinario),\n\nCONSIDERANDO:\n\n1. Que se dio cumplimiento a la etapa de indagación previa mediante Auto de fecha XX.\n2. Que durante la investigación se practicaron todas las pruebas decretadas (documentales, testimoniales, periciales).\n3. Que no se evidencian causales de nulidad que afecten lo actuado.\n4. Que los hechos investigados permiten formar convicción sobre la conducta.\n\nRESUELVE:\n\nPRIMERO: DAR POR TERMINADA LA ETAPA DE INVESTIGACIÓN.\nSEGUNDO: CORRER TRASLADO a los sujetos procesales por el término de DIEZ (10) DÍAS HÁBILES para presentar alegatos precalificatorios.\nTERCERO: NOTIFICAR conforme a la ley.\n\nNOTIFÍQUESE Y CÚMPLASE,";
+        }
+
+        function sendToReview() {
+            document.getElementById('confirm-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('confirm-modal').style.display = 'none';
+            // Aquí iría la lógica de redirección o actualización de estado
+            alert("Redirigiendo a bandeja de 'En revisión'...");
+        }
+    </script>
+</body>
+</html>
